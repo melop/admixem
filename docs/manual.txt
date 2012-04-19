@@ -1,0 +1,124 @@
+Admixsimul Manual
+
+This program performs individual-based simulation of admixture of two populations in a hybrid zone. 
+
+System requirements
+This program was developed in Visual C++ Express 10.0 and can only be compiled against Win32 or Win64 platforms. I'm trying to port the code onto Linux. To export results to admixmap, installation of the latest version of Php 5 is required.
+
+Installation:
+Copy admixsimul.exe, export_genotype.php and export_phenotype.php to the same folder. Add the folder to the $PATH environment variable.
+
+Usage:
+
+Marker generation:
+
+Execute admixsimul.exe, choose option 1 - Generate markers. 
+The program will ask for the following information:
+1. Random Seed (0,1). remember this number to repeat the marker generation process.
+2. Chromosome configuration including sizes in base-pairs and position of the centromere. The position of the centromere can be set to an arbitrary value (within the size range of the chromosome of course) if you want to use uniformly distributed recombination fractions. 
+3. Provide the total number of markers as well as parameters of the allelic frequencies in the ancestral populations. To simulate completely ancestral informative markers, set the average frequency to 1 and standard deviation to 0 so that the markers are fixed in the two parental pops.
+4. Output file name. 
+
+The program will then save the marker setup to the specified file, and then it will ask if you want to create recombination fractions. Say "y" and provide the following information:
+
+Total expected recombination events per meiosis. If you want on average 1 recombination per arm, set this to 4n. This will be distributed over the genome depending on size of arms.
+
+Distribution of recombination fraction. 
+1 - Uniform
+The recombination is uniformly distributed regardless of the break point's position relative to the centromere.
+
+2 - Parabola
+The recombination fraction increases as a function of the distance from the parabola. This will make recombination very unlikely near the centromere and extremely frequent close to the telomere. 
+If you choose this option, provide the shape parameter for males and females.
+
+
+Then specify the number of breakpoint samples to put. Usually this should be at least the same as the number of markers.
+
+You can also specify fold difference in recombination fraction between sexes.
+
+Simulation:
+
+Setting up a configuration file
+
+The configuration file is a tab-delimited text file with variable names followed by a tab, then by "=", then by another tab, then the value. Comments starts with "#".
+The parser is not very sophisticated so use the existing config as a template.
+Variable names are case-sensitive.
+See this example:
+
+RandomSeed		=	0.33	#Specify the same random seed to repeat the simulation.
+MarkerFile		=	K:\apps\admixsimul\test\simul3_markers.txt		#Marker File Containing marker info generated using option 1. Put spaces around = sign!
+MarkerProbFile	=	K:\apps\admixsimul\test\simul3_recomb.txt	#Recombination fraction file generated using option 1
+IgnoreMarkerFreq	=	yes											#Ignore marker frequencies specified in the recombination fraction file and make them reciprocally fixed in the parental pops
+GeneFile		=	K:\apps\admixsimul\test\genes2.txt	#Gene file, which specifies genetic loci underlying phenotypes
+PhenotypeFile	=	K:\apps\admixsimul\test\phenotypes2.txt			#Phenotype File, which specifies formulae from which phenotypes are calculated 
+OutputFolder	=	K:\apps\admixsimul\test\epistasis\2\		#where should the program spit files into
+pop1_name		=	malinche				#name of parental pop 1
+pop1_ancestry_label =	m						#only one character is allowed, this is used in the output file to specify the real ancestry of a marker
+pop2_name		=	birchmanni				#name of parental pop 2
+pop2_ancestry_label =	b						#only one character is allowed
+hybrid_name		=	hybridzone				#name of hybrid pop
+pop1_init_size	=	200						#how many individuals to create in the initial parental pop 1
+pop2_init_size	=	200						#how many individuals to create in the initial parental pop 2
+pop1_size_limit	=	200					#Pop Size limit
+pop2_size_limit	=	200					#Pop Size Limit
+hybrid_size_limit =	2000					#Pop Size Limit	
+pop1_male_ratio		= 0.5					#Sex ratio of pop1, see below
+pop2_male_ratio	=	0.5					#Sex ratio of pop2
+gen1_pop1_to_hybrid	=	5				#In generation 0 , the hybrid pop is empty. So you need to let animals come into the hybrid zone to breed
+gen1_pop2_to_hybrid	=	5
+gen1_hybrid_to_pop1	=	0				#unused.
+gen1_hybrid_to_pop2	=	1				#unused.
+gen1_pop1_to_pop2	=	0				#unused.
+migration_only_first_gen	=	yes			#gene flow only happen before generation 1? if no, the following parameters of gene flow will be used for later generations
+pop1_to_hybrid	=	100					#number of individuals from pop1 to hybrid zone in each gen.
+pop2_to_hybrid	=	0
+hybrid_to_pop1	=	0
+hybrid_to_pop2	=	0
+pop1_to_pop2	=	0
+generations		=	20				#how many generations to simulate? 
+samplefreq	=	5					#write result files every 5 generations. note that generation 0, 1 and 2 will always be written.
+
+Note that sex needs to be specified in the phenotype file. The sex ratios in the configuration only acts as filters in generation 0. If your genetic and phenotypic settings for sex (say, only females are produced) cannot meet these sex ratio filters (say 0.5), then the program will not stop but try to create more individuals. For a typical XY organism, specify an imaginary male determining locus in the gene file:
+
+name	Chromosome	position	Dominant Allele	Dominant Allele Value	Recessive Allele	Recessive Allele Value	Mode	Dominant Freq Pop1	Dominant Freq Pop2
+chr10_3000000	10	3000000	A	1	a	0	Hemizygous	0.5	0.5
+
+And then specify a phenotype called "Sex" (case-sensitive) in the phenotype file:
+Phenotype	Formula
+Sex		chr10_3000000
+
+The "dominant allele" of this sex-determining locus has the frequencies of 0.5 in both parental populations and takes on the value 1. The "Sex" phenotype will evaluate to 1 when the sex determining locus has a "dominant allele". If "Sex" evaluates to non-zeros, the individual will be treated as male, otherwise female. Note that you should specify the "Mode" of the sex-determining locus as Hemizygous, so that only Aa or aa genotypes are created during initialization of parental pops. Feel free to try other genetic sex-determining mechanisms. This program doesn't deal with environmental sex-determination yet.
+
+The gene file:
+This tab-delimited file gives the genomic positions and other information about the genetic loci you want to model. IMPORTANT: sort this file in excel by Chromosome and then position, failure of doing so will cause undefined behavior of the program! 
+These columns are needed:
+name	- should be in the format chr[ChromosomeNumber]_[Position in bp]. You can use the excel function CONCATENATE() to automatically create this field from the next two columns.
+Chromosome	- Chromosome number
+position	- position of gene, in bp
+Dominant Allele	- Label of the "dominant" allele, only one character allowed. 
+Dominant Allele Value	- the allele's "value" for calculating phenotypes
+Recessive Allele	- Label of the "recessive" allele, only one character allowed
+Recessive Allele Value	- the allele's "value" for calculating phenotypes
+Mode	- Hemizygous: the genome can never homozygous for the "dominant" allele. Dominant - the locus will take on the value of the dominant allele. Additive - the locus will take on the summation of the values of the alleles.
+Dominant Freq Pop1	- the frequency of the "dominant" allele in pop1
+Dominant Freq Pop2	- the frequency of the "dominant" allele in pop2
+
+The phenotype file allows you to specify complex mathematically rules coding for phenotypes:
+Two columns are needed: 
+Phenotype	- name of phenotype. Remember, you should specify "Sex" so that the program can proceed.
+Formula		- specify the formula for the phenotype. You can use common mathematical operations such as + - * / () ^ as well as functions such as sin() cos() exp() sqrt() etc. Macros are used to refer to genes. For example, chr6_10000000 refers to the so-named gene in the gene file. The value of chr6_10000000 will be calculated during run-time depending on the gene settings as well as the genotypes of the individual. 
+
+Output
+Gen[Number of Generation]_genes.txt
+This file has the following format:
+<individual id>   <pop id>    <sex 0-female 1-male>    <father id>    <mother id>   -1  ......
+Each chromosome starts with -1 and all the genes are listed in order, with the alleles labeled as specified in the gene file, followed immediately with the real ancestry of that locus using population labels specified in the main configuration file. For example, Km means that this locus has the allele K and the ancestry m. Each individual has two lines, representing the homologous chromosome pairs.  
+
+Gen[Number of Generation]_markers.txt
+This file has the same format as the gene output. The two alleles are represented by A and a respectively. This file could get very huge. 
+
+Gen[Number of Generation]_phenotypes.txt
+This file contains the same initial columns as the above two files and a header. Phenotypic values are listed for each individual. 
+
+Exporting to admixmap
+You can use the program's option 3 to export a simulated dataset to admixmap. Make sure that php is correctly installed and php.exe is in your $PATH variable. The program doesn't do subsampling so you will need to put -1 -1 -1 when it asks for sample size. 
