@@ -1,0 +1,4 @@
+admixsimul
+==========
+
+Admixture simulator
