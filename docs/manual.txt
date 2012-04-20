@@ -3,10 +3,17 @@ Admixsimul Manual
 This program performs individual-based simulation of admixture of two populations in a hybrid zone. 
 
 System requirements
-This program was developed in Visual C++ Express 10.0 and can only be compiled against Win32 or Win64 platforms. I'm trying to port the code onto Linux. To export results to admixmap, installation of the latest version of Php 5 is required.
+This program was developed in Visual C++ Express 10.0 with Linux compatibility in mind and can only be compiled against Win32, Win64 or Linux64 (tested on Ubuntu 11.10) platforms. To export results to admixmap, installation of the latest version of Php 5 is required.
+
+Compilation
+* Win64
+  There is generally no point of compiling this on a 32 bit platform if you hope to simulate a realistic number of individuals and marker loci due to the 2GB RAM limit. The project is created in Visual Studio C++ Express 2010. To enable 64bit compilation, you have to first install WinSDK and go through some fairly annoying steps. See http://social.msdn.microsoft.com/Forums/en/Vsexpressvc/thread/4ce313a3-cb5f-43fc-bbb9-50233f8ed11b for more information. 
+
+* Linux (Ubuntu, probably on other distros too)
+  Simply cd to the source directory and type make. If successful, the binary executable can be found in the ./bin folder.
 
 Installation:
-Copy admixsimul.exe, export_genotype.php and export_phenotype.php to the same folder. Add the folder to the $PATH environment variable.
+Copy admixsimul.exe (on windows) or admixsimul (on Linux), export_genotype.php and export_phenotype.php to the same folder. Add the folder to the $PATH environment variable.
 
 Usage:
 
