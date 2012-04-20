@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <math.h>
+#include <limits.h>
 #include <map>
 #include "makemarkerfile.h"
 #include "newran02/newran.h"
@@ -23,4 +24,6 @@ int fnCompare (const void * a, const void * b);
 int fnGetRandIndex(int nSizeOfArray);
 
 double round(double nNum) ;
+
+string fnIntToString(int nNum );
 #endif

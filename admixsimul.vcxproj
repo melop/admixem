@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="filesystem.cpp" />
     <ClCompile Include="Individual.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="makemarkerfile.cpp" />

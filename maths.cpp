@@ -1,4 +1,5 @@
 #include "maths.h"
+#include <sstream>
 
 Normal NormalGen; 
 Uniform UniformGen;
@@ -40,4 +41,11 @@ double round(double nNum) {
 	else {
 		return nIntegral + 1;
 	}
+}
+
+string fnIntToString(int nNum ) {
+	std::stringstream sstm;
+	sstm << nNum;
+    return (sstm.str());
+
 }

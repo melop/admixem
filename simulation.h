@@ -6,7 +6,14 @@
 #include <string>
 #include <vector>
 #include <map>
+
+#ifdef _WIN32
 #include <direct.h>
+#endif
+
+/*
+#include <sys/stat.h>
+*/
 #include "config.h"
 #include "Population.h"
 #include "maths.h"
@@ -21,3 +28,5 @@ void UIExportResults();
 void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed);
 
 string convertInt(int number);
+
+void fnMakeDir(const char * sPath);

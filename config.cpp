@@ -1,5 +1,5 @@
 #include "config.h"
-
+#include <cstring>
 SimulationConfigurations SimulConfig; //Global configuration object
 extern Normal NormalGen; 
 extern Uniform UniformGen;

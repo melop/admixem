@@ -54,6 +54,9 @@
     <ClCompile Include="maths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="filesystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="def.h">

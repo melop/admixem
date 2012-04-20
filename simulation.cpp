@@ -1,4 +1,5 @@
 #include "simulation.h"
+#include "maths.h"
 
 extern Normal NormalGen; 
 extern Uniform UniformGen;
@@ -27,7 +28,7 @@ void PerformSimulation() {
 
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "\\";
 	string sOutFileBase = sOutFolder + "Gen";
-	_mkdir(sOutFolder.c_str()); // make output folder
+	fnMakeDir(sOutFolder.c_str()); // make output folder
 
 	printf("Initializing Pop 1...\n");
 	pPop1->Init(
@@ -67,8 +68,11 @@ void PerformSimulation() {
 
 		
 			printf("Writing to disk...\n");
+			/*
 			char szCurrGen[100];
 			_itoa(nCurrGen , szCurrGen, 10);
+			*/
+			string szCurrGen = fnIntToString(nCurrGen);
 			//FILE * pOutFile = fopen( (sOutFileBase + szCurrGen + ".txt").c_str(), "w" );
 			ofstream fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile;
 			fMarkerOutFile.open((sOutFileBase + szCurrGen + "_markers.txt").c_str());// output file stream
@@ -166,7 +170,7 @@ void UIExportResults() {
 				continue; // 
 			}
 			else {
-				_mkdir(sExportFolder.c_str()); // make dir.
+				fnMakeDir(sExportFolder.c_str()); // make dir.
 				break;
 			}
 			
@@ -219,25 +223,26 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 	Random::Set(nRandSeed);
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
 	sExportFolder = sExportFolder + "/Gen" + convertInt(nGen);
-	_mkdir(sExportFolder.c_str());
+	fnMakeDir(sExportFolder.c_str());
 
 	ofstream fPriorAlleleFreq, fOutcomeVars, fGenotypes, fEtaPriors, fLoci, fSampledMarkers;// Create priorallelefreqs.txt
 	//fPriorAlleleFreq.open(sExportFolder + "/priorallelefreqs.txt");
 	//fOutcomeVars.open(sExportFolder + "/outcomevars.txt");
 	//fGenotypes.open(sExportFolder + "/genotypes.txt");
 	//fEtaPriors.open(sExportFolder + "/etapriors.txt");
-	fLoci.open(sExportFolder + "/lociChr.txt");
+	fLoci.open((sExportFolder + "/lociChr.txt").c_str());
 	fSampledMarkers.open("sampledmarkers.txt"); // this is an instruction to the php script regarding what markers to draw
 
 	ifstream fMarkers, fPhenotypes;
-	char szCurrGen[100];
+	/*char szCurrGen[100];
 	_itoa(nGen , szCurrGen, 10);
+	*/
 	string sGenHeader = sOutFolder + "/Gen";
-	sGenHeader = sGenHeader + szCurrGen;
+	sGenHeader = sGenHeader + fnIntToString(nGen);//szCurrGen;
 
-	fMarkers.open(sGenHeader + "_markers.txt" , ios_base::in );
+	fMarkers.open((sGenHeader + "_markers.txt").c_str() , ios_base::in );
 
-	fPhenotypes.open(sGenHeader + "_phenotypes.txt" , ios_base::in );
+	fPhenotypes.open((sGenHeader + "_phenotypes.txt").c_str() , ios_base::in );
 	//convert the phenotype file to outcomevars.txt
 	string sCmd = "php export_phenotype.php -- -s \"" + sGenHeader + "_phenotypes.txt\" -o \"" + sExportFolder + "/outcomevars.txt\"";
 	printf("Calling: %s ...\n", sCmd.c_str());
@@ -356,4 +361,14 @@ string convertInt(int number)
    stringstream ss;//create a stringstream
    ss << number;//add number to the stream
    return ss.str();//return a string with the contents of the stream
+}
+
+void fnMakeDir(const char * sPath)
+{
+	#ifdef _WIN32
+	_mkdir(sPath);
+	#elif __linux__
+	string szCmd("mkdir -m 777 -p ");
+	system((szCmd + "\"" + sPath + "\"").c_str());
+	#endif
 }

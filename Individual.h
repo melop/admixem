@@ -68,7 +68,7 @@ class Genome {
 class Individual {
 
     public:
-	Individual::Individual(void);
+	Individual(void);
 	Individual(int nPopId, char nAncestryLabel); //constructor for founders
 	Individual(Individual * pFather, Individual * pMother); //Constructor . Fertilize a new individual given parents
 	
