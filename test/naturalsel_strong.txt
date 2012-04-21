@@ -1,0 +1,4 @@
+Population	Selection
+malinche	1
+birchmanni	1
+hybridzone	exp( - pow( Swordlen- 0 , 2)/(2 * pow(2,2)))

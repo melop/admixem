@@ -9,7 +9,10 @@
 #include <vector>
 #include "Individual.h"
 #include "maths.h"
+
 #pragma once
+#ifndef _POPULATION_FILE
+#define _POPULATION_FILE 0
 
 using namespace std;
 //extern int nCurrIndividualId; // defined in individual.cpp
@@ -27,6 +30,8 @@ public:
 	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile);
 	void NaturalSelection();
 	int GetPopSize(int nMode);
+	int GetPopId();
+	string  GetPopName();
 
 private:
 	string _sPopName;
@@ -50,3 +55,4 @@ private:
 	void fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex);
 };
 
+#endif

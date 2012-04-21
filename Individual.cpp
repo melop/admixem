@@ -8,6 +8,7 @@
  */
 
 #include "Individual.h"
+#include "Population.h"
 
 extern SimulationConfigurations SimulConfig;
 extern Normal NormalGen; 
@@ -21,7 +22,7 @@ void Genome::BuildGenome(Chromosome * pPaternalGamete, Chromosome * pMaternalGam
 */
 
 Individual::Individual(void) {
-
+	this->_bDead = false;
 }
 
 Individual::~Individual(void) {
@@ -32,8 +33,10 @@ Individual::~Individual(void) {
 	//delete &_mpEnvPhenotypes;
 }
 
-Individual::Individual(int nPopId, char nAncestryLabel) { //Initializing a founder
-
+Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a founder
+	this->_bDead = false;
+	int nPopId = ((Population *)pPop)->GetPopId();
+	this->_pPop = pPop;
 	if (nPopId == 3) {
 		throw "You cannot directly create hybrid founders.";
 	}
@@ -243,8 +246,10 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 
 
 Individual::Individual(Individual * pFather, Individual * pMother) {
+	this->_bDead = false;
+	this->_pPop = pMother->GetPop();
 
-	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not supported.
+	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not implemented.
 		throw "Cannot create a new individual from same-sex parents!";
 	}
 	
@@ -299,9 +304,14 @@ bool Individual::Court(Individual * pChooser) {
 
 int Individual::HandleCourter(Individual * pCourter) {
 
+	if (pCourter->IsDead()) {
+		throw(new Exception("Cannot mate with dead courter. Something went wrong."));
+	}
+
 	if (this->_nAvailableGametes == 0) {
 		//no more gametes, byebye.
 	}
+	//entry point for sexual selection.
 	_arrOtherParentsForOffsprings.push_back(pCourter);
 	// just for now, inseminate one egg:
 	_nAvailableGametes--; // one less gamete!
@@ -317,12 +327,50 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum) {
 
 	nNum = nNum==-1? _arrOtherParentsForOffsprings.size():nNum;
 	
-	for(int i=0; i<nNum; i++) {
+	// do frequency-independent natural selection here!
+
+	string sPop = ((Population*)(this->_pPop))->GetPopName();
+	list< Parser * > * pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(sPop);
+	//list< vector<string> > * pqvCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsCourter( sPop);
+	list< vector<string> > * pqvSelfSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsSelf( sPop);
+
+	
+	for(int i=0; i<nNum;i++) { 
 		if (_arrOtherParentsForOffsprings.size()==0) return;
 
 		int nRandDad = fnGetRandIndex(_arrOtherParentsForOffsprings.size() );
 		Individual * pOffSpring = new Individual( _arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
-		vOffSprings.push_back(pOffSpring);
+		// See if it's lucky enough to survive the cruel nature!!
+		// Go through each selection rule:
+		
+		//list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
+		list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
+		for (list< Parser * >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			vector<string> vSymbolsSelf = *itSelfSymbols;
+			Parser * pParser = *itParser;
+
+			//Set self symbol values
+			for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
+			{
+				pParser->symbols_[string("My_"+(*itSymbol))] = pOffSpring->GetPhenotype(*itSymbol);
+				pParser->symbols_[*itSymbol] = pOffSpring->GetPhenotype(*itSymbol); //set both variables
+			}
+
+			bool bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+
+			if (!bLive) {
+				delete pOffSpring; // uhoh, dead!!
+				pOffSpring = NULL;
+				break;
+			}
+
+			++itSelfSymbols;
+		}
+
+		if (!pOffSpring) { }
+		else {
+			vOffSprings.push_back(pOffSpring);
+		}
 		//_arrOtherParentsForOffsprings.erase(_arrOtherParentsForOffsprings.begin() + nRandDad);
 	}
 
@@ -331,12 +379,23 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum) {
 
 }
 
+double Individual::GetPhenotype(string sPhenotype) {
+	return this->_mpPhenotypes[sPhenotype];
+}
+
 /*
 void Individual::GetGamete(Chromosome * pGamete) {
 
 	
 }
 */
+void Individual::ChangePopulation(void * pPop) {
+	this->_pPop = pPop;
+}
+
+void * Individual::GetPop() {
+	return this->_pPop;
+}
 
 Individual::Sex Individual::GetSex() {
 	return this-> _bSex;
@@ -574,4 +633,17 @@ void Individual::WritePhenotypeHeader(ofstream &fOutFile) { // nChromosomeSide i
 		}
 
 
+}
+
+bool Individual::IsDead() {
+	return this->_bDead;
+}
+
+void Individual::Die() {
+	if (this->_bDead) {
+		throw(new Exception("Individual is already dead, cannot die again!"));
+	}
+	else {
+		this->_bDead = true;
+	}
 }

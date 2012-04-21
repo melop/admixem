@@ -21,6 +21,7 @@
 #include "newran02/newran.h"
 #include "config.h"
 #include "maths.h"
+//#include "Population.h"
 
 
 #pragma once
@@ -69,7 +70,7 @@ class Individual {
 
     public:
 	Individual(void);
-	Individual(int nPopId, char nAncestryLabel); //constructor for founders
+	Individual(void * pPop, char nAncestryLabel); //constructor for founders
 	Individual(Individual * pFather, Individual * pMother); //Constructor . Fertilize a new individual given parents
 	
 	enum Sex {Male, Female};
@@ -86,6 +87,7 @@ class Individual {
 	unsigned int GetID();
 	unsigned int GetFatherId();
 	unsigned int GetMotherId();
+	double GetPhenotype(string sPhenotype);
 
 	void GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Gene> > &vGenes );
 	void GiveBirth(vector<Individual *> &vOffSprings, int nNum); // give birth to any number inseminated eggs, pass -1 to nNum to get all. this takes a lot of memory so be careful.
@@ -94,6 +96,10 @@ class Individual {
 	void DumpGenes(ofstream &fOutFile, int nChromosomeSide); // write all markers to file stream. each chromosome separated by -1.
 	void DumpPhenotypes(ofstream &fOutFile);
 	void WritePhenotypeHeader(ofstream &fOutFile);
+	bool IsDead();
+	void Die(); // sets the dead flag
+	void ChangePopulation(void * pPop);
+	void * GetPop();
 
 	//void GetGamete( Chromosome * pGamete);
 
@@ -105,8 +111,10 @@ class Individual {
 	 unsigned int _nFatherId; //id of father
 	 unsigned int _nMotherId; //id of mother
 	 unsigned int _nId; // fish id
+	 void * _pPop; //pointer to the current population it's living in.
 	 Sex _bSex;
 	 bool _bMatured;
+	 bool _bDead;
 	 double _nCondition; //Condition of fish
 	 double _nAge; //Age of the individual
 	 unsigned int _nAvailableGametes; // how many more gametes available? Only meaningful for females. males have unlimited num of gametes (-1)

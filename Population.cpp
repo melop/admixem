@@ -39,7 +39,7 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 			break;
 		}
 
-		Individual * pNewInd = new Individual(nPopId, nAncestryLabel);
+		Individual * pNewInd = new Individual(this, nAncestryLabel);
 
 		if (pNewInd->GetSex() == Individual::Male) { // If the created individual is male
 
@@ -94,7 +94,7 @@ bool Population::Breed() {
 		//After mating, get the offspring out!
 
 		vector<Individual *> vOffSprings;
-		(*itFemale)->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)));
+		(*itFemale)->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100))); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) {
 
@@ -179,6 +179,7 @@ bool Population::Immigrate(Individual * pImmigrant, bool bForceExistingDie) { //
 		return false;
 	}
 	//printf("1\n");
+	pImmigrant->ChangePopulation(this);
 	Individual::Sex bWhichSex = pImmigrant->GetSex();
 	//printf("2\n");
 	vector< Individual *> * pIndividuals = (bWhichSex==Individual::Male)? &_mpMales:&_mpFemales;
@@ -223,6 +224,8 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 }
 
 void Population::fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex) {
+
+	bool bWriteMarkers = !(SimulConfig.GetConfig("MarkerOutput") == "Off");
 	
 	vector< Individual *> * pMpIndividuals = (bSex == Individual::Male)? &this->_mpMales : &this->_mpFemales;
 	
@@ -231,7 +234,10 @@ void Population::fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofs
 	int i=0;
 
 	for (vector< Individual *>::iterator itInd=pMpIndividuals->begin(); itInd!=pMpIndividuals->end(); ++ itInd) {
-		this->fnWriteIndividualMarkers(fMarkerOutFile, *itInd);
+
+		if (bWriteMarkers) {
+			this->fnWriteIndividualMarkers(fMarkerOutFile, *itInd);
+		}
 		this->fnWriteIndividualGenes(fGeneOutFile, *itInd);
 
 		if (i==0) {
@@ -285,3 +291,11 @@ void Population::fnWriteIndividualID(ofstream &fOutFile, Individual * pInd) {
 	fOutFile << pInd->GetFatherId() << '\t';
 	fOutFile << pInd->GetMotherId() << '\t';
 }
+
+int Population::GetPopId() {
+	return this->_nPopId;
+};
+
+string  Population::GetPopName() {
+	return this->_sPopName;
+};

@@ -495,7 +495,15 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 			this->_mpPhenotypes[sPhenotypeName] = sFormula;
 			
 			Parser * pF = new Parser("");
-			pF->Evaluate(sFormula);
+			try {
+				pF->Evaluate(sFormula);
+			}
+			catch(std::runtime_error e) {
+				
+				printf("Error occured when trying to parse formula: %s \nErrMsg:%s\nPlease check formulae grammar!", sFormula.c_str(), e.what());
+				exit(100);
+			}
+
 			vector< pair<int, double> > vSymbols;
 			vector<string> vSymbolStrings;
 			//list all the symbols used in this formula
@@ -561,6 +569,312 @@ Parser * PhenotypeConfigurations::GetFormula(string sPhenotypeName) {
 	return this->_mpPhenotypeFormulae[sPhenotypeName];
 };
 
+NaturalSelectionConfigurations::NaturalSelectionConfigurations(void * pParentConfig) {
+
+	this->_pParentConfig = pParentConfig;
+
+};
+
+void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
+{
+	FILE *pConfigFile;
+	char szBuffer[13049];
+	char szPopName[100];
+	char szFormula[12048];
+	
+	
+	
+	printf("Start loading natural selection file %s ...\n", szConfigFile.c_str());
+
+	_szConfigFilename = szConfigFile; // save name of config file
+
+	pConfigFile = fopen(szConfigFile.c_str(), "r");
+
+	if (!pConfigFile) {
+		printf("%s\n", "Cannot open natural selection file ...");
+		throw "Cannot open natural selection file!";
+	}
+
+	if (fgets(szBuffer, 2048, pConfigFile) == NULL) { // skip the header line
+		throw "Cannot read natural selection file!";
+	}
+
+	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
+	{
+		string sPopName, sFormula;
+
+		sscanf(szBuffer, "%[^\t\n]	%[^\t\n]", szPopName, szFormula);
+		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
+		sFormula = szFormula;
+		if (sPopName.length() != 0 && sFormula.length() !=0) {
+			
+			
+
+			if (this->_mpRules.find(sPopName) == this->_mpRules.end()) { // if this pop is not in the map yet
+				list< string > vsFormulae;
+				list< Parser * > vpFormulae;
+				list< vector<string> > vvsSymbols;
+				list< vector<string> > vvsSymbols2;
+				list< vector<string> > vvsSymbols3;
+				list< vector<string> > vvsSymbols4;
+				list< vector<string> > vvsSymbols5;
+				list< vector<string> > vvsSymbols6;
+
+				this->_mpRules[sPopName] = vsFormulae;
+				this->_mpRuleFormulae[sPopName] = vpFormulae;
+				this->_mpRuleFormulaSymbolStrings[sPopName] = vvsSymbols;
+				this->_mpRuleFormulaSymbolStringsCourter[sPopName] = vvsSymbols2;
+				this->_mpRuleFormulaSymbolStringsSelf[sPopName] = vvsSymbols3;
+				this->_mpRuleFormulaSymbolStringsPopWide[sPopName] = vvsSymbols4;
+				this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName] = vvsSymbols5;
+				this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName] = vvsSymbols6;
+			}
+
+			
+			
+			Parser * pF = new Parser("");
+
+			try {
+				pF->Evaluate(sFormula);
+			}
+			catch(std::runtime_error e) {
+				
+				printf("Error occured when trying to parse formula: %s \nErrMsg:%s\nPlease check formulae grammar!", sFormula.c_str(), e.what());
+				exit(100);
+			}
+
+		
+			vector<string> vSymbolStrings; // all symbols
+			vector<string> vSymbolStringsCourter; // only symbols referring to an individual courter's trait prefixed with Courter_
+			vector<string> vSymbolStringsPopWideCourter; // symbols referring to population-level variables prefixed with PopCourter_
+			vector<string> vSymbolStringsSelf; //symbols referring to individual chooser trait prefixed with My_
+			vector<string> vSymbolStringsPopWideChooser;//symbols referring to population-level variables prefixed with PopChooser_
+			vector<string> vSymbolStringsPopWide; // symbols referring to population-level variables prefixed with Pop_
+			//list all the symbols used in this formula
+			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
+			{	
+				//Parse chromosome number and position from the symbol
+				//cout << (it->first) << "\n"; //list all keys
+
+				
+				if (strlen(it->first.c_str()) < 3) { // no need to add symbol
+					continue;
+				}
+
+				vSymbolStrings.push_back(it->first); // save label too
+
+				//Look at prefixes:
+				string sSymbol = it->first;
+				
+				if (sSymbol.find("Courter_") == 0) {
+					throw(new Exception("Courter_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 8, "");
+					vSymbolStringsCourter.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PopCourter_") == 0) {
+					throw(new Exception("PopCourter_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 11, "");
+					vSymbolStringsPopWideCourter.push_back(sSymbol );
+				}
+				else if (sSymbol.find("My_") == 0) {
+					sSymbol.replace(0, 3, "");
+					vSymbolStringsSelf.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PopChooser_") == 0) {
+					throw(new Exception("PopChooser_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 11, "");
+					vSymbolStringsPopWideChooser.push_back(sSymbol);
+				}
+				else if (sSymbol.find("Pop_") == 0) {
+					throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 4, "");
+					vSymbolStringsPopWide.push_back(sSymbol);
+				}
+				else { //default to be self
+					vSymbolStringsSelf.push_back(sSymbol);
+				}
+			}
+			
+			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
+			this->_mpRuleFormulae[sPopName].push_back(pF);
+			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
+			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
+			this->_mpRuleFormulaSymbolStringsSelf[sPopName].push_back(vSymbolStringsSelf);
+			this->_mpRuleFormulaSymbolStringsPopWide[sPopName].push_back(vSymbolStringsPopWide);
+			this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName].push_back(vSymbolStringsPopWideChooser);
+			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
+		}
+	}
+
+	printf("Selection rules for %d populations loaded. \n", this->_mpRules.size());
+
+}
+
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStrings(string sPop) {
+	return &this->_mpRuleFormulaSymbolStrings[sPop];
+}
+
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStringsCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsCourter[sPop];
+}
+
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStringsSelf(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsSelf[sPop];
+}
+
+list< Parser * > * NaturalSelectionConfigurations::GetFormulae(string sPop) {
+	return &this->_mpRuleFormulae[sPop];
+}
+
+
+SexualSelectionConfigurations::SexualSelectionConfigurations(void * pParentConfig) {
+
+	this->_pParentConfig = pParentConfig;
+
+};
+
+void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
+{
+	FILE *pConfigFile;
+	char szBuffer[13049];
+	char szPopName[100];
+	char szFormula[12048];
+	
+	
+	
+	printf("Start loading sexual selection file %s ...\n", szConfigFile.c_str());
+
+	_szConfigFilename = szConfigFile; // save name of config file
+
+	pConfigFile = fopen(szConfigFile.c_str(), "r");
+
+	if (!pConfigFile) {
+		printf("%s\n", "Cannot open sexual selection file ...");
+		throw "Cannot open sexual selection file!";
+	}
+
+	if (fgets(szBuffer, 2048, pConfigFile) == NULL) { // skip the header line
+		throw "Cannot read sexual selection file!";
+	}
+
+	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
+	{
+		string sPopName, sFormula;
+
+		sscanf(szBuffer, "%[^\t\n]	%[^\t\n]", szPopName, szFormula);
+		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
+		sFormula = szFormula;
+		if (sPopName.length() != 0 && sFormula.length() !=0) {
+			
+			
+
+			if (this->_mpRules.find(sPopName) == this->_mpRules.end()) { // if this pop is not in the map yet
+				list< string > vsFormulae;
+				list< Parser * > vpFormulae;
+				list< vector<string> > vvsSymbols;
+				list< vector<string> > vvsSymbols2;
+				list< vector<string> > vvsSymbols3;
+				list< vector<string> > vvsSymbols4;
+				list< vector<string> > vvsSymbols5;
+				list< vector<string> > vvsSymbols6;
+
+				this->_mpRules[sPopName] = vsFormulae;
+				this->_mpRuleFormulae[sPopName] = vpFormulae;
+				this->_mpRuleFormulaSymbolStrings[sPopName] = vvsSymbols;
+				this->_mpRuleFormulaSymbolStringsCourter[sPopName] = vvsSymbols2;
+				this->_mpRuleFormulaSymbolStringsChooser[sPopName] = vvsSymbols3;
+				this->_mpRuleFormulaSymbolStringsPopWide[sPopName] = vvsSymbols4;
+				this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName] = vvsSymbols5;
+				this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName] = vvsSymbols6;
+			}
+
+			
+			
+			Parser * pF = new Parser("");
+			try {
+				pF->Evaluate(sFormula);
+			}
+			catch(std::runtime_error e) {
+				
+				printf("Error occured when trying to parse formula: %s \nErrMsg:%s\nPlease check formulae grammar!", sFormula.c_str(), e.what());
+				exit(100);
+			}
+
+			vector<string> vSymbolStrings; // all symbols
+			vector<string> vSymbolStringsCourter; // only symbols referring to an individual courter's trait prefixed with Courter_
+			vector<string> vSymbolStringsPopWideCourter; // symbols referring to population-level variables prefixed with PopCourter_
+			vector<string> vSymbolStringsChooser; //symbols referring to individual chooser trait prefixed with My_
+			vector<string> vSymbolStringsPopWideChooser;//symbols referring to population-level variables prefixed with PopChooser_
+			vector<string> vSymbolStringsPopWide; // symbols referring to population-level variables prefixed with Pop_
+
+			//list all the symbols used in this formula
+			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
+			{	
+				//Parse chromosome number and position from the symbol
+				//cout << (it->first) << "\n"; //list all keys
+
+				
+				if (strlen(it->first.c_str()) < 3) { // no need to add symbol
+					continue;
+				}
+
+				vSymbolStrings.push_back(it->first); // save label too
+
+				//Look at prefixes:
+				string sSymbol = it->first;
+				
+				if (sSymbol.find("Courter_") == 0) {
+					//throw(new Exception("Courter_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 8, "");
+					vSymbolStringsCourter.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PopCourter_") == 0) {
+					throw(new Exception("PopCourter_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 11, "");
+					vSymbolStringsPopWideCourter.push_back(sSymbol );
+				}
+				else if (sSymbol.find("My_") == 0) {
+					sSymbol.replace(0, 3, "");
+					vSymbolStringsChooser.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PopChooser_") == 0) {
+					throw(new Exception("PopChooser_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 11, "");
+					vSymbolStringsPopWideChooser.push_back(sSymbol);
+				}
+				else if (sSymbol.find("Pop_") == 0) {
+					throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 4, "");
+					vSymbolStringsPopWide.push_back(sSymbol);
+				}
+				else { //default to be self
+					vSymbolStringsChooser.push_back(sSymbol);
+				}
+
+			}
+			
+			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
+			this->_mpRuleFormulae[sPopName].push_back(pF);
+			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
+			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
+			this->_mpRuleFormulaSymbolStringsChooser[sPopName].push_back(vSymbolStringsChooser);
+			this->_mpRuleFormulaSymbolStringsPopWide[sPopName].push_back(vSymbolStringsPopWide);
+			this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName].push_back(vSymbolStringsPopWideChooser);
+			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
+		}
+	}
+
+	printf("Sexual Selection rules for %d populations loaded. \n", this->_mpRules.size());
+
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStrings(string sPop) {
+	return &this->_mpRuleFormulaSymbolStrings[sPop];
+}
+
+list< Parser * > * SexualSelectionConfigurations::GetFormulae(string sPop) {
+	return &this->_mpRuleFormulae[sPop];
+}
 
 GeneConfigurations::GeneConfigurations(void * pParentConfig) {
 
@@ -660,6 +974,8 @@ SimulationConfigurations::SimulationConfigurations() {
 	this->pRecombProbConfig = new RecombProbConfigurations(this);
 	this->pPhenotypeConfig = new PhenotypeConfigurations(this);
 	this->pGeneConfig = new GeneConfigurations(this);
+	this->pNaturalSelConfig = new NaturalSelectionConfigurations(this);
+	this->pSexualSelConfig = new SexualSelectionConfigurations(this);
 	_szConfigFilename="";
 };
 
@@ -715,6 +1031,8 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 	this->pRecombProbConfig->LoadFromFile(this->GetConfig("MarkerProbFile"));
 	this->pPhenotypeConfig->LoadFromFile(this->GetConfig("PhenotypeFile"));
 	this->pGeneConfig->LoadFromFile(this->GetConfig("GeneFile"));
+	this->pNaturalSelConfig->LoadFromFile(this->GetConfig("NaturalSelection"));
+	this->pSexualSelConfig->LoadFromFile(this->GetConfig("SexualSelection"));
 	this->pMarkerConfig->CalculateMapDistances();
 };
 

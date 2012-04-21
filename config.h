@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <list>
 #include <map>
 #include "parser/parser.h"
 #include "newran02/newran.h"
@@ -94,6 +95,50 @@ class PhenotypeConfigurations {
 		map<string , vector<string> > _mpPhenotypeFormulaSymbolStrings; // Symbols as strings
 };
 
+class NaturalSelectionConfigurations {
+
+	public:
+		NaturalSelectionConfigurations(void * pParentConfig);
+		void LoadFromFile(string szConfigFile);
+		list< vector<string> > * GetFormulaSymbolStrings(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsCourter(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsSelf(string sPop);
+		list< Parser * > * GetFormulae(string sPop);
+
+	private:
+		string _szConfigFilename;
+		void * _pParentConfig;// convert to SimulationConfigurations!
+		map<string , list< string > > _mpRules; //definition of selection rules. key is population name
+		map<string , list< Parser * > > _mpRuleFormulae; // similar as above, but the expression is parsed
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStrings; // Symbols as strings
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCourter; // Symbols that are courter values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsSelf; // Symbols that are self (female) values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWide; // Symbols that are population-wide values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWideCourter; // Symbols that are population-wide courter values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWideChooser; // Symbols that are population-wide chooser values
+};
+
+class SexualSelectionConfigurations {
+
+	public:
+		SexualSelectionConfigurations(void * pParentConfig);
+		void LoadFromFile(string szConfigFile);
+		list< vector<string> > * GetFormulaSymbolStrings(string sPop);
+		list< Parser * > * GetFormulae(string sPop);
+
+	private:
+		string _szConfigFilename;
+		void * _pParentConfig;// convert to SimulationConfigurations!
+		map<string , list< string > > _mpRules; //definition of selection rules. key is population name
+		map<string , list< Parser * > > _mpRuleFormulae; // similar as above, but the expression is parsed
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStrings; // Symbols as strings
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCourter; // Symbols that are courter values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsChooser; // Symbols that are self (female) values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWide; // Symbols that are population-wide values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWideCourter; // Symbols that are population-wide courter values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWideChooser; // Symbols that are population-wide chooser values
+};
+
 struct GeneProperties {
 	
 	enum Mode {Hemizygous, Additive, Dominant};
@@ -136,6 +181,8 @@ class SimulationConfigurations {
 		RecombProbConfigurations * pRecombProbConfig;
 		PhenotypeConfigurations * pPhenotypeConfig;
 		GeneConfigurations * pGeneConfig;
+		NaturalSelectionConfigurations * pNaturalSelConfig; 
+		SexualSelectionConfigurations * pSexualSelConfig; 
 		const string GetConfigFileName();
 
 	private:

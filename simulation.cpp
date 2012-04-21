@@ -109,17 +109,26 @@ void PerformSimulation() {
 			printf("End Migration...\n");
 		}
 		
+		bool bAtLeastOneBred = false;
 		if (pPop1->Breed())
 		{
 			pPop1->KillOldGen();
+			bAtLeastOneBred = true;
 		}
 		if (pPop2->Breed())
 		{
 			pPop2->KillOldGen();
+			bAtLeastOneBred = true;
 		}
 		if (pPop_hybrid->Breed()){
 
 			pPop_hybrid->KillOldGen();
+			bAtLeastOneBred = true;
+		}
+
+		if (!bAtLeastOneBred ) {
+			printf("All populations went extinct because all of them failed to breed.");
+			exit(200);
 		}
 
 		printf("Population size: pop1 %d (m:f=%3f) pop2 %d (m:f=%3f) pop3 %d (m:f=%3f) \n", 
