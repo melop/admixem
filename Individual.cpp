@@ -299,10 +299,16 @@ bool Individual::Court(Individual * pChooser) {
 	if (this->_bSex != Male) {
 		throw "Females courting is not implemented yet!";
 	}
-	return pChooser->HandleCourter(this);
+
+	int nCurrGen = SimulConfig.GetCurrGen(); // tell what is the current generation
+	bool bIgnoreGlobalRules = SimulConfig.pSexualSelConfig->IgnoreGlobalRules(nCurrGen); // is there special sexual selection rules for this generation?
+
+	return pChooser->HandleCourter(this , bIgnoreGlobalRules);
 }
 
-int Individual::HandleCourter(Individual * pCourter) {
+int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
+
+	int nCurrGen = SimulConfig.GetCurrGen();
 
 	if (pCourter->IsDead()) {
 		throw(new Exception("Cannot mate with dead courter. Something went wrong."));
@@ -312,6 +318,50 @@ int Individual::HandleCourter(Individual * pCourter) {
 		//no more gametes, byebye.
 	}
 	//entry point for sexual selection.
+
+	string sPop = ((Population*)(this->_pPop))->GetPopName();
+	list< pair< Parser *, int > > * pqParsers = SimulConfig.pSexualSelConfig->GetFormulae(sPop);
+	list< vector<string> > * pqvCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsCourter( sPop);
+	list< vector<string> > * pqvSelfSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsSelf( sPop);
+
+	list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
+	list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
+
+		for (list< pair< Parser *, int > > ::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			vector<string> vSymbolsSelf = *itSelfSymbols;
+			vector<string> vSymbolsCourter = *itCourterSymbols;
+
+			Parser * pParser = itParser->first;
+			int nGen = itParser->second;
+
+			if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) { // two scenarios: apply global rule or apply generation-specific rule
+				
+
+				//Set self symbol values
+				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
+				{
+					pParser->symbols_[string("My_"+(*itSymbol))] = this->GetPhenotype(*itSymbol);
+					pParser->symbols_[*itSymbol] = this->GetPhenotype(*itSymbol); //set both variables
+				}
+
+				//Set courter symbol values
+				for(vector<string>::iterator itSymbol=vSymbolsCourter.begin();itSymbol!=vSymbolsCourter.end();++itSymbol)
+				{
+					pParser->symbols_[string("Courter_"+(*itSymbol))] = pCourter->GetPhenotype(*itSymbol);				
+				}
+
+				bool bAccept = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+
+				if (!bAccept) {
+					return 0; //reject mate
+				}
+
+			}
+
+			++itSelfSymbols;
+			++itCourterSymbols;
+		}
+
 	_arrOtherParentsForOffsprings.push_back(pCourter);
 	// just for now, inseminate one egg:
 	_nAvailableGametes--; // one less gamete!
@@ -319,7 +369,13 @@ int Individual::HandleCourter(Individual * pCourter) {
 	return 1;
 }
 
-void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum) {
+int Individual::GetMateNumber() {
+	return _arrOtherParentsForOffsprings.size();
+}
+
+void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
+
+	int nCurrGen = SimulConfig.GetCurrGen();
 	//Go through the parenthood of each inseminated gamete:
 	if (this->_bSex == Male) {
 		throw "Males cannot give birth, r u nuts??";
@@ -330,7 +386,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum) {
 	// do frequency-independent natural selection here!
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
-	list< Parser * > * pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(sPop);
+	list< pair< Parser *, int> > * pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(sPop);
 	//list< vector<string> > * pqvCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsCourter( sPop);
 	list< vector<string> > * pqvSelfSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsSelf( sPop);
 
@@ -345,23 +401,26 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum) {
 		
 		//list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
 		list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
-		for (list< Parser * >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
 			vector<string> vSymbolsSelf = *itSelfSymbols;
-			Parser * pParser = *itParser;
+			Parser * pParser = itParser->first;
+			int nGen = itParser->second;
 
-			//Set self symbol values
-			for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
-			{
-				pParser->symbols_[string("My_"+(*itSymbol))] = pOffSpring->GetPhenotype(*itSymbol);
-				pParser->symbols_[*itSymbol] = pOffSpring->GetPhenotype(*itSymbol); //set both variables
-			}
+			if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
+				//Set self symbol values
+				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
+				{
+					pParser->symbols_[string("My_"+(*itSymbol))] = pOffSpring->GetPhenotype(*itSymbol);
+					pParser->symbols_[*itSymbol] = pOffSpring->GetPhenotype(*itSymbol); //set both variables
+				}
 
-			bool bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				bool bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
 
-			if (!bLive) {
-				delete pOffSpring; // uhoh, dead!!
-				pOffSpring = NULL;
-				break;
+				if (!bLive) {
+					delete pOffSpring; // uhoh, dead!!
+					pOffSpring = NULL;
+					break;
+				}
 			}
 
 			++itSelfSymbols;

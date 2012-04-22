@@ -82,15 +82,16 @@ class Individual {
 	//Public methods
 	bool Court(Individual * pChooser); // Only available to males
 	double EvaluateCourter(Individual * pCourter); //Assign a probability for the female to mate with the given courter. This is the preference function of the female.
-	int HandleCourter(Individual * pCourter); // Handling the courtship. Only available to females. EvaluateCourter() will be called, then self condition will also be considered. If accepted, will inseminate some eggs. return value are the eggs inseminated
+	int HandleCourter(Individual * pCourter, bool bIgnoreGlobalRules); // Handling the courtship. Only available to females. EvaluateCourter() will be called, then self condition will also be considered. If accepted, will inseminate some eggs. return value are the eggs inseminated
 	Sex	GetSex();
 	unsigned int GetID();
 	unsigned int GetFatherId();
 	unsigned int GetMotherId();
+	int GetMateNumber();
 	double GetPhenotype(string sPhenotype);
 
 	void GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Gene> > &vGenes );
-	void GiveBirth(vector<Individual *> &vOffSprings, int nNum); // give birth to any number inseminated eggs, pass -1 to nNum to get all. this takes a lot of memory so be careful.
+	void GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules); // give birth to any number inseminated eggs, pass -1 to nNum to get all. this takes a lot of memory so be careful.
 	
 	void DumpMarkers(ofstream &fOutFile, int nChromosomeSide); // write all markers to file stream. each chromosome separated by -1.
 	void DumpGenes(ofstream &fOutFile, int nChromosomeSide); // write all markers to file stream. each chromosome separated by -1.

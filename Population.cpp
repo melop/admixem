@@ -68,6 +68,10 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 };
 
 bool Population::Breed() {
+	int nCurrGen = SimulConfig.GetCurrGen(); // tell what is the current generation
+	bool bIgnoreGlobalRules = SimulConfig.pSexualSelConfig->IgnoreGlobalRules(nCurrGen); // is there special sexual selection rules for this generation?
+	bool bIgnoreGlobalRulesNa = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
+	double nSampleMate = SimulConfig.GetNumericConfig("SampleMate");
 
 	if (_mpMales.size()==0 || _mpFemales.size()==0) {
 		printf("Pop %s cannot breed because one of the sexes is 0...\n", _sPopName.c_str());
@@ -79,22 +83,28 @@ bool Population::Breed() {
 	int nNumFemales = _mpFemales.size();
 	double nAvgKidPerFemale = (double)_nPopMaxSize / (double)nNumFemales;
 
-	for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
+	//for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
+	for(int i=0;i<nNumFemales;i++) {
 		//Go over each female so that they can mate.
-		int nCourters =  (int)NormalExt(10, 1, 0, 100);
-		for (int i=0;i<nCourters;i++) {
-			//printf("Breed::beforerandom\n");
-			//printf("_mpMale.size() %d", _mpMales.size());
-			Individual * pCourter = _mpMales.at(fnGetRandIndex(_mpMales.size() ));
-			//printf("Breed::afterrandom\n");
-			(*itFemale)->HandleCourter(pCourter);
-			//printf("Breed::aftercourterhandler\n");
-		}
+		Individual * pFemale = _mpFemales[fnGetRandIndex(nNumFemales)]; //get random female
+
+		int nCourters =  (int)NormalExt(nSampleMate , 1, 0, 100);
+
+		
+			for (int i=0;i<nCourters;i++) {
+				//printf("Breed::beforerandom\n");
+				//printf("_mpMale.size() %d", _mpMales.size());
+				Individual * pCourter = _mpMales.at(fnGetRandIndex(_mpMales.size() ));
+				//printf("Breed::afterrandom\n");
+				pFemale->HandleCourter(pCourter , bIgnoreGlobalRules);
+				//printf("Breed::aftercourterhandler\n");
+			}
+		
 
 		//After mating, get the offspring out!
 
 		vector<Individual *> vOffSprings;
-		(*itFemale)->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100))); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+		pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) {
 

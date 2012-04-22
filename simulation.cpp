@@ -63,6 +63,7 @@ void PerformSimulation() {
 	for (int nCurrGen=0; nCurrGen <= nGenerations; nCurrGen++) {
 
 		printf("\n----------------------------------------\nGeneration: %d\n", nCurrGen);
+		SimulConfig.SetCurrGen(nCurrGen);
 
 		if ( (nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2) {
 

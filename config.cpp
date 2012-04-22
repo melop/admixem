@@ -602,8 +602,8 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
 	{
 		string sPopName, sFormula;
-
-		sscanf(szBuffer, "%[^\t\n]	%[^\t\n]", szPopName, szFormula);
+		int nGen;
+		sscanf(szBuffer, "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
@@ -612,7 +612,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 			if (this->_mpRules.find(sPopName) == this->_mpRules.end()) { // if this pop is not in the map yet
 				list< string > vsFormulae;
-				list< Parser * > vpFormulae;
+				list< pair< Parser * , int> > vpFormulae;
 				list< vector<string> > vvsSymbols;
 				list< vector<string> > vvsSymbols2;
 				list< vector<string> > vvsSymbols3;
@@ -696,13 +696,17 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 			}
 			
 			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-			this->_mpRuleFormulae[sPopName].push_back(pF);
+			this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
 			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
 			this->_mpRuleFormulaSymbolStringsSelf[sPopName].push_back(vSymbolStringsSelf);
 			this->_mpRuleFormulaSymbolStringsPopWide[sPopName].push_back(vSymbolStringsPopWide);
 			this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName].push_back(vSymbolStringsPopWideChooser);
 			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
+
+			if (nGen > -1) {
+				this->_vSpecialGens.insert(nGen);
+			}
 		}
 	}
 
@@ -722,7 +726,11 @@ list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStrings
 	return &this->_mpRuleFormulaSymbolStringsSelf[sPop];
 }
 
-list< Parser * > * NaturalSelectionConfigurations::GetFormulae(string sPop) {
+bool NaturalSelectionConfigurations::IgnoreGlobalRules(int nGen) {
+	return this->_vSpecialGens.find(nGen) != this->_vSpecialGens.end();
+}
+
+list< pair< Parser * , int > > * NaturalSelectionConfigurations::GetFormulae(string sPop) {
 	return &this->_mpRuleFormulae[sPop];
 }
 
@@ -760,8 +768,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
 	{
 		string sPopName, sFormula;
-
-		sscanf(szBuffer, "%[^\t\n]	%[^\t\n]", szPopName, szFormula);
+		int nGen = -1;
+		sscanf(szBuffer, "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
@@ -770,7 +778,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 			if (this->_mpRules.find(sPopName) == this->_mpRules.end()) { // if this pop is not in the map yet
 				list< string > vsFormulae;
-				list< Parser * > vpFormulae;
+				list< pair< Parser * , int > > vpFormulae;
 				list< vector<string> > vvsSymbols;
 				list< vector<string> > vvsSymbols2;
 				list< vector<string> > vvsSymbols3;
@@ -854,13 +862,17 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			}
 			
 			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-			this->_mpRuleFormulae[sPopName].push_back(pF);
+			this->_mpRuleFormulae[sPopName].push_back( pair< Parser *, int> (pF, nGen) );
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
 			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
 			this->_mpRuleFormulaSymbolStringsChooser[sPopName].push_back(vSymbolStringsChooser);
 			this->_mpRuleFormulaSymbolStringsPopWide[sPopName].push_back(vSymbolStringsPopWide);
 			this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName].push_back(vSymbolStringsPopWideChooser);
 			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
+
+			if (nGen > -1) {
+				this->_vSpecialGens.insert(nGen);
+			}
 		}
 	}
 
@@ -868,12 +880,24 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 }
 
+bool SexualSelectionConfigurations::IgnoreGlobalRules(int nGen) {
+	return this->_vSpecialGens.find(nGen) != this->_vSpecialGens.end();
+}
+
 list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStrings(string sPop) {
 	return &this->_mpRuleFormulaSymbolStrings[sPop];
 }
 
-list< Parser * > * SexualSelectionConfigurations::GetFormulae(string sPop) {
+list< pair< Parser * , int> > * SexualSelectionConfigurations::GetFormulae(string sPop) {
 	return &this->_mpRuleFormulae[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsCourter[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsSelf(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsChooser[sPop];
 }
 
 GeneConfigurations::GeneConfigurations(void * pParentConfig) {
@@ -1093,3 +1117,11 @@ const double SimulationConfigurations::GetNumericConfig(string sKey) {
 
 
 };
+
+int SimulationConfigurations::GetCurrGen() {
+	return this->nCurrGen;
+}
+
+void SimulationConfigurations::SetCurrGen(int nGen) {
+	this->nCurrGen = nGen;
+}

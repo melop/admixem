@@ -31,7 +31,7 @@ int fnCompare (const void * a, const void * b)
 int fnGetRandIndex(int nSizeOfArray) {
 	int nRet = (int)floor(UniformGen.Next() * (double)nSizeOfArray - 0.01);
 	return nRet>=0? nRet:0;
-}
+};
 
 double round(double nNum) {
 	double nIntegral = (double)((int)nNum);
@@ -41,11 +41,11 @@ double round(double nNum) {
 	else {
 		return nIntegral + 1;
 	}
-}
+};
 
 string fnIntToString(int nNum ) {
 	std::stringstream sstm;
 	sstm << nNum;
     return (sstm.str());
 
-}
+};
