@@ -26,7 +26,7 @@ void PerformSimulation() {
 	Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
 	srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
 
-	string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "\\";
+	string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "/";
 	string sOutFileBase = sOutFolder + "Gen";
 	fnMakeDir(sOutFolder.c_str()); // make output folder
 
