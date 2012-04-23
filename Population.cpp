@@ -1,3 +1,7 @@
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
 #include "Population.h"
 
 extern Normal NormalGen; 
@@ -68,6 +72,18 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 };
 
 bool Population::Breed() {
+	
+	
+	#ifdef _OPENMP
+		int nThreads = (int)SimulConfig.GetNumericConfig("NumThreads");
+		if (nThreads <= 0 ) {
+			omp_set_num_threads( 2 );
+		}
+		else {
+			omp_set_num_threads( nThreads );
+		}
+	#endif
+	
 	int nCurrGen = SimulConfig.GetCurrGen(); // tell what is the current generation
 	bool bIgnoreGlobalRules = SimulConfig.pSexualSelConfig->IgnoreGlobalRules(nCurrGen); // is there special sexual selection rules for this generation?
 	bool bIgnoreGlobalRulesNa = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
@@ -84,19 +100,27 @@ bool Population::Breed() {
 	double nAvgKidPerFemale = (double)_nPopMaxSize / (double)nNumFemales;
 
 	//for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
+	//enable omp. because this is random access, ideal for parallel
+	#pragma omp parallel shared(nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount)
+	{
+
+	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) {
 		//Go over each female so that they can mate.
-		Individual * pFemale = _mpFemales[fnGetRandIndex(nNumFemales)]; //get random female
+		Individual * pFemale = this->_mpFemales[fnGetRandIndex(nNumFemales)]; //get random female
 
 		int nCourters =  (int)NormalExt(nSampleMate , 1, 0, 100);
 
 		
-			for (int i=0;i<nCourters;i++) {
+			for (int j=0;j<nCourters;j++) {
 				//printf("Breed::beforerandom\n");
 				//printf("_mpMale.size() %d", _mpMales.size());
-				Individual * pCourter = _mpMales.at(fnGetRandIndex(_mpMales.size() ));
+				Individual * pCourter = this->_mpMales.at(fnGetRandIndex(this->_mpMales.size() ));
 				//printf("Breed::afterrandom\n");
-				pFemale->HandleCourter(pCourter , bIgnoreGlobalRules);
+				#pragma omp critical
+				{
+					pFemale->HandleCourter(pCourter , bIgnoreGlobalRules);
+				}
 				//printf("Breed::aftercourterhandler\n");
 			}
 		
@@ -104,19 +128,33 @@ bool Population::Breed() {
 		//After mating, get the offspring out!
 
 		vector<Individual *> vOffSprings;
-		pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+
+		#pragma omp critical
+		{
+			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+		}
 
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) {
 
-			if (nNewOffSpringCount <= _nPopMaxSize)
+			if (nNewOffSpringCount <= this->_nPopMaxSize)
 			{
 				if ( (*itOffSpring)->GetSex() == Individual::Male) {
-					_mpNewGenMales.push_back(*itOffSpring);
+
+					#pragma omp critical
+					{
+						this->_mpNewGenMales.push_back(*itOffSpring);
+					}
 				}
 				else {
-					_mpNewGenFemales.push_back(*itOffSpring);
+					#pragma omp critical
+					{
+						this->_mpNewGenFemales.push_back(*itOffSpring);
+					}
 				}
-				nNewOffSpringCount++;
+				#pragma omp critical
+				{
+					nNewOffSpringCount++;
+				}
 			}
 			else {
 				break; // no need to do anything more, already exceeded limit;
@@ -124,6 +162,8 @@ bool Population::Breed() {
 		}
 
 	}
+
+	} //end parallel block
 
 	this->_bBred = true; //set flag
 	return true;
