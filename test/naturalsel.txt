@@ -1,4 +1,4 @@
-Population	Selection
-malinche	1
-birchmanni	1
-hybridzone	exp( - pow( Swordlen- 0 , 2)/(2 * pow(10,2)))
+Population	Gen	Selection
+malinche	-1	1
+birchmanni	-1	1
+hybridzone	-1	exp( - pow( Swordlen- 0 , 2)/(2 * pow(10,2)))
