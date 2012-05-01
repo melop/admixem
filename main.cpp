@@ -6,12 +6,22 @@
 #include "testexpression.h"
 #include "simulation.h"
 #include <math.h>
+#include <string>
 
 #pragma once
 
 using namespace std;
+extern SimulationConfigurations SimulConfig; // defined in config.cpp
 
 int main (int argc, char * const argv[]) {
+
+	if (argc == 2) {
+		string sConfig = argv[1];
+		SimulConfig.LoadFromFile(sConfig);
+		UISimulation();
+		return 0;
+	}
+
     // insert code here...
     //std::cout << "Hello, World!\n";
 	
