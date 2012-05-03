@@ -57,6 +57,8 @@ void PerformSimulation() {
 				);
 
 	// Now start simulation:
+
+
 	// Do migration:
 	int nSampleFreq = (int)SimulConfig.GetNumericConfig("samplefreq");
 
@@ -64,6 +66,12 @@ void PerformSimulation() {
 
 		printf("\n----------------------------------------\nGeneration: %d\n", nCurrGen);
 		SimulConfig.SetCurrGen(nCurrGen);
+
+		//Summarize phenotypes
+		printf("Calculating phenotype distributions...\n");
+		pPop1->SummarizePhenotype();
+		pPop2->SummarizePhenotype();
+		pPop_hybrid->SummarizePhenotype();
 
 		if ( (nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2) {
 
@@ -75,15 +83,16 @@ void PerformSimulation() {
 			*/
 			string szCurrGen = fnIntToString(nCurrGen);
 			//FILE * pOutFile = fopen( (sOutFileBase + szCurrGen + ".txt").c_str(), "w" );
-			ofstream fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile;
+			ofstream fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile;
 			fMarkerOutFile.open((sOutFileBase + szCurrGen + "_markers.txt").c_str());// output file stream
 			fGeneOutFile.open((sOutFileBase + szCurrGen + "_genes.txt").c_str());// output file stream
 			fPhenotypeOutFile.open((sOutFileBase + szCurrGen + "_phenotypes.txt").c_str());// output file stream
+			fPhenoSumFile.open((sOutFileBase + szCurrGen + "_phenostats.txt").c_str());// output file stream
 
 			//dump everything to disk:
-			pPop1->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile);
-			pPop2->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile);
-			pPop_hybrid->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile);
+			pPop1->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
+			pPop2->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
+			pPop_hybrid->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
 		
 			fMarkerOutFile.close();
 			fGeneOutFile.close();

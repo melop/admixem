@@ -71,6 +71,68 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 	}
 };
 
+void Population::SummarizePhenotype() {
+	vector< string > vPhenotypes;
+	SimulConfig.pPhenotypeConfig->GetKeys(vPhenotypes);
+
+	for(vector< string >::iterator it=vPhenotypes.begin(); it != vPhenotypes.end(); ++it) { // go over each key
+		string sKey = *it;
+		int nPop=0, nMale=0, nFemale=0;
+		double nSum=0.0, nSumMale=0.0, nSumFemale=0.0;
+		double nMean=0.0, nMeanMale=0.0, nMeanFemale=0.0;
+		double nSqrDiffSum=0.0, nSqrDiffSumMale=0.0, nSqrDiffSumFemale=0.0;
+
+		//go over males
+		for(vector< Individual *>::iterator itInd = _mpMales.begin(); itInd !=_mpMales.end(); ++itInd ) {
+			nPop++;
+			nMale++;
+			double nVal = (*itInd)->GetPhenotype(sKey);
+			double nValSqr = nVal * nVal;
+			nSum += nVal;
+			nSumMale += nVal;
+		}
+
+				//go over females
+		for(vector< Individual *>::iterator itInd = _mpFemales.begin(); itInd !=_mpFemales.end(); ++itInd ) {
+			nPop++;
+			nFemale++;
+			double nVal = (*itInd)->GetPhenotype(sKey);
+			double nValSqr = nVal * nVal;
+			nSum += nVal;
+			nSumFemale += nVal;
+		}
+
+		nMean = (nPop == 0)? 0.0:  nSum / nPop;
+		nMeanMale = (nMale == 0)? 0.0: nSumMale / nMale;
+		nMeanFemale = (nFemale == 0) ? 0.0:nSumFemale / nFemale;
+
+		//go over males
+		for(vector< Individual *>::iterator itInd = _mpMales.begin(); itInd !=_mpMales.end(); ++itInd ) {
+			double nVal = (*itInd)->GetPhenotype(sKey);
+			double nDiff = nVal - nMean;
+			double nDiffMale = nVal - nMeanMale;
+			nSqrDiffSum += nDiff * nDiff;
+			nSqrDiffSumMale += nDiffMale * nDiffMale;
+		}
+
+				//go over females
+		for(vector< Individual *>::iterator itInd = _mpFemales.begin(); itInd !=_mpFemales.end(); ++itInd ) {
+			double nVal = (*itInd)->GetPhenotype(sKey);
+			double nDiff = nVal - nMean;
+			double nDiffFemale = nVal - nMeanFemale;
+			nSqrDiffSum += nDiff * nDiff;
+			nSqrDiffSumFemale += nDiffFemale * nDiffFemale;
+		}
+
+
+		
+		this->_mpSumPhenotype[sKey] = pair< double , double >( nMean  , sqrt((nPop==0)? 0.0:(nSqrDiffSum / nPop))); // mean, standard deviation
+		this->_mpSumPhenotypeMale[sKey] = pair< double , double >( nMeanMale , sqrt((nMale==0)? 0.0:(nSqrDiffSumMale / nMale)) ); // mean, standard deviation
+		this->_mpSumPhenotypeFemale[sKey] = pair< double , double >( nMeanFemale , sqrt((nFemale==0)? 0.0: (nSqrDiffSumFemale / nFemale)) ); // mean, standard deviation
+
+	}
+}
+
 bool Population::Breed() {
 	
 	
@@ -266,11 +328,31 @@ int Population::GetPopSize(int nMode) {
 	}
 }
 
-void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile) {
+void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile,  ofstream &fPhenoSumOutFile ) {
 	// now dump all the males:
 	this->fnSample(fMarkerOutFile, fGeneOutFile,  fPhenotypeOutFile , Individual::Male);
 	// dump all females:
 	this->fnSample(fMarkerOutFile, fGeneOutFile,  fPhenotypeOutFile , Individual::Female);
+
+	this->fnSamplePhenotypeStats(fPhenoSumOutFile);
+}
+
+void Population::fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile) {
+
+	map< string , pair< double, double> >::iterator itMale = this->_mpSumPhenotypeMale.begin();
+	map< string , pair< double, double> >::iterator itFemale = this->_mpSumPhenotypeFemale.begin();
+
+	for ( map< string , pair< double, double> >::iterator itAll = this->_mpSumPhenotype.begin(); itAll != _mpSumPhenotype.end(); ++itAll) {
+
+		fPhenoSumOutFile << this->GetPopId() << '\t' << itAll->first << '\t';
+		
+		fPhenoSumOutFile << itAll->second.first << '[' << itAll->second.second << "]\t"
+			<< itMale->second.first << '[' << itMale->second.second << "]\t"
+			<< itFemale->second.first << '[' << itFemale->second.second << ']' << endl;
+
+		++itMale;
+		++itFemale;
+	}
 }
 
 void Population::fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex) {

@@ -553,6 +553,13 @@ void PhenotypeConfigurations::InitKeys( map<string, double> * pMap) {
 	}
 }
 
+void PhenotypeConfigurations::GetKeys(  vector< string > &vKeys) {
+	for (std::map<string,string>::iterator it = _mpPhenotypes.begin(); it != _mpPhenotypes.end(); ++it) {
+		
+		vKeys.push_back(it->first);
+	}
+}
+
 vector< pair<int, double> > * PhenotypeConfigurations::GetFormulaSymbols(string sPhenotypeName) {
 
 	return &this->_mpPhenotypeFormulaSymbols[sPhenotypeName];

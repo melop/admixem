@@ -27,8 +27,9 @@ public:
 	Individual * Emigrate(); // delete individual from the population and return it 
 	bool Breed();
 	void KillOldGen();
-	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile);
-	void NaturalSelection();
+	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, ofstream &fPhenoSumOutFile);
+	void NaturalSelection(); //Frequency-dependent natural selection
+	void SummarizePhenotype(); // get pop level statisticss
 	int GetPopSize(int nMode);
 	int GetPopId();
 	string  GetPopName();
@@ -47,12 +48,16 @@ private:
 	vector< Individual *> _mpFemales; //array storing females
 	vector< Individual *> _mpNewGenMales;  // array storing males
 	vector< Individual *> _mpNewGenFemales; //array storing females
+	map< string , pair< double, double> > _mpSumPhenotype; // population statistics
+	map< string , pair< double, double> > _mpSumPhenotypeMale; // population statistics for males
+	map< string , pair< double, double> > _mpSumPhenotypeFemale; // population statistics for females
 
 	void fnWriteIndividualMarkers(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualGenes(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualPhenotypes(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualID(ofstream &fOutFile, Individual * pInd);
 	void fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex);
+	void fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile);
 };
 
 #endif

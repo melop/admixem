@@ -83,6 +83,7 @@ class PhenotypeConfigurations {
 		void LoadFromFile(string szConfigFile);
 		int GetNumPhenotypes();
 		void InitKeys( map<string, double> * pMap);
+		void GetKeys( vector<string> &vKeys);
 		vector<pair<int, double> > * GetFormulaSymbols(string sPhenotypeName);
 		vector<string> * GetFormulaSymbolStrings(string sPhenotypeName);
 		Parser * GetFormula(string sPhenotypeName);
