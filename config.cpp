@@ -619,7 +619,9 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 			if (this->_mpRules.find(sPopName) == this->_mpRules.end()) { // if this pop is not in the map yet
 				list< string > vsFormulae;
+				list< string > vsFreqDependentFormulae;
 				list< pair< Parser * , int> > vpFormulae;
+				list< pair< Parser * , int> > vpFreqDependentFormulae;
 				list< vector<string> > vvsSymbols;
 				list< vector<string> > vvsSymbols2;
 				list< vector<string> > vvsSymbols3;
@@ -628,7 +630,9 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 				list< vector<string> > vvsSymbols6;
 
 				this->_mpRules[sPopName] = vsFormulae;
+				this->_mpFreqDependentRules[sPopName] = vsFreqDependentFormulae;
 				this->_mpRuleFormulae[sPopName] = vpFormulae;
+				this->_mpFreqDependentRuleFormulae[sPopName] = vpFreqDependentFormulae;
 				this->_mpRuleFormulaSymbolStrings[sPopName] = vvsSymbols;
 				this->_mpRuleFormulaSymbolStringsCourter[sPopName] = vvsSymbols2;
 				this->_mpRuleFormulaSymbolStringsSelf[sPopName] = vvsSymbols3;
@@ -640,6 +644,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 			
 			
 			Parser * pF = new Parser("");
+			Parser * pDummyFormula = new Parser("1"); // dummy formula that always return 1.
 
 			try {
 				pF->Evaluate(sFormula);
@@ -658,6 +663,9 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 			vector<string> vSymbolStringsPopWideChooser;//symbols referring to population-level variables prefixed with PopChooser_
 			vector<string> vSymbolStringsPopWide; // symbols referring to population-level variables prefixed with Pop_
 			//list all the symbols used in this formula
+
+			bool bFreqDependent = false; // does this formula contain frequency dependent symbols?
+
 			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
 			{	
 				//Parse chromosome number and position from the symbol
@@ -679,31 +687,48 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 					vSymbolStringsCourter.push_back(sSymbol);
 				}
 				else if (sSymbol.find("PopCourter_") == 0) {
-					throw(new Exception("PopCourter_ not yet implemented in natural selection."));
+					//throw(new Exception("PopCourter_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 11, "");
 					vSymbolStringsPopWideCourter.push_back(sSymbol );
+					bFreqDependent = true;
 				}
 				else if (sSymbol.find("My_") == 0) {
 					sSymbol.replace(0, 3, "");
 					vSymbolStringsSelf.push_back(sSymbol);
 				}
 				else if (sSymbol.find("PopChooser_") == 0) {
-					throw(new Exception("PopChooser_ not yet implemented in natural selection."));
+					//throw(new Exception("PopChooser_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 11, "");
 					vSymbolStringsPopWideChooser.push_back(sSymbol);
+					bFreqDependent = true;
 				}
 				else if (sSymbol.find("Pop_") == 0) {
-					throw(new Exception("Pop_ not yet implemented in natural selection."));
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 4, "");
 					vSymbolStringsPopWide.push_back(sSymbol);
+					bFreqDependent = true;
 				}
 				else { //default to be self
 					vSymbolStringsSelf.push_back(sSymbol);
 				}
 			}
 			
-			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-			this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
+			if (bFreqDependent) {
+				this->_mpFreqDependentRules[sPopName].push_back(sFormula); // save the formula string for further reference.
+				this->_mpFreqDependentRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
+				
+				this->_mpRules[sPopName].push_back("1"); // 
+				this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pDummyFormula , nGen )); // set dummy formula which always return 1. 
+				
+			}
+			else {
+
+				this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
+				this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
+
+				this->_mpFreqDependentRules[sPopName].push_back("1"); 
+				this->_mpFreqDependentRuleFormulae[sPopName].push_back(pair< Parser *, int >( pDummyFormula , nGen ));// set dummy formula which always return 1.
+			}
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
 			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
 			this->_mpRuleFormulaSymbolStringsSelf[sPopName].push_back(vSymbolStringsSelf);
@@ -733,6 +758,18 @@ list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStrings
 	return &this->_mpRuleFormulaSymbolStringsSelf[sPop];
 }
 
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStringsPop(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWide[sPop];
+}
+
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStringsPopCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWideCourter[sPop];
+}
+
+list< vector<string> > * NaturalSelectionConfigurations::GetFormulaSymbolStringsPopChooser(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWideChooser[sPop];
+}
+
 bool NaturalSelectionConfigurations::IgnoreGlobalRules(int nGen) {
 	return this->_vSpecialGens.find(nGen) != this->_vSpecialGens.end();
 }
@@ -741,6 +778,9 @@ list< pair< Parser * , int > > * NaturalSelectionConfigurations::GetFormulae(str
 	return &this->_mpRuleFormulae[sPop];
 }
 
+list< pair< Parser * , int > > * NaturalSelectionConfigurations::GetFreqDependentFormulae(string sPop) {
+	return &this->_mpFreqDependentRuleFormulae[sPop];
+}
 
 SexualSelectionConfigurations::SexualSelectionConfigurations(void * pParentConfig) {
 

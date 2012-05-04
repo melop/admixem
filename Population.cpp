@@ -337,6 +337,206 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 	this->fnSamplePhenotypeStats(fPhenoSumOutFile);
 }
 
+void Population::FreqDependentNaturalSelection() {
+	int nCurrGen = SimulConfig.GetCurrGen();
+	bool bIgnoreGlobalRules = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
+	string sPop = this->_sPopName;
+	list< pair< Parser *, int> > * pqParsers = SimulConfig.pNaturalSelConfig->GetFreqDependentFormulae(sPop);
+	//list< vector<string> > * pqvCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsCourter( sPop);
+	list< vector<string> > * pqvSelfSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsSelf( sPop);
+	list< vector<string> > * pqvPopSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsPop( sPop);
+	list< vector<string> > * pqvPopCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsPopCourter( sPop);
+	list< vector<string> > * pqvPopChooserSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsPopChooser( sPop);
+
+	//set population level parameters
+	list< vector<string> >::iterator itPopSymbols = pqvPopSymbols->begin();
+	list< vector<string> >::iterator itPopCourterSymbols = pqvPopCourterSymbols->begin();
+	list< vector<string> >::iterator itPopChooserSymbols = pqvPopChooserSymbols->begin();
+
+	for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+		vector<string> vSymbolsPop = *itPopSymbols;
+		vector<string> vSymbolsPopCourter = *itPopCourterSymbols;
+		vector<string> vSymbolsPopChooser = *itPopChooserSymbols;
+
+		Parser * pParser = itParser->first;
+		//set population level symbols
+
+		for(vector<string>::iterator itSymbol=vSymbolsPop.begin();itSymbol!=vSymbolsPop.end();++itSymbol)
+		{
+			string sSymbol = (*itSymbol).substr(4);
+			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+			if (sType != "Avg" && sType != "Std") {
+				throw new Exception("Population parameter type unknown!");
+			}
+			if (this->_mpSumPhenotype.find(sSymbol) == _mpSumPhenotype.end()) {
+				throw new Exception("Unable to find population symbol");
+			}
+			
+			pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
+			pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
+
+		}
+
+		for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
+		{
+			string sSymbol = (*itSymbol).substr(4);
+			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+			if (sType != "Avg" && sType != "Std") {
+				throw new Exception("Population parameter type unknown!");
+			}
+			if (this->_mpSumPhenotypeMale.find(sSymbol) == _mpSumPhenotypeMale.end()) {
+				throw new Exception("Unable to find population symbol: male");
+			}
+			
+			pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
+			pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
+
+		}
+
+		for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
+		{
+			string sSymbol = (*itSymbol).substr(4);
+			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+			if (sType != "Avg" && sType != "Std") {
+				throw new Exception("Population parameter type unknown!");
+			}
+			if (this->_mpSumPhenotypeFemale.find(sSymbol) == _mpSumPhenotypeFemale.end()) {
+				throw new Exception("Unable to find population symbol: female");
+			}
+			
+			pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
+			pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
+
+		}
+
+		
+		++itPopSymbols;
+		++itPopCourterSymbols;
+		++itPopChooserSymbols;
+	}
+
+
+	//now go through each individual 
+	vector<int>::size_type nMale = this->_mpMales.size();
+	vector<int>::size_type nFemale = this->_mpFemales.size();
+
+	#pragma omp parallel 
+	{
+
+	#pragma omp for
+	for (vector< Individual * >::size_type i=0; i< nMale; i++ ) {
+		Individual * pInd = _mpMales[i];
+
+		list< vector<string> >::iterator itSelfSymbols = pqvSelfSymbols->begin();
+		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			vector<string> vSymbolsSelf = *itSelfSymbols;
+			Parser * pParser = itParser->first;
+			int nGen = itParser->second;
+
+			if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
+
+				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
+				{
+					#pragma omp critical
+					{
+						pParser->symbols_[string("My_"+(*itSymbol))] = pInd->GetPhenotype(*itSymbol);
+						pParser->symbols_[*itSymbol] = pInd->GetPhenotype(*itSymbol); //set both variables
+					}
+				}
+
+				bool bLive = true;
+				#pragma omp critical 
+				{
+					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				}
+
+				if (!bLive) {
+
+					#pragma omp critical 
+					{
+						delete pInd; // uhoh, dead!!
+						_mpMales[i] = NULL; //mark it
+						//_mpMales.erase(_mpMales.begin() + i);
+					}
+					break;
+				}
+			}
+		
+			++itSelfSymbols;
+		}
+
+
+	}
+
+	#pragma omp for
+	for (vector< Individual * >::size_type i=0; i< nFemale; i++ ) {
+		Individual * pInd = _mpFemales[i];
+
+		list< vector<string> >::iterator itSelfSymbols = pqvSelfSymbols->begin();
+		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			vector<string> vSymbolsSelf = *itSelfSymbols;
+			Parser * pParser = itParser->first;
+			int nGen = itParser->second;
+
+			if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
+
+				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
+				{
+					#pragma omp critical 
+					{
+						pParser->symbols_[string("My_"+(*itSymbol))] = pInd->GetPhenotype(*itSymbol);
+						pParser->symbols_[*itSymbol] = pInd->GetPhenotype(*itSymbol); //set both variables
+					}
+				}
+
+				bool bLive = true;
+				#pragma omp critical 
+				{
+					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				}
+
+				if (!bLive) {
+					#pragma omp critical 
+					{
+						delete pInd; // uhoh, dead!!
+						_mpFemales[i] = NULL;
+						//_mpFemales.erase(_mpFemales.begin() + i);
+					}
+					break;
+				}
+			}
+		
+			++itSelfSymbols;
+		}
+
+
+	}
+
+	} //end parallel block
+
+	//clear NULL pointers from the arrays:
+
+	for (vector< Individual * >::size_type i=0; i< nMale; i++ ) {
+		if (! _mpMales[i]) {
+			_mpMales.erase(_mpMales.begin() + i);
+			nMale--; // readjust upper bound
+			i--;
+		}
+	}
+	
+	for (vector< Individual * >::size_type i=0; i< nFemale; i++ ) {
+		if (! _mpFemales[i]) {
+			_mpFemales.erase(_mpFemales.begin() + i);
+			nFemale--; // readjust upper bound
+			i--;
+		}
+	}
+
+}
+
+ 
+
+
 void Population::fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile) {
 
 	map< string , pair< double, double> >::iterator itMale = this->_mpSumPhenotypeMale.begin();

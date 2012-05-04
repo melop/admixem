@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include "Individual.h"
 #include "maths.h"
 
@@ -28,8 +29,9 @@ public:
 	bool Breed();
 	void KillOldGen();
 	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, ofstream &fPhenoSumOutFile);
-	void NaturalSelection(); //Frequency-dependent natural selection
+	void FreqDependentNaturalSelection(); //Frequency-dependent natural selection
 	void SummarizePhenotype(); // get pop level statisticss
+	//static bool IsNULL(Individual * pPtr);
 	int GetPopSize(int nMode);
 	int GetPopId();
 	string  GetPopName();

@@ -105,14 +105,20 @@ class NaturalSelectionConfigurations {
 		list< vector<string> > * GetFormulaSymbolStrings(string sPop);
 		list< vector<string> > * GetFormulaSymbolStringsCourter(string sPop);
 		list< vector<string> > * GetFormulaSymbolStringsSelf(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPop(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPopCourter(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPopChooser(string sPop);
 		list< pair< Parser *, int> > * GetFormulae(string sPop);
+		list< pair< Parser *, int> > * GetFreqDependentFormulae(string sPop);
 		bool IgnoreGlobalRules(int nGen);
 
 	private:
 		string _szConfigFilename;
 		void * _pParentConfig;// convert to SimulationConfigurations!
-		map<string , list< string > > _mpRules; //definition of selection rules. key is population name
+		map<string , list< string > > _mpRules; //definition of selection rules (freq independent rules). key is population name
+		map<string , list< string > > _mpFreqDependentRules; //definition of selection rules (freq dependent rules). key is population name
 		map<string , list< pair< Parser *, int> > > _mpRuleFormulae; // similar as above, but the expression is parsed
+		map<string , list< pair< Parser *, int> > > _mpFreqDependentRuleFormulae; // similar as above, but the expression is parsed
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStrings; // Symbols as strings
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCourter; // Symbols that are courter values
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsSelf; // Symbols that are self (female) values

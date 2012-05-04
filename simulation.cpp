@@ -98,6 +98,14 @@ void PerformSimulation() {
 			fGeneOutFile.close();
 			fPhenotypeOutFile.close();
 		}
+		// do frequency-dependent selection
+
+		printf("Frequency dependent selection: Pop1...\n");
+		pPop1->FreqDependentNaturalSelection();
+		printf("Frequency dependent selection: Pop2...\n");
+		pPop2->FreqDependentNaturalSelection();
+		printf("Frequency dependent selection: PopHybrid...\n");
+		pPop_hybrid->FreqDependentNaturalSelection();
 
 		//do migration:
 		int nPop1_to_hybrid = (nCurrGen==0)? (int)SimulConfig.GetNumericConfig("gen1_pop1_to_hybrid"):(int)SimulConfig.GetNumericConfig("pop1_to_hybrid") ;
