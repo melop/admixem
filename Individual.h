@@ -73,6 +73,8 @@ class Individual {
 	Individual(void * pPop, char nAncestryLabel); //constructor for founders
 	Individual(Individual * pFather, Individual * pMother); //Constructor . Fertilize a new individual given parents
 	
+	friend class Individual;
+
 	enum Sex {Male, Female};
 	//Genome CurrentGenome;
 	
@@ -101,6 +103,7 @@ class Individual {
 	void Die(); // sets the dead flag
 	void ChangePopulation(void * pPop);
 	void * GetPop();
+	//friend class Individual;
 
 	//void GetGamete( Chromosome * pGamete);
 
@@ -125,6 +128,9 @@ class Individual {
 
 	 std::map<string, double >  _mpPhenotypes; // map recording phenotypic values directly calculated from genotypic values;
 	 std::map<string, double >  _mpEnvPhenotypes; // Phenotypes with added enviromental variations
+	 std::map<string, double >  _mpDadPhenotypes; //father's phenotypes, useful for imprinting
+	 std::map<string, double >  _mpMomPhenotypes; //mother's phenotypes, useful for imprinting
+
 	 //map<double, Marker> * _pmMarkers; // 2n chromosomes, each element in vector is one chromosome, the map are indexed by absolute positions on that chromosome
 	 vector< vector<Marker> >  _arrMarkers; // 2n chromosomes, each
 	 //map<double, Gene> * _pmGenes; // same structured as above

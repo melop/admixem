@@ -266,6 +266,8 @@ Individual::Individual(Individual * pFather, Individual * pMother) {
 	SimulConfig.pPhenotypeConfig->InitKeys(&this->_mpPhenotypes);
 	SimulConfig.pPhenotypeConfig->InitKeys(&this->_mpEnvPhenotypes);
 	
+	_mpDadPhenotypes.insert(pFather->_mpPhenotypes.begin(), pFather->_mpPhenotypes.end()); // save parent's phenotypes
+	_mpMomPhenotypes.insert(pMother->_mpPhenotypes.begin(), pMother->_mpPhenotypes.end());
 	
 	vector< vector<Marker> > vFatherMarkers, vMotherMarkers;
 	vector< vector<Gene> > vFatherGenes, vMotherGenes;
@@ -323,13 +325,21 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 	list< pair< Parser *, int > > * pqParsers = SimulConfig.pSexualSelConfig->GetFormulae(sPop);
 	list< vector<string> > * pqvCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsCourter( sPop);
 	list< vector<string> > * pqvSelfSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsSelf( sPop);
+	list< vector<string> > * pqvDadSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsDad( sPop);
+	list< vector<string> > * pqvMomSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsMom( sPop);
 
 	list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
 	list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
+	list< vector<string> >::iterator itDadSymbols= pqvDadSymbols->begin();
+	list< vector<string> >::iterator itMomSymbols= pqvMomSymbols->begin();
+
+	bool bAccept = true;
 
 		for (list< pair< Parser *, int > > ::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
 			vector<string> vSymbolsSelf = *itSelfSymbols;
 			vector<string> vSymbolsCourter = *itCourterSymbols;
+			vector<string> vSymbolsDad = *itDadSymbols;
+			vector<string> vSymbolsMom = *itMomSymbols;
 
 			Parser * pParser = itParser->first;
 			int nGen = itParser->second;
@@ -350,7 +360,33 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 					pParser->symbols_[string("Courter_"+(*itSymbol))] = pCourter->GetPhenotype(*itSymbol);				
 				}
 
-				bool bAccept = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				//Set dad symbol values
+				bool bSkipRule = false; // rules containing references to parental phenotypes will be skipped in generation 0
+				for(vector<string>::iterator itSymbol=vSymbolsDad.begin();itSymbol!=vSymbolsDad.end();++itSymbol)
+				{
+					if (nCurrGen == 0) {
+						bSkipRule = true;
+						break;
+					}
+
+					pParser->symbols_[string("Dad_"+(*itSymbol))] = this->_mpDadPhenotypes[*itSymbol];				
+				}
+
+				//Set mom symbol values
+				for(vector<string>::iterator itSymbol=vSymbolsMom.begin();itSymbol!=vSymbolsMom.end();++itSymbol)
+				{
+					if (nCurrGen == 0) {
+						bSkipRule = true;
+						break;
+					}
+
+					pParser->symbols_[string("Mom_"+(*itSymbol))] = this->_mpMomPhenotypes[*itSymbol];				
+				}
+
+				if (bSkipRule) continue;
+				
+
+				bAccept = (UniformGen.Next() <= pParser->Evaluate())? true : false;
 
 				if (!bAccept) {
 					return 0; //reject mate
@@ -360,6 +396,8 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 
 			++itSelfSymbols;
 			++itCourterSymbols;
+			++itDadSymbols;
+			++itMomSymbols;
 		}
 
 	_arrOtherParentsForOffsprings.push_back(pCourter);

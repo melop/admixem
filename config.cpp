@@ -832,6 +832,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 				list< vector<string> > vvsSymbols4;
 				list< vector<string> > vvsSymbols5;
 				list< vector<string> > vvsSymbols6;
+				list< vector<string> > vvsSymbols7;
+				list< vector<string> > vvsSymbols8;
 
 				this->_mpRules[sPopName] = vsFormulae;
 				this->_mpRuleFormulae[sPopName] = vpFormulae;
@@ -841,6 +843,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 				this->_mpRuleFormulaSymbolStringsPopWide[sPopName] = vvsSymbols4;
 				this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName] = vvsSymbols5;
 				this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName] = vvsSymbols6;
+				this->_mpRuleFormulaSymbolStringsDad[sPopName] = vvsSymbols7;
+				this->_mpRuleFormulaSymbolStringsMom[sPopName] = vvsSymbols8;
 			}
 
 			
@@ -861,6 +865,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			vector<string> vSymbolStringsChooser; //symbols referring to individual chooser trait prefixed with My_
 			vector<string> vSymbolStringsPopWideChooser;//symbols referring to population-level variables prefixed with PopChooser_
 			vector<string> vSymbolStringsPopWide; // symbols referring to population-level variables prefixed with Pop_
+			vector<string> vSymbolStringsDad; // symbols referring to population-level variables prefixed with Dad_
+			vector<string> vSymbolStringsMom; // symbols referring to population-level variables prefixed with Mom_
 
 			//list all the symbols used in this formula
 			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
@@ -884,7 +890,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 					vSymbolStringsCourter.push_back(sSymbol);
 				}
 				else if (sSymbol.find("PopCourter_") == 0) {
-					throw(new Exception("PopCourter_ not yet implemented in natural selection."));
+					//throw(new Exception("PopCourter_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 11, "");
 					vSymbolStringsPopWideCourter.push_back(sSymbol );
 				}
@@ -893,14 +899,24 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 					vSymbolStringsChooser.push_back(sSymbol);
 				}
 				else if (sSymbol.find("PopChooser_") == 0) {
-					throw(new Exception("PopChooser_ not yet implemented in natural selection."));
+					//throw(new Exception("PopChooser_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 11, "");
 					vSymbolStringsPopWideChooser.push_back(sSymbol);
 				}
 				else if (sSymbol.find("Pop_") == 0) {
-					throw(new Exception("Pop_ not yet implemented in natural selection."));
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
 					sSymbol.replace(0, 4, "");
 					vSymbolStringsPopWide.push_back(sSymbol);
+				}
+				else if (sSymbol.find("Dad_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 4, "");
+					vSymbolStringsDad.push_back(sSymbol);
+				}
+				else if (sSymbol.find("Mom_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 4, "");
+					vSymbolStringsMom.push_back(sSymbol);
 				}
 				else { //default to be self
 					vSymbolStringsChooser.push_back(sSymbol);
@@ -916,6 +932,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			this->_mpRuleFormulaSymbolStringsPopWide[sPopName].push_back(vSymbolStringsPopWide);
 			this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName].push_back(vSymbolStringsPopWideChooser);
 			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
+			this->_mpRuleFormulaSymbolStringsDad[sPopName].push_back(vSymbolStringsDad);
+			this->_mpRuleFormulaSymbolStringsMom[sPopName].push_back(vSymbolStringsMom);
 
 			if (nGen > -1) {
 				this->_vSpecialGens.insert(nGen);
@@ -945,6 +963,26 @@ list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsC
 
 list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsSelf(string sPop) {
 	return &this->_mpRuleFormulaSymbolStringsChooser[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsPop(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWide[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsPopCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWideCourter[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsPopChooser(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPopWideChooser[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsDad(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsDad[sPop];
+}
+
+list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsMom(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsMom[sPop];
 }
 
 GeneConfigurations::GeneConfigurations(void * pParentConfig) {
