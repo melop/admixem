@@ -73,8 +73,6 @@ class Individual {
 	Individual(void * pPop, char nAncestryLabel); //constructor for founders
 	Individual(Individual * pFather, Individual * pMother); //Constructor . Fertilize a new individual given parents
 	
-	friend class Individual;
-
 	enum Sex {Male, Female};
 	//Genome CurrentGenome;
 	
