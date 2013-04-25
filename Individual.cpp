@@ -318,6 +318,7 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 
 	if (this->_nAvailableGametes == 0) {
 		//no more gametes, byebye.
+		return 0;
 	}
 	//entry point for sexual selection.
 
