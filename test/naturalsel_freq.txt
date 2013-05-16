@@ -1,4 +1,0 @@
-Population	Gen	Selection
-malinche	-1	1
-birchmanni	-1	1
-hybridzone	-1	if (Sex, 1 - exp( - pow( Swordlen - PopCourter_Avg_Swordlen , 2)/(2 * pow(1.5,2))) , 1)

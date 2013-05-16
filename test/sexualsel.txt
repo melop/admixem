@@ -1,5 +1,0 @@
-Population	Gen	Selection
-hybridzone	2	exp( -pow( My_PrefSwordlen - Courter_Swordlen , 2)/(2*pow(6 , 2)))
-malinche	-1	exp( -pow( My_PrefSwordlen - Courter_Swordlen , 2)/(2*pow(2 , 2)))
-birchmanni	-1	exp( -pow( My_PrefSwordlen - Courter_Swordlen , 2)/(2*pow(2 , 2)))
-hybridzone	-1	exp( -pow( My_PrefSwordlen - Courter_Swordlen , 2)/(2*pow(2 , 2)))
