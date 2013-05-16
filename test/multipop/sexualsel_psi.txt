@@ -1,0 +1,6 @@
+Population	Gen	Selection
+malinche	-1	1
+birchmanni	-1	1
+hybridzone	-1	if (Psi==0 , 1, if(Psi>0, exp( -pow( if(PopCourter_Avg_Signal<8 , 0, if( PopCourter_Avg_Signal == 8 , 8, 16))  - Courter_Signal , 2)/(2*pow(2 , 2))) , exp( -pow( if(PopCourter_Avg_Signal<8 , 16, if( PopCourter_Avg_Signal == 8, 8, 0))  - Courter_Signal , 2)/(2*pow(2, 2)))) )
+hybridzone1	-1	if (Psi==0 , 1, if(Psi>0, exp( -pow( if(PopCourter_Avg_Signal<8 , 0, if( PopCourter_Avg_Signal == 8 , 8, 16))  - Courter_Signal , 2)/(2*pow(2 , 2))) , exp( -pow( if(PopCourter_Avg_Signal<8 , 16, if( PopCourter_Avg_Signal == 8, 8, 0))  - Courter_Signal , 2)/(2*pow(2, 2)))) )
+hybridzone2	-1	if (Psi==0 , 1, if(Psi>0, exp( -pow( if(PopCourter_Avg_Signal<8 , 0, if( PopCourter_Avg_Signal == 8 , 8, 16))  - Courter_Signal , 2)/(2*pow(2 , 2))) , exp( -pow( if(PopCourter_Avg_Signal<8 , 16, if( PopCourter_Avg_Signal == 8, 8, 0))  - Courter_Signal , 2)/(2*pow(2, 2)))) )

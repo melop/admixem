@@ -1,0 +1,4 @@
+Population	Gen	Selection
+malinche	-1	1
+birchmanni	-1	1
+hybridzone	-1	if (Sex, 1 - exp( - pow( Swordlen- 6 , 2)/(2 * pow(1.5,2))) , 1)

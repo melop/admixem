@@ -1,0 +1,8 @@
+Phenotype	Formula
+Sex		chr10_3000000
+DorsalBase	chr1_13405214 + chr9_1300054 + chr8_5000005 + chr7_15000000 + chr6_2000000
+Swordlen	(chr10_3000000) * (chr5_7000000 + chr6_2000000 + 2*(chr4_7800000) + chr3_6600000)
+PrefSwordlen	(chr5_7000000 + chr6_2000000 + 2*(chr4_7800000) + chr3_6600000)
+ComplexEpi1	(chr3_4500000 == chr5_3000000) * chr6_10000000
+ComplexEpi2	(chr3_4500000 == chr5_3000000) * 1
+SingleLocus	chr6_10000000
