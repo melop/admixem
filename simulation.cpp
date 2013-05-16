@@ -17,11 +17,25 @@ void UISimulation() {
 
 };
 
+string PopId2PopString(int nId) {
+	ostringstream sRet;
+	if (nId == 1 || nId == 2) {
+		sRet << "pop" << nId;
+	}
+	else if (nId == 3) {
+		sRet << "hybrid";
+	}
+	else {
+		sRet << "hybrid" << (nId - 3);
+	}
+
+	return sRet.str();
+}
+
 void PerformSimulation() {
 	int nGenerations = (int)SimulConfig.GetNumericConfig("generations");
-	Population * pPop1 = new Population();
-	Population * pPop2 = new Population();
-	Population * pPop_hybrid = new Population();
+	vector< Population * > vPops;
+
 
 	Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
 	srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
@@ -30,31 +44,45 @@ void PerformSimulation() {
 	string sOutFileBase = sOutFolder + "Gen";
 	fnMakeDir(sOutFolder.c_str()); // make output folder
 
-	printf("Initializing Pop 1...\n");
-	pPop1->Init(
-					SimulConfig.GetConfig("pop1_name"),1, 
-					SimulConfig.GetConfig("pop1_ancestry_label").c_str()[0],
-					(int)SimulConfig.GetNumericConfig("pop1_init_size"),
-					(int)SimulConfig.GetNumericConfig("pop1_size_limit"),
-					SimulConfig.GetNumericConfig("pop1_male_ratio")
-				);
+	int nPopId = 1;//start from 1
+	while(true) { // now try to parse in populations.
 
-	printf("Initializing Pop 2...\n");
-	pPop2->Init(
-					SimulConfig.GetConfig("pop2_name"),2, 
-					SimulConfig.GetConfig("pop2_ancestry_label").c_str()[0],
-					(int)SimulConfig.GetNumericConfig("pop2_init_size"),
-					(int)SimulConfig.GetNumericConfig("pop2_size_limit"),
-					SimulConfig.GetNumericConfig("pop2_male_ratio")
+		string sPopString = PopId2PopString(nPopId);
+		Population * pNewPop = new Population();
+		printf((sPopString+"_size_limit\n").c_str());
+		if (SimulConfig.GetNumericConfig(sPopString+"_size_limit")==NULL) {
+			printf("%d populations defined in configuration.\n", (nPopId-1));
+			break;
+		}
+
+		if (nPopId==1 || nPopId==2) { // parental pops
+				printf(string("Initializing Parental " + sPopString + "...\n").c_str());
+				pNewPop->Init(
+					SimulConfig.GetConfig(sPopString+"_name"),nPopId, 
+					SimulConfig.GetConfig(sPopString+"_ancestry_label").c_str()[0],
+					(int)SimulConfig.GetNumericConfig(sPopString+"_init_size"),
+					(int)SimulConfig.GetNumericConfig(sPopString+"_size_limit"),
+					SimulConfig.GetNumericConfig(sPopString+"_male_ratio")
 				);
-	printf("Initializing Pop hybrid...\n");
-	pPop_hybrid->Init(
-					SimulConfig.GetConfig("hybrid_name"),3, 
+		}
+		else {
+				printf(string("Initializing Hybrid pop " + sPopString + "...\n").c_str());
+				pNewPop->Init(
+					SimulConfig.GetConfig(sPopString+"_name"),nPopId, 
 					NULL,
 					0,
-					(int)SimulConfig.GetNumericConfig("hybrid_size_limit"),
+					(int)SimulConfig.GetNumericConfig(sPopString+"_size_limit"),
 					0
 				);
+		}
+
+		vPops.push_back(pNewPop);
+
+		nPopId++;
+	}
+
+
+
 
 	// Now start simulation:
 
@@ -69,9 +97,11 @@ void PerformSimulation() {
 
 		//Summarize phenotypes
 		printf("Calculating phenotype distributions...\n");
-		pPop1->SummarizePhenotype();
-		pPop2->SummarizePhenotype();
-		pPop_hybrid->SummarizePhenotype();
+		for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+		{
+			(*itpPop)->SummarizePhenotype();
+		}
+	
 
 		if ( (nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2) {
 
@@ -90,9 +120,10 @@ void PerformSimulation() {
 			fPhenoSumFile.open((sOutFileBase + szCurrGen + "_phenostats.txt").c_str());// output file stream
 
 			//dump everything to disk:
-			pPop1->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
-			pPop2->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
-			pPop_hybrid->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
+			for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+			{
+				(*itpPop)->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
+			}
 		
 			fMarkerOutFile.close();
 			fGeneOutFile.close();
@@ -100,63 +131,85 @@ void PerformSimulation() {
 		}
 		// do frequency-dependent selection
 
-		printf("Frequency dependent selection: Pop1...\n");
-		pPop1->FreqDependentNaturalSelection();
-		printf("Frequency dependent selection: Pop2...\n");
-		pPop2->FreqDependentNaturalSelection();
-		printf("Frequency dependent selection: PopHybrid...\n");
-		pPop_hybrid->FreqDependentNaturalSelection();
+		for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+		{
+				printf(string("FreqDependent Selection " + (*itpPop)->GetPopName() + "...\n").c_str());
+				(*itpPop)->FreqDependentNaturalSelection();
+				
+		}
+
+
 
 		//do migration:
-		int nPop1_to_hybrid = (nCurrGen==0)? (int)SimulConfig.GetNumericConfig("gen1_pop1_to_hybrid"):(int)SimulConfig.GetNumericConfig("pop1_to_hybrid") ;
-		int nPop2_to_hybrid = (nCurrGen==0)? (int)SimulConfig.GetNumericConfig("gen1_pop2_to_hybrid") : (int)SimulConfig.GetNumericConfig("pop2_to_hybrid");
+		//try to do all pairwise migration, if the parameter is not specified, then it's deemed 0
 		bool bMigrateOnlyFirstGen = SimulConfig.GetConfig("migration_only_first_gen") == "yes";
 
-		
-		if ( (bMigrateOnlyFirstGen && nCurrGen==0) || !bMigrateOnlyFirstGen ) {
-			printf("Start Migration...\n");
-			printf("Pop1_to_hybrid : %d...\n", nPop1_to_hybrid);
-			for (int i=0; i<nPop1_to_hybrid; i++) {
-				pPop_hybrid->Immigrate( pPop1->Emigrate(), true );
-			}
+		if (bMigrateOnlyFirstGen && nCurrGen!=0) {//no migration then.
 
-			printf("Pop2_to_hybrid : %d...\n", nPop2_to_hybrid);
-			for (int i=0; i<nPop2_to_hybrid; i++) {
-				pPop_hybrid->Immigrate( pPop2->Emigrate(), true );
-			}
-			printf("End Migration...\n");
 		}
+		else {
+			string sMigrationParamLabelPrefix = (nCurrGen==0)? "gen1_":"";
+			for (vector< Population * >::iterator itpPop1 = vPops.begin() ; itpPop1 != vPops.end(); ++itpPop1)
+			{
+				for (vector< Population * >::iterator itpPop2 = vPops.begin() ; itpPop2 != vPops.end(); ++itpPop2) {
+
+					if ((*itpPop1)->GetPopId() == (*itpPop2)->GetPopId()) {
+						continue; // same pops, no migration needed
+					}
+					string sMigrationParamLabel = sMigrationParamLabelPrefix + PopId2PopString((*itpPop1)->GetPopId()) + "_to_" + PopId2PopString((*itpPop2)->GetPopId()); 
+					if (!SimulConfig.GetNumericConfig(sMigrationParamLabel)) {
+						continue; // didn't find the configuration for this migration, move on
+					}
+					else {
+						int nNumberMigrants = SimulConfig.GetNumericConfig(sMigrationParamLabel);
+						if (nNumberMigrants == NULL) {
+							continue;
+						}
+
+						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), nNumberMigrants);
+						for (int i=0; i<nNumberMigrants; i++) {
+							(*itpPop2)->Immigrate( (*itpPop1)->Emigrate(), true );
+						}
+					}
+				}
+				
+			}
+		}
+
+		//breed and kill
 		
 		bool bAtLeastOneBred = false;
-		if (pPop1->Breed())
-		{
-			pPop1->KillOldGen();
-			bAtLeastOneBred = true;
-		}
-		if (pPop2->Breed())
-		{
-			pPop2->KillOldGen();
-			bAtLeastOneBred = true;
-		}
-		if (pPop_hybrid->Breed()){
 
-			pPop_hybrid->KillOldGen();
-			bAtLeastOneBred = true;
+		for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+		{
+				
+				if ((*itpPop)->Breed())
+				{
+					(*itpPop)->KillOldGen();
+					bAtLeastOneBred = true;
+				}
+				
 		}
+
 
 		if (!bAtLeastOneBred ) {
 			printf("All populations went extinct because all of them failed to breed.");
 			exit(200);
 		}
 
-		printf("Population size: pop1 %d (m:f=%3f) pop2 %d (m:f=%3f) pop3 %d (m:f=%3f) \n", 
-			pPop1->GetPopSize(4),
-			(double)pPop1->GetPopSize(1) / (double)pPop1->GetPopSize(0),
-			pPop2->GetPopSize(4),
-			(double)pPop2->GetPopSize(1) / (double)pPop2->GetPopSize(0),
-			pPop_hybrid->GetPopSize(4),
-			(double)pPop_hybrid->GetPopSize(1) / (double)pPop_hybrid->GetPopSize(0)
-			);
+		ostringstream sPopSizeReport;
+		sPopSizeReport<< "Population size: ";
+		for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+		{
+			sPopSizeReport <<  (*itpPop)->GetPopName() << "  ";
+			sPopSizeReport << ((*itpPop)->GetPopSize(4));
+			sPopSizeReport << " (m:f=" ;
+			sPopSizeReport << ((double)(*itpPop)->GetPopSize(1) / (double)(*itpPop)->GetPopSize(0));
+			sPopSizeReport << ") ";
+		}
+		sPopSizeReport << "\n";
+		 
+		printf(sPopSizeReport.str().c_str());
 
 	}
 	

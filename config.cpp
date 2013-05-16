@@ -1177,7 +1177,7 @@ const string SimulationConfigurations::GetConfig(string sKey) {
 
 	if (  this->_mpConfigs.find(sKey) == this ->_mpConfigs.end()) { // the requested key is not found in the config
 
-		printf("The key %s was not found in the configuration file.\n", sKey.c_str());
+		//printf("The key %s was not found in the configuration file.\n", sKey.c_str());
 		return NULL;
 
 	}
@@ -1192,7 +1192,7 @@ const double SimulationConfigurations::GetNumericConfig(string sKey) {
 	
 	if (  this->_mpNumericConfigs.find(sKey) == this->_mpNumericConfigs.end()) { // the requested key is not found in the config
 
-		printf("The key %s was not found in the configuration file.\n", sKey.c_str());
+		//printf("The key %s was not found in the configuration file.\n", sKey.c_str());
 		return NULL;
 
 	}
