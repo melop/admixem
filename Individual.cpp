@@ -122,6 +122,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 			if (it2->second.AlleleMode == GeneProperties::Hemizygous && (i % 2)==1 ) { // if this gene is hemizygous, then only need to randomize for the first chromosome.
 				//if ( this->_pmGenes[i-1][it->first].Allele == it->second.DominantLabel ) { // if the homologous chrom. already has the dominant allele
 					oGene.Allele = it2->second.RecessiveLabel; // make the current one recessive.
+					oGene.Value = it2->second.RecessiveValue;
 
 				//}
 			}
@@ -141,6 +142,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 			*/
 			else {
 				oGene.Allele = (UniformGen.Next()<= nFrequency)?  it2->second.DominantLabel:it2->second.RecessiveLabel;
+				oGene.Value = (oGene.Allele == it2->second.DominantLabel)?  it2->second.DominantValue:it2->second.RecessiveValue;
 				/*if ( nCurrChrNum == 9 ) {
 					printf("something wrong.\n");
 				}*/
@@ -220,17 +222,22 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 			*/
 
 			if (oGeneProp.AlleleMode==GeneProperties::Hemizygous || oGeneProp.AlleleMode==GeneProperties::Dominant) { // if this gene is hemizygous or dominant
-				if (oAllele1.Allele == oGeneProp.DominantLabel || oAllele2.Allele == oGeneProp.DominantLabel) { // if one of the alleles is dominant
-					nVal = oGeneProp.DominantValue;
+				if (oAllele1.Allele  != oAllele2.Allele) { // if one of the alleles is dominant
+					nVal = (oAllele1.Allele == oGeneProp.DominantLabel )? oAllele1.Value : oAllele2.Value;//oGeneProp.DominantValue;
 				}
-				else { // both recessive
-					nVal = oGeneProp.RecessiveValue;
+				/*else if (oAllele1.Allele == oGeneProp.DominantLabel && oAllele2.Allele == oGeneProp.DominantLabel){ // both dominant
+					nVal = ( oAllele1.Value + oAllele2.Value)/2;//oGeneProp.RecessiveValue; take the mean. 
+				}*/
+				else {//both recessive or dominant
+					nVal = ( oAllele1.Value + oAllele2.Value)/2;
 				}
+
 
 			}
 			else { //this gene is additive
-				nVal  = oAllele1.Allele == oGeneProp.DominantLabel? oGeneProp.DominantValue:oGeneProp.RecessiveValue;
-				nVal += oAllele2.Allele == oGeneProp.DominantLabel? oGeneProp.DominantValue:oGeneProp.RecessiveValue;
+				/*nVal  = oAllele1.Allele == oGeneProp.DominantLabel? oGeneProp.DominantValue:oGeneProp.RecessiveValue;
+				  nVal += oAllele2.Allele == oGeneProp.DominantLabel? oGeneProp.DominantValue:oGeneProp.RecessiveValue;*/
+				nVal = ( oAllele1.Value + oAllele2.Value);
 			}
 			
 			

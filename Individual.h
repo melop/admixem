@@ -43,7 +43,7 @@ struct Marker: public GeneticLocus {
 };
 
 struct Gene: public GeneticLocus {
-	
+	double Value;
 };
 /*
 class Chromosome {
