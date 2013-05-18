@@ -1,4 +1,4 @@
-﻿Build started 5/18/2013 12:48:25 PM.
+﻿Build started 5/18/2013 4:27:41 PM.
      1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Individual.cpp
@@ -11,8 +11,8 @@
      1>Individual.cpp(315): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
      1>Individual.cpp(644): warning C4018: '<' : signed/unsigned mismatch
      1>Individual.cpp(658): warning C4018: '<' : signed/unsigned mismatch
-     1>Individual.cpp(700): warning C4018: '<' : signed/unsigned mismatch
-     1>Individual.cpp(712): warning C4018: '<' : signed/unsigned mismatch
+     1>Individual.cpp(721): warning C4018: '<' : signed/unsigned mismatch
+     1>Individual.cpp(733): warning C4018: '<' : signed/unsigned mismatch
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\Debug\admixsimul.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\admixsimul.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"K:\apps\github\admixsimul\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\Debug\admixsimul.lib" /MACHINE:X86 Debug\config.obj
          Debug\filesystem.obj
@@ -35,4 +35,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.43
+Time Elapsed 00:00:02.98

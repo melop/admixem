@@ -1,0 +1,4 @@
+Phenotype	Formula
+Sex		chr10_3000000
+Signal	(chr10_3000000) * (chr1_4500000 + chr2_4500000 +  chr3_4500000 + chr4_4500000 + chr5_4500000 + chr6_4500000 + chr7_4500000 + chr8_4500000 )
+Psi		chr9_4500000

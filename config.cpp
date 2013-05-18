@@ -1017,7 +1017,7 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 	int nChr;
 	double  nPos, nDomVal, nRecesVal , nDominantFreqPop1, nDominantFreqPop2;
 	char nDominantName, nRecessiveName;
-	
+
 	
 	
 	printf("Start loading gene file %s ...\n", szConfigFile.c_str());
@@ -1063,6 +1063,59 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 		this->_mpGeneIndex[nChr-1][nPos] = vIndexCounters.at(nChr-1);
 		vIndexCounters.at(nChr-1) += 1;
 		//nIndexCounter++;
+		
+	}
+
+	
+	//Try opening muation file too
+	string szMutationFile = ((SimulationConfigurations *)this->_pParentConfig)->GetConfig("GeneMutationFile");
+	if (szMutationFile=="") {
+		std::printf("No mutation file specified for genes, no mutations will be carried out\n");
+	}
+	else {
+		FILE *pMutationFile;
+		char szBuffer[12048];
+		char szFormula[12048];
+		char szGeneName[100];
+		int nChr;
+		double  nPos, nMuteRate, nLowerBound , nUpperBound;
+
+
+		pMutationFile = fopen(szMutationFile.c_str(), "r");
+
+		if (!pMutationFile) {
+			printf("%s\n", "Cannot open gene mutation file ...");
+			throw "Cannot open mutation file!";
+		}
+
+		if (fgets(szBuffer, 12048, pMutationFile) == NULL) { // skip the header line
+			throw "Cannot read mutation file!";
+		}
+
+		while(fgets(szBuffer, 12048, pMutationFile) != NULL) 
+		{
+		
+			if (sscanf(szBuffer, "%[^\t\n]	%d	%lf	%lf	%lf	%lf %s", szGeneName, &nChr ,&nPos, &nMuteRate, &nLowerBound, &nUpperBound, szFormula  ) != 7) {
+				continue;//empty line
+			}
+
+			if (this->_mpGenes.size() < nChr)
+			{
+				std::printf("Warning: Gene mutation definition applied to an undefined chromosome: %d", nChr);
+			}
+			else if (this->_mpGenes[nChr-1].find(nPos) == this->_mpGenes[nChr-1].end()) {//
+				std::printf("Warning: Gene mutation definition applied to an undefined location: %f on chromosome %d", nPos, nChr);
+			}
+			else {
+				this->_mpGenes[nChr-1][nPos].MutationProb = nMuteRate;
+				this->_mpGenes[nChr-1][nPos].LowerBound = nLowerBound;
+				this->_mpGenes[nChr-1][nPos].UpperBound = nUpperBound;
+				this->_mpGenes[nChr-1][nPos].pFormula = new Parser(szFormula);
+				std::printf("Mutation rule %s loaded for chr %d : %f\n", szFormula, nChr, nPos);
+			}
+
+			
+		};
 		
 	}
 
@@ -1178,7 +1231,7 @@ const string SimulationConfigurations::GetConfig(string sKey) {
 	if (  this->_mpConfigs.find(sKey) == this ->_mpConfigs.end()) { // the requested key is not found in the config
 
 		//printf("The key %s was not found in the configuration file.\n", sKey.c_str());
-		return NULL;
+		return "";
 
 	}
 	

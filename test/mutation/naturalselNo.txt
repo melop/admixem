@@ -1,0 +1,4 @@
+Population	Gen	Selection
+malinche	-1	if (Sex, exp( - pow( Signal - 25 , 2)/(2 * pow(5,2))) , 1)
+birchmanni	-1	1
+hybridzone	-1	1

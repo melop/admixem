@@ -164,6 +164,10 @@ class SexualSelectionConfigurations {
 
 struct GeneProperties {
 	
+	GeneProperties() {
+		this->MutationProb = 0;
+	}
+
 	enum Mode {Hemizygous, Additive, Dominant};
 	
 	string GeneName;
@@ -174,8 +178,14 @@ struct GeneProperties {
 	double DominantFreqPop1;
 	double DominantFreqPop2;
 	Mode AlleleMode;
-	
+
+	//Mutation properties, optional
+	double MutationProb;
+	double LowerBound;
+	double UpperBound;
+	Parser * pFormula;
 };
+
 
 class GeneConfigurations {
 	public:
