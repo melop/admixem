@@ -1,0 +1,6 @@
+Population	Gen	Selection
+malinche	-1	1
+birchmanni	-1	1
+hybridzone	-1	1
+hybridzone1	-1	1
+hybridzone2	-1	1

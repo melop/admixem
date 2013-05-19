@@ -1,5 +1,6 @@
 #include "simulation.h"
 #include "maths.h"
+#include <time.h>
 
 extern Normal NormalGen; 
 extern Uniform UniformGen;
@@ -12,8 +13,12 @@ void UISimulation() {
 
 		UILoadConfig();
 
-
+		clock_t t;
+		t = clock();
 		PerformSimulation();
+		t = clock() - t;
+		printf ("Execution time %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
+
 
 };
 
@@ -92,6 +97,10 @@ void PerformSimulation() {
 
 	for (int nCurrGen=0; nCurrGen <= nGenerations; nCurrGen++) {
 
+		clock_t t;
+		t = clock();
+		
+		
 		printf("\n----------------------------------------\nGeneration: %d\n", nCurrGen);
 		SimulConfig.SetCurrGen(nCurrGen);
 
@@ -102,8 +111,13 @@ void PerformSimulation() {
 			(*itpPop)->SummarizePhenotype();
 		}
 	
+		bool bAllOutputOff = (SimulConfig.GetConfig("AllOutput")=="Off");
 
-		if ( (nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2) {
+		if (bAllOutputOff) {
+			printf("Warning: AllOutput is set to Off, no output will be written. \n");
+		}
+
+		if ( (!bAllOutputOff) && ((nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2)) {
 
 		
 			printf("Writing to disk...\n");
@@ -210,6 +224,9 @@ void PerformSimulation() {
 		sPopSizeReport << "\n";
 		 
 		printf(sPopSizeReport.str().c_str());
+
+		t = clock() - t;
+		printf ("Execution time for generation : %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
 
 	}
 	

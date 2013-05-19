@@ -1,0 +1,26 @@
+#PBS -l walltime=3:00:00
+#PBS -q short
+#PBS -l nodes=1:ppn=8
+#PBS -l mem=31000mb
+
+# Change this to where you put the nex dataset, don't put any space
+WORKDIR=/data/melop/admixsimul/psi/55_55_preffunc3_rep2/
+
+# Change this to the name of the phylip dataset, don't put any space
+IN_FILE=analysisFreq.cfg
+
+LOG_FILE=peakshift.log
+
+# Change this to the product of nodes and ppn in Line 3, for example nodes=2:ppn=8, this num=16:
+NUM_PROCESS=8
+
+# Executable of MrBayes, don't need to change
+ADMIXSIMUL_EXE=/home/melop/apps/melop-admixsimul-e224589/bin/admixsimulOPENMP
+
+#Screen log ending
+SCREEN_LOG_END=.screen.log
+
+cd ${WORKDIR}
+${ADMIXSIMUL_EXE} ${IN_FILE} &> ${LOG_FILE}
+
+exit 0
