@@ -338,10 +338,27 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 	list< vector<string> > * pqvDadSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsDad( sPop);
 	list< vector<string> > * pqvMomSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsMom( sPop);
 
+	//Traits for oblique imprinting; note that things for peer imprinting has already been set at the pop level. see Population::Breed()
+	list< vector<string> > * pqvPrevGenCurrPopSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenCurrPop(sPop);
+	list< vector<string> > * pqvPrevGenCurrPopCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenCurrPopCourter(sPop);
+	list< vector<string> > * pqvPrevGenCurrPopChooserSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenCurrPopChooser(sPop);
+
+	list< vector<string> > * pqvPrevGenPrevPopSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenPrevPop(sPop);
+	list< vector<string> > * pqvPrevGenPrevPopCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenPrevPopCourter(sPop);
+	list< vector<string> > * pqvPrevGenPrevPopChooserSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPrevGenPrevPopChooser(sPop);
+
 	list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
 	list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
 	list< vector<string> >::iterator itDadSymbols= pqvDadSymbols->begin();
 	list< vector<string> >::iterator itMomSymbols= pqvMomSymbols->begin();
+
+	list< vector<string> >::iterator itPrevGenCurrPopSymbols		=        pqvPrevGenCurrPopSymbols->begin();
+	list< vector<string> >::iterator itPrevGenCurrPopCourterSymbols = 		 pqvPrevGenCurrPopCourterSymbols->begin();
+	list< vector<string> >::iterator itPrevGenCurrPopChooserSymbols =		 pqvPrevGenCurrPopChooserSymbols->begin();
+	
+	list< vector<string> >::iterator itPrevGenPrevPopSymbols		= 				 pqvPrevGenPrevPopSymbols->begin();
+	list< vector<string> >::iterator itPrevGenPrevPopCourterSymbols =  		 pqvPrevGenPrevPopCourterSymbols->begin();
+	list< vector<string> >::iterator itPrevGenPrevPopChooserSymbols =		 pqvPrevGenPrevPopChooserSymbols->begin();
 
 	bool bAccept = true;
 
@@ -350,6 +367,14 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 			vector<string> vSymbolsCourter = *itCourterSymbols;
 			vector<string> vSymbolsDad = *itDadSymbols;
 			vector<string> vSymbolsMom = *itMomSymbols;
+
+			vector<string> vSymbolsPrevGenCurrPop		=	*itPrevGenCurrPopSymbols	;	
+			vector<string> vSymbolsPrevGenCurrPopCourter = *itPrevGenCurrPopCourterSymbols;
+			vector<string> vSymbolsPrevGenCurrPopChooser = *itPrevGenCurrPopChooserSymbols;
+			 
+			vector<string> vSymbolsPrevGenPrevPop		 =	*itPrevGenPrevPopSymbols		;
+			vector<string> vSymbolsPrevGenPrevPopCourter = *itPrevGenPrevPopCourterSymbols;
+			vector<string> vSymbolsPrevGenPrevPopChooser = *itPrevGenPrevPopChooserSymbols;
 
 			Parser * pParser = itParser->first;
 			int nGen = itParser->second;
@@ -393,6 +418,22 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 					pParser->symbols_[string("Mom_"+(*itSymbol))] = this->_mpMomPhenotypes[*itSymbol];				
 				}
 
+				//Set PrevGenCurrPop symbol values
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenCurrPop, string("PrevGenCurrPop"), ((Population*)this->GetPop())->_mpPrevGenSumPhenotype);
+				//Set PrevGenCurrPopCourter symbol values
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenCurrPopCourter , string("PrevGenCurrPopCourter"), ((Population*)this->GetPop())->_mpPrevGenSumPhenotypeMale);
+				//Set PrevGenCurrPopChooser
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenCurrPopChooser, string("PrevGenCurrPopChooser"), ((Population*)this->GetPop())->_mpPrevGenSumPhenotypeFemale);
+				
+				//set PrevGenPrevPop
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenPrevPop, string("PrevGenPrevPop"), ((Population*)this->GetPrevPop())->_mpPrevGenSumPhenotype);
+				// set PrevGenPrevPopCourter
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenPrevPopCourter, string("PrevGenPrevPopCourter"), ((Population*)this->GetPrevPop())->_mpPrevGenSumPhenotypeMale);
+				//set PrevGenPrevPopChooser
+				bSkipRule = bSkipRule || this->fnSetParserPopWide(pParser , vSymbolsPrevGenPrevPopChooser, string("PrevGenPrevPopChooser"), ((Population*)this->GetPrevPop())->_mpPrevGenSumPhenotypeFemale);
+				
+
+
 				if (bSkipRule) continue;
 				
 
@@ -408,6 +449,15 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 			++itCourterSymbols;
 			++itDadSymbols;
 			++itMomSymbols;
+
+			++itPrevGenCurrPopSymbols;	
+			++itPrevGenCurrPopCourterSymbols;
+			++itPrevGenCurrPopChooserSymbols;
+			
+			++itPrevGenPrevPopSymbols;
+			++itPrevGenPrevPopCourterSymbols;
+			++itPrevGenPrevPopChooserSymbols;
+
 		}
 
 	_arrOtherParentsForOffsprings.push_back(pCourter);
@@ -415,6 +465,33 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 	_nAvailableGametes--; // one less gamete!
 
 	return 1;
+}
+
+bool Individual::fnSetParserPopWide(Parser * pParser,  vector<string> &vSymbols, const string &sPrefix,  map< string , pair< double, double> > &mpSumPhenotypes) { // returns skipped.
+	int nCurrGen = SimulConfig.GetCurrGen();
+	for(vector<string>::iterator itSymbol=vSymbols.begin();itSymbol!=vSymbols.end();++itSymbol)
+				{
+					if (nCurrGen == 0) {
+						return true; // skipped this rule
+					}
+
+					string sSymbol = (*itSymbol).substr(4);
+					string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+
+					if (mpSumPhenotypes.find(sSymbol) == mpSumPhenotypes.end()) {
+						throw new Exception("Unable to find population symbol");
+					}
+
+					if (sType == "Avg") {
+						pParser->symbols_[string(sPrefix + "_Avg_"+sSymbol)] = mpSumPhenotypes[sSymbol].first;
+					}
+					else if (sType == "Std") {
+						pParser->symbols_[string(sPrefix + "_Std_"+sSymbol)] = mpSumPhenotypes[sSymbol].second;
+					}
+
+	}
+
+	return false;
 }
 
 int Individual::GetMateNumber() {

@@ -110,6 +110,7 @@ class Individual {
 	 void fnDetermineSex();
 	 void fnDeterminePhenotypes();
 	 void fnDetermineNumGametes(); //determines how many gametes does this female have.
+	 bool fnSetParserPopWide(Parser * pParser,  vector<string> &vSymbols, const string &sPrefix,  map< string , pair< double, double> > &mpSumPhenotypes);
 
 	 unsigned int _nFatherId; //id of father
 	 unsigned int _nMotherId; //id of mother

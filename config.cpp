@@ -628,7 +628,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 				list< vector<string> > vvsSymbols4;
 				list< vector<string> > vvsSymbols5;
 				list< vector<string> > vvsSymbols6;
-
+				
 				this->_mpRules[sPopName] = vsFormulae;
 				this->_mpFreqDependentRules[sPopName] = vsFreqDependentFormulae;
 				this->_mpRuleFormulae[sPopName] = vpFormulae;
@@ -639,6 +639,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 				this->_mpRuleFormulaSymbolStringsPopWide[sPopName] = vvsSymbols4;
 				this->_mpRuleFormulaSymbolStringsPopWideChooser[sPopName] = vvsSymbols5;
 				this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName] = vvsSymbols6;
+
 			}
 
 			
@@ -834,6 +835,12 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 				list< vector<string> > vvsSymbols6;
 				list< vector<string> > vvsSymbols7;
 				list< vector<string> > vvsSymbols8;
+				list< vector<string> > vvsSymbols9;
+				list< vector<string> > vvsSymbols10;
+				list< vector<string> > vvsSymbols11;
+				list< vector<string> > vvsSymbols12;
+				list< vector<string> > vvsSymbols13;
+				list< vector<string> > vvsSymbols14;
 
 				this->_mpRules[sPopName] = vsFormulae;
 				this->_mpRuleFormulae[sPopName] = vpFormulae;
@@ -845,6 +852,15 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 				this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName] = vvsSymbols6;
 				this->_mpRuleFormulaSymbolStringsDad[sPopName] = vvsSymbols7;
 				this->_mpRuleFormulaSymbolStringsMom[sPopName] = vvsSymbols8;
+				
+				this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGen[sPopName] = vvsSymbols9; // Symbols that are population-wide values from prev gen. of current pop
+				this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenCourter[sPopName] = vvsSymbols10; // Symbols that are population-wide courter values from prev gen. of current pop
+				this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenChooser[sPopName] = vvsSymbols11; // Symbols that are population-wide chooser values from prev gen. of current pop
+				this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGen[sPopName] = vvsSymbols12; // Symbols that are population-wide values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+				this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenCourter[sPopName] = vvsSymbols13; // Symbols that are population-wide courter values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+				this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenChooser[sPopName] = vvsSymbols14; // Symbols that are population-wide chooser values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+
+			
 			}
 
 			
@@ -867,6 +883,13 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			vector<string> vSymbolStringsPopWide; // symbols referring to population-level variables prefixed with Pop_
 			vector<string> vSymbolStringsDad; // symbols referring to population-level variables prefixed with Dad_
 			vector<string> vSymbolStringsMom; // symbols referring to population-level variables prefixed with Mom_
+
+			vector<string> vSymbolStringsCurrPopWidePrevGen; //PrevGenCurrPop_
+			vector<string> vSymbolStringsCurrPopWidePrevGenCourter; //PrevGenCurrPopCourter_
+			vector<string> vSymbolStringsCurrPopWidePrevGenChooser; //PrevGenCurrPopChooser_
+			vector<string> vSymbolStringsPrevPopWidePrevGen; //PrevGenPrevPop_
+			vector<string> vSymbolStringsPrevPopWidePrevGenCourter;  //PrevGenPrevPopCourter_
+			vector<string> vSymbolStringsPrevPopWidePrevGenChooser; //PrevGenPrevPopChooser_
 
 			//list all the symbols used in this formula
 			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
@@ -918,6 +941,36 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 					sSymbol.replace(0, 4, "");
 					vSymbolStringsMom.push_back(sSymbol);
 				}
+				else if (sSymbol.find("PrevGenCurrPop_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 15, "");
+					vSymbolStringsCurrPopWidePrevGen.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PrevGenCurrPopCourter_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 22, "");
+					vSymbolStringsCurrPopWidePrevGenCourter.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PrevGenCurrPopChooser_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 22, "");
+					vSymbolStringsCurrPopWidePrevGenChooser.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PrevGenPrevPop_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 15, "");
+					vSymbolStringsPrevPopWidePrevGen.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PrevGenPrevPopCourter_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 22, "");
+					vSymbolStringsPrevPopWidePrevGenCourter.push_back(sSymbol);
+				}
+				else if (sSymbol.find("PrevGenPrevPopChooser_") == 0) {
+					//throw(new Exception("Pop_ not yet implemented in natural selection."));
+					sSymbol.replace(0, 22, "");
+					vSymbolStringsPrevPopWidePrevGenChooser.push_back(sSymbol);
+				}
 				else { //default to be self
 					vSymbolStringsChooser.push_back(sSymbol);
 				}
@@ -934,6 +987,13 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			this->_mpRuleFormulaSymbolStringsPopWideCourter[sPopName].push_back(vSymbolStringsPopWideCourter);
 			this->_mpRuleFormulaSymbolStringsDad[sPopName].push_back(vSymbolStringsDad);
 			this->_mpRuleFormulaSymbolStringsMom[sPopName].push_back(vSymbolStringsMom);
+
+			this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGen[sPopName].push_back(vSymbolStringsCurrPopWidePrevGen); //PrevGenCurrPop_
+			this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenCourter[sPopName].push_back(vSymbolStringsCurrPopWidePrevGenCourter); //PrevGenCurrPopCourter_
+			this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenChooser[sPopName].push_back(vSymbolStringsCurrPopWidePrevGenChooser); //PrevGenCurrPopChooser_
+			this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGen[sPopName].push_back(vSymbolStringsPrevPopWidePrevGen); //PrevGenPrevPop_
+			this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenCourter[sPopName].push_back(vSymbolStringsPrevPopWidePrevGenCourter);  //PrevGenPrevPopCourter_
+			this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenChooser[sPopName].push_back(vSymbolStringsPrevPopWidePrevGenChooser); //PrevGenPrevPopChooser_
 
 			if (nGen > -1) {
 				this->_vSpecialGens.insert(nGen);
@@ -984,6 +1044,29 @@ list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsD
 list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsMom(string sPop) {
 	return &this->_mpRuleFormulaSymbolStringsMom[sPop];
 }
+
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenCurrPop(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGen[sPop];
+}
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenCurrPopCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenCourter[sPop];
+}
+
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenCurrPopChooser(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsCurrPopWidePrevGenChooser[sPop];	
+}
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenPrevPop(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGen[sPop];
+}
+
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenPrevPopCourter(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenCourter[sPop];
+}
+
+list< vector<string> > *  SexualSelectionConfigurations::GetFormulaSymbolStringsPrevGenPrevPopChooser(string sPop) {
+	return &this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenChooser[sPop];
+}
+
 
 GeneConfigurations::GeneConfigurations(void * pParentConfig) {
 

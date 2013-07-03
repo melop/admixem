@@ -142,6 +142,14 @@ class SexualSelectionConfigurations {
 		list< vector<string> > * GetFormulaSymbolStringsDad(string sPop);
 		list< vector<string> > * GetFormulaSymbolStringsMom(string sPop);
 
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenCurrPop(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenCurrPopCourter(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenCurrPopChooser(string sPop);
+
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenPrevPop(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenPrevPopCourter(string sPop);
+		list< vector<string> > * GetFormulaSymbolStringsPrevGenPrevPopChooser(string sPop);
+
 		list< pair< Parser * , int> > * GetFormulae(string sPop);
 		bool IgnoreGlobalRules(int nGen);
 
@@ -158,6 +166,13 @@ class SexualSelectionConfigurations {
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPopWideChooser; // Symbols that are population-wide chooser values
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsDad; // Symbols that are father's values
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsMom; // Symbols that are mother's values
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCurrPopWidePrevGen; // Symbols that are population-wide values from prev gen. of current pop
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCurrPopWidePrevGenCourter; // Symbols that are population-wide courter values from prev gen. of current pop
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCurrPopWidePrevGenChooser; // Symbols that are population-wide chooser values from prev gen. of current pop
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPrevPopWidePrevGen; // Symbols that are population-wide values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPrevPopWidePrevGenCourter; // Symbols that are population-wide courter values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsPrevPopWidePrevGenChooser; // Symbols that are population-wide chooser values from prev gen. of previous pop, if the individual did not migrate, previous pop = current pop
+
 
 		set< int > _vSpecialGens; //generations with special rules. if the generation is in here, all rules with -1 will be ignored.
 };
