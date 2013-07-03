@@ -101,6 +101,7 @@ class Individual {
 	void Die(); // sets the dead flag
 	void ChangePopulation(void * pPop);
 	void * GetPop();
+	void * GetPrevPop(); //What is the prev pop? If the individual migrated, then prev pop will differ from the current.
 	//friend class Individual;
 
 	//void GetGamete( Chromosome * pGamete);
@@ -114,6 +115,7 @@ class Individual {
 	 unsigned int _nMotherId; //id of mother
 	 unsigned int _nId; // fish id
 	 void * _pPop; //pointer to the current population it's living in.
+	 void * _pPrevPop; // pointer to the previous population, before migration. this is relavant in oblique imprinting, where the individual learned before migration.
 	 Sex _bSex;
 	 bool _bMatured;
 	 bool _bDead;
@@ -125,7 +127,7 @@ class Individual {
 	 int _nTotalChrNum;
 
 	 std::map<string, double >  _mpPhenotypes; // map recording phenotypic values directly calculated from genotypic values;
-	 std::map<string, double >  _mpEnvPhenotypes; // Phenotypes with added enviromental variations
+	 std::map<string, double >  _mpEnvPhenotypes; // Phenotypes with added enviromental variations NOT USED
 	 std::map<string, double >  _mpDadPhenotypes; //father's phenotypes, useful for imprinting
 	 std::map<string, double >  _mpMomPhenotypes; //mother's phenotypes, useful for imprinting
 

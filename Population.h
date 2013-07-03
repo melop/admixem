@@ -35,6 +35,7 @@ public:
 	int GetPopSize(int nMode);
 	int GetPopId();
 	string  GetPopName();
+	friend class Individual;
 
 private:
 	string _sPopName;
@@ -53,6 +54,10 @@ private:
 	map< string , pair< double, double> > _mpSumPhenotype; // population statistics
 	map< string , pair< double, double> > _mpSumPhenotypeMale; // population statistics for males
 	map< string , pair< double, double> > _mpSumPhenotypeFemale; // population statistics for females
+
+	map< string , pair< double, double> > _mpPrevGenSumPhenotype; // prev gen population statistics
+	map< string , pair< double, double> > _mpPrevGenSumPhenotypeMale; // prev gen population statistics for males
+	map< string , pair< double, double> > _mpPrevGenSumPhenotypeFemale; // prev gen population statistics for females
 
 	void fnWriteIndividualMarkers(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualGenes(ofstream &fOutFile, Individual * pInd);

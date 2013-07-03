@@ -36,6 +36,7 @@ Individual::~Individual(void) {
 Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a founder
 	this->_bDead = false;
 	int nPopId = ((Population *)pPop)->GetPopId();
+	this->_pPrevPop = NULL;
 	this->_pPop = pPop;
 	if (nPopId == 3) {
 		throw "You cannot directly create hybrid founders.";
@@ -254,6 +255,7 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 
 Individual::Individual(Individual * pFather, Individual * pMother) {
 	this->_bDead = false;
+	this->_pPrevPop = NULL;
 	this->_pPop = pMother->GetPop();
 
 	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not implemented.
@@ -495,11 +497,16 @@ void Individual::GetGamete(Chromosome * pGamete) {
 }
 */
 void Individual::ChangePopulation(void * pPop) {
+	this->_pPrevPop = this->_pPop;
 	this->_pPop = pPop;
 }
 
 void * Individual::GetPop() {
 	return this->_pPop;
+}
+
+void * Individual::GetPrevPop() {
+	return (this->_pPrevPop == NULL)? this->_pPop:this->_pPrevPop;
 }
 
 Individual::Sex Individual::GetSex() {

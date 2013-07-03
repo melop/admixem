@@ -124,7 +124,10 @@ void Population::SummarizePhenotype() {
 			nSqrDiffSumFemale += nDiffFemale * nDiffFemale;
 		}
 
-
+		/* Save the phenotype for the previous generation , used for oblique imprinting*/
+		this->_mpPrevGenSumPhenotype[sKey] = (_mpSumPhenotype.find(sKey) == _mpSumPhenotype.end())? pair< double, double> ( 0.0 , 0.0 ) : this->_mpSumPhenotype[sKey];
+		this->_mpPrevGenSumPhenotypeMale[sKey] = (_mpSumPhenotypeMale.find(sKey) == _mpSumPhenotypeMale.end())? pair< double, double> ( 0.0 , 0.0 ) : this->_mpSumPhenotypeMale[sKey]; 
+		this->_mpPrevGenSumPhenotypeFemale[sKey] = (_mpSumPhenotypeFemale.find(sKey) == _mpSumPhenotypeFemale.end())? pair< double, double> ( 0.0 , 0.0 ) : this->_mpSumPhenotypeFemale[sKey];  ; 
 		
 		this->_mpSumPhenotype[sKey] = pair< double , double >( nMean  , sqrt((nPop==0)? 0.0:(nSqrDiffSum / nPop))); // mean, standard deviation
 		this->_mpSumPhenotypeMale[sKey] = pair< double , double >( nMeanMale , sqrt((nMale==0)? 0.0:(nSqrDiffSumMale / nMale)) ); // mean, standard deviation
