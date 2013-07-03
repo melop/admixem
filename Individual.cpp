@@ -742,7 +742,7 @@ void Individual::DumpGenes(ofstream &fOutFile, int nChromosomeSide) { // nChromo
 		fOutFile << -1 << '\t'; // output chromosome spacer
 
 		for (vector<Gene>::iterator itGene=pGenes->begin(); itGene != pGenes->end() ; ++itGene) {
-			fOutFile << (*itGene).Allele <<  (*itGene).Ancestry << '\t';
+			fOutFile << (*itGene).Allele <<  (*itGene).Ancestry << '\t' << (*itGene).Value << '\t';
 		}
 
 	}
