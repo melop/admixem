@@ -1,8 +1,20 @@
 #include "config.h"
 #include <cstring>
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
 SimulationConfigurations SimulConfig; //Global configuration object
 extern Normal NormalGen; 
 extern Uniform UniformGen;
+
+/*
+int omp_thread_count() {
+    int n = 0;
+    #pragma omp parallel reduction(+:n)
+    n += 1;
+    return n;
+}
+*/
 
 void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 
@@ -467,7 +479,13 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 	char szPhenotypeName[100];
 	char szFormula[2048];
 	
-	
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		int nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
 	
 	printf("Start loading phenotype file %s ...\n", szConfigFile.c_str());
 
@@ -529,7 +547,11 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 				vSymbols.push_back(oSymbolPair);
 				vSymbolStrings.push_back(it->first); // save label too
 			}
-			this->_mpPhenotypeFormulae[sPhenotypeName] = pF;
+
+			for (int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+				//map<string , Parser *> _mpPhenotypeFormulae;
+				this->_mpmpPhenotypeFormulae[nCPU][sPhenotypeName] = new Parser(sFormula);//pF;
+			}
 			this->_mpPhenotypeFormulaSymbols[sPhenotypeName] = vSymbols;
 			this->_mpPhenotypeFormulaSymbolStrings[sPhenotypeName] = vSymbolStrings;
 		}
@@ -573,7 +595,14 @@ vector<string> * PhenotypeConfigurations::GetFormulaSymbolStrings(string sPhenot
 };
 
 Parser * PhenotypeConfigurations::GetFormula(string sPhenotypeName) {
-	return this->_mpPhenotypeFormulae[sPhenotypeName];
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+		//printf("%s : %d\n", "SexSelFormulae # ", nCPU);
+	#else
+		int nCPU = 0;
+	#endif
+
+	return this->_mpmpPhenotypeFormulae[nCPU][sPhenotypeName];
 };
 
 NaturalSelectionConfigurations::NaturalSelectionConfigurations(void * pParentConfig) {
@@ -589,6 +618,14 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	char szPopName[100];
 	char szFormula[12048];
 	
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		int nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
+
 	
 	
 	printf("Start loading natural selection file %s ...\n", szConfigFile.c_str());
@@ -631,8 +668,17 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 				
 				this->_mpRules[sPopName] = vsFormulae;
 				this->_mpFreqDependentRules[sPopName] = vsFreqDependentFormulae;
-				this->_mpRuleFormulae[sPopName] = vpFormulae;
-				this->_mpFreqDependentRuleFormulae[sPopName] = vpFreqDependentFormulae;
+				for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { // the formula object needs to be duplicated such that it will parallelize
+					printf("%d CPU cores found, putting natural selection parser on CPU %d\n",nTotalCPUCore, nCPU );
+					if (this->_mpmpRuleFormulae.find(nCPU) == this->_mpmpRuleFormulae.end()) {
+						 map<string , list< pair<Parser *, int> > > mpRuleFormulae, _mpFreqDependentRuleFormulae;
+						this->_mpmpRuleFormulae[nCPU] =  mpRuleFormulae;
+						this->_mpmpFreqDependentRuleFormulae[nCPU] = _mpFreqDependentRuleFormulae;
+					}
+
+					this->_mpmpRuleFormulae[nCPU][sPopName] = vpFormulae;
+					this->_mpmpFreqDependentRuleFormulae[nCPU][sPopName] = vpFreqDependentFormulae;
+				}
 				this->_mpRuleFormulaSymbolStrings[sPopName] = vvsSymbols;
 				this->_mpRuleFormulaSymbolStringsCourter[sPopName] = vvsSymbols2;
 				this->_mpRuleFormulaSymbolStringsSelf[sPopName] = vvsSymbols3;
@@ -645,7 +691,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 			
 			
 			Parser * pF = new Parser("");
-			Parser * pDummyFormula = new Parser("1"); // dummy formula that always return 1.
+			//Parser * pDummyFormula = new Parser("1"); // dummy formula that always return 1.
 
 			try {
 				pF->Evaluate(sFormula);
@@ -713,22 +759,37 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 					vSymbolStringsSelf.push_back(sSymbol);
 				}
 			}
+
+			delete pF;
 			
 			if (bFreqDependent) {
 				this->_mpFreqDependentRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-				this->_mpFreqDependentRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
+				
+				
 				
 				this->_mpRules[sPopName].push_back("1"); // 
-				this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pDummyFormula , nGen )); // set dummy formula which always return 1. 
+				
+
+				for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { // the formula object needs to be duplicated such that it will parallelize
+
+					this->_mpmpFreqDependentRuleFormulae[nCPU][sPopName].push_back(pair< Parser *, int >( new Parser(sFormula) , nGen )); // literally duplicate the parser object so that it can parallelize
+					this->_mpmpRuleFormulae[nCPU][sPopName].push_back(pair< Parser *, int >( new Parser("1") , nGen )); // set dummy formula which always return 1. 
+				}
 				
 			}
 			else {
 
-				this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-				this->_mpRuleFormulae[sPopName].push_back(pair< Parser *, int >( pF , nGen ));
+				this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.			
 
 				this->_mpFreqDependentRules[sPopName].push_back("1"); 
-				this->_mpFreqDependentRuleFormulae[sPopName].push_back(pair< Parser *, int >( pDummyFormula , nGen ));// set dummy formula which always return 1.
+				
+
+				for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { // the formula object needs to be duplicated such that it will parallelize
+					this->_mpmpRuleFormulae[nCPU][sPopName].push_back(pair< Parser *, int >( new Parser(sFormula) , nGen ));
+					this->_mpmpFreqDependentRuleFormulae[nCPU][sPopName].push_back(pair< Parser *, int >( new Parser("1") , nGen ));// set dummy formula which always return 1.
+					
+				}
+
 			}
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
 			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
@@ -776,12 +837,32 @@ bool NaturalSelectionConfigurations::IgnoreGlobalRules(int nGen) {
 }
 
 list< pair< Parser * , int > > * NaturalSelectionConfigurations::GetFormulae(string sPop) {
-	return &this->_mpRuleFormulae[sPop];
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+	#else
+		int nCPU = 0;
+	#endif
+
+	return &this->_mpmpRuleFormulae[nCPU][sPop];
 }
 
 list< pair< Parser * , int > > * NaturalSelectionConfigurations::GetFreqDependentFormulae(string sPop) {
-	return &this->_mpFreqDependentRuleFormulae[sPop];
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+	#else
+		int nCPU = 0;
+	#endif
+	return &this->_mpmpFreqDependentRuleFormulae[nCPU][sPop];
 }
+
+map< int, map<string , list< pair<Parser *, int> > > > *  NaturalSelectionConfigurations::GetFormulaeAllCPUs() {
+	return &this->_mpmpRuleFormulae;
+}
+
+map< int, map<string , list< pair<Parser *, int> > > > *  NaturalSelectionConfigurations::GetFreqDependentFormulaeAllCPUs() {
+	return &this->_mpmpFreqDependentRuleFormulae;
+}
+
 
 SexualSelectionConfigurations::SexualSelectionConfigurations(void * pParentConfig) {
 
@@ -796,7 +877,11 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 	char szPopName[100];
 	char szFormula[12048];
 	
-	
+	#ifdef _OPENMP
+		int nTotalCPUCore = omp_get_max_threads();//omp_get_num_threads();
+	#else
+		int nTotalCPUCore = 1;
+	#endif
 	
 	printf("Start loading sexual selection file %s ...\n", szConfigFile.c_str());
 
@@ -843,7 +928,14 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 				list< vector<string> > vvsSymbols14;
 
 				this->_mpRules[sPopName] = vsFormulae;
-				this->_mpRuleFormulae[sPopName] = vpFormulae;
+				for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+					printf("%d CPU cores found, putting sexual selection parser on CPU %d\n",nTotalCPUCore, nCPU );
+					if (this->_mpmpRuleFormulae.find(nCPU) == this->_mpmpRuleFormulae.end()) {
+						 map<string , list< pair<Parser *, int> > > mpRuleFormulae;
+						this->_mpmpRuleFormulae[nCPU] =  mpRuleFormulae;
+					}
+					this->_mpmpRuleFormulae[nCPU][sPopName] = vpFormulae;
+				}
 				this->_mpRuleFormulaSymbolStrings[sPopName] = vvsSymbols;
 				this->_mpRuleFormulaSymbolStringsCourter[sPopName] = vvsSymbols2;
 				this->_mpRuleFormulaSymbolStringsChooser[sPopName] = vvsSymbols3;
@@ -977,8 +1069,12 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 			}
 			
+			delete pF;
+
 			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
-			this->_mpRuleFormulae[sPopName].push_back( pair< Parser *, int> (pF, nGen) );
+			for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+				this->_mpmpRuleFormulae[nCPU][sPopName].push_back( pair< Parser *, int> ( new Parser(sFormula), nGen) ); //literally copy the pF object, so that there are nTotalCPUCore numbers of copies in the RAM! ;-)
+			}
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
 			this->_mpRuleFormulaSymbolStringsCourter[sPopName].push_back(vSymbolStringsCourter);
 			this->_mpRuleFormulaSymbolStringsChooser[sPopName].push_back(vSymbolStringsChooser);
@@ -1014,8 +1110,19 @@ list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStrings(
 }
 
 list< pair< Parser * , int> > * SexualSelectionConfigurations::GetFormulae(string sPop) {
-	return &this->_mpRuleFormulae[sPop];
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+		//printf("%s : %d\n", "SexSelFormulae # ", nCPU);
+	#else
+		int nCPU = 0;
+	#endif
+	return &this->_mpmpRuleFormulae[nCPU][sPop];
 }
+
+map< int, map<string , list< pair<Parser *, int> > > > *  SexualSelectionConfigurations::GetFormulaeAllCPUs() {
+	return &this->_mpmpRuleFormulae;
+}
+
 
 list< vector<string> > * SexualSelectionConfigurations::GetFormulaSymbolStringsCourter(string sPop) {
 	return &this->_mpRuleFormulaSymbolStringsCourter[sPop];
@@ -1226,6 +1333,7 @@ SimulationConfigurations::SimulationConfigurations() {
 
 void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 
+
 	FILE *pConfigFile;
 
 	printf("%s\n", "Start loading config ...");
@@ -1270,6 +1378,17 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 		printf("%s%s", it->first, it->second);
 	}
 	*/
+	
+	#ifdef _OPENMP
+
+		int nThreads = (int)this->GetNumericConfig("NumThreads");
+		if (nThreads <= 0 ) {
+			omp_set_num_threads( 2 );
+		}
+		else {
+			omp_set_num_threads( nThreads );
+		}
+	#endif
 
 	//Load other config files:
 	this->pMarkerConfig->LoadFromFile(this->GetConfig("MarkerFile"));
@@ -1279,6 +1398,9 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 	this->pNaturalSelConfig->LoadFromFile(this->GetConfig("NaturalSelection"));
 	this->pSexualSelConfig->LoadFromFile(this->GetConfig("SexualSelection"));
 	this->pMarkerConfig->CalculateMapDistances();
+
+
+
 };
 
 const string SimulationConfigurations::GetConfigFileName() {

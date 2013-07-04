@@ -62,7 +62,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 	//this->_arrGenes = new vector<Gene>* [_nTotalChrNum];
 
 	//fill individual genome with markers
-	for (int i=0; i<_nTotalChrNum; i++) {
+	for (int i=0; i<this->_nTotalChrNum; i++) {
 
 		int nCurrChrNum;
 		if (i % 2 ==0) {
@@ -174,7 +174,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 void Individual::fnDetermineSex() 
 {
 	//this->_bSex = UniformGen.Next()>=0.5? Sex::Male:Sex::Female; // temp function.
-	this->_bSex = _mpPhenotypes["Sex"]==0.0? Female:Male;
+	this->_bSex = this->_mpPhenotypes["Sex"]==0.0? Female:Male;
 }
 
 void Individual::fnDetermineNumGametes() {
@@ -191,7 +191,7 @@ void Individual::fnDetermineNumGametes() {
 
 void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values from genotypes
 
-	for(std::map<string, double >::iterator it=_mpPhenotypes.begin(); it!=_mpPhenotypes.end(); ++it) {
+	for(std::map<string, double >::iterator it=this->_mpPhenotypes.begin(); it!=this->_mpPhenotypes.end(); ++it) {
 
 		//Go over all phenotypes
 		string sPhenoName = it->first;
@@ -211,8 +211,8 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 			//look up information of this gene
 			int nIndex2 = nChr  * 2 - 1;
 			int nIndex1 = nIndex2 - 1;
-			Gene oAllele1 = _arrGenes.at(nIndex1).at(oGeneIndexList[nPos]); 
-			Gene oAllele2 = _arrGenes.at(nIndex2).at(oGeneIndexList[nPos]);
+			Gene oAllele1 = this->_arrGenes.at(nIndex1).at(oGeneIndexList[nPos]); 
+			Gene oAllele2 = this->_arrGenes.at(nIndex2).at(oGeneIndexList[nPos]);
 			GeneProperties oGeneProp = oGeneList[nPos];
 
 			double nVal=0.0;
@@ -247,7 +247,7 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 			oSymbolString++;
 		}
 
-		_mpPhenotypes[sPhenoName] = pFormula->Evaluate(); // re-evaluate.
+		this->_mpPhenotypes[sPhenoName] = pFormula->Evaluate(); // re-evaluate.
 	}
 
 }
@@ -275,8 +275,8 @@ Individual::Individual(Individual * pFather, Individual * pMother) {
 	SimulConfig.pPhenotypeConfig->InitKeys(&this->_mpPhenotypes);
 	SimulConfig.pPhenotypeConfig->InitKeys(&this->_mpEnvPhenotypes);
 	
-	_mpDadPhenotypes.insert(pFather->_mpPhenotypes.begin(), pFather->_mpPhenotypes.end()); // save parent's phenotypes
-	_mpMomPhenotypes.insert(pMother->_mpPhenotypes.begin(), pMother->_mpPhenotypes.end());
+	this->_mpDadPhenotypes.insert(pFather->_mpPhenotypes.begin(), pFather->_mpPhenotypes.end()); // save parent's phenotypes
+	this->_mpMomPhenotypes.insert(pMother->_mpPhenotypes.begin(), pMother->_mpPhenotypes.end());
 	
 	vector< vector<Marker> > vFatherMarkers, vMotherMarkers;
 	vector< vector<Gene> > vFatherGenes, vMotherGenes;
@@ -285,19 +285,19 @@ Individual::Individual(Individual * pFather, Individual * pMother) {
 
 	//printf("vFatherMarkers.size() %d\n", vFatherMarkers.size());
 	//printf("vFatherGenes.size() %d\n", vFatherGenes.size());
-	_arrMarkers.reserve(vFatherMarkers.size() * 2);
-	_arrGenes.reserve(vFatherGenes.size() * 2);
+	this->_arrMarkers.reserve(vFatherMarkers.size() * 2);
+	this->_arrGenes.reserve(vFatherGenes.size() * 2);
 
 	//put chromosomes in order:
 	for (int i=0;i<vFatherMarkers.size();i++) {
-		_arrMarkers.push_back(vFatherMarkers.at(i));
-		_arrMarkers.push_back(vMotherMarkers.at(i));
+		this->_arrMarkers.push_back(vFatherMarkers.at(i));
+		this->_arrMarkers.push_back(vMotherMarkers.at(i));
 
 	}
 
 	for (int i=0;i<vFatherGenes.size();i++) {
-		_arrGenes.push_back(vFatherGenes.at(i));
-		_arrGenes.push_back(vMotherGenes.at(i));
+		this->_arrGenes.push_back(vFatherGenes.at(i));
+		this->_arrGenes.push_back(vMotherGenes.at(i));
 	}
 
 	//printf("_arrMarkers.size() %d\n", _arrMarkers.size());
@@ -332,7 +332,7 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 	//entry point for sexual selection.
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
-	list< pair< Parser *, int > > * pqParsers = SimulConfig.pSexualSelConfig->GetFormulae(sPop);
+	
 	list< vector<string> > * pqvCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsCourter( sPop);
 	list< vector<string> > * pqvSelfSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsSelf( sPop);
 	list< vector<string> > * pqvDadSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsDad( sPop);
@@ -362,6 +362,9 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 
 	bool bAccept = true;
 
+	//#pragma omp critical 
+	//{
+		list< pair< Parser *, int > > * pqParsers = SimulConfig.pSexualSelConfig->GetFormulae(sPop);
 		for (list< pair< Parser *, int > > ::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
 			vector<string> vSymbolsSelf = *itSelfSymbols;
 			vector<string> vSymbolsCourter = *itCourterSymbols;
@@ -445,6 +448,11 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 
 			}
 
+			/*
+			if (!bAccept) {
+				break;
+			}
+			*/
 			++itSelfSymbols;
 			++itCourterSymbols;
 			++itDadSymbols;
@@ -459,12 +467,19 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 			++itPrevGenPrevPopChooserSymbols;
 
 		}
+	
+	//}//end critical
 
-	_arrOtherParentsForOffsprings.push_back(pCourter);
+	if (!bAccept) {
+		return 0;
+	}
+
+	this->_arrOtherParentsForOffsprings.push_back(pCourter);
 	// just for now, inseminate one egg:
-	_nAvailableGametes--; // one less gamete!
+	this->_nAvailableGametes--; // one less gamete!
 
 	return 1;
+	
 }
 
 bool Individual::fnSetParserPopWide(Parser * pParser,  vector<string> &vSymbols, const string &sPrefix,  map< string , pair< double, double> > &mpSumPhenotypes) { // returns skipped.
@@ -495,7 +510,7 @@ bool Individual::fnSetParserPopWide(Parser * pParser,  vector<string> &vSymbols,
 }
 
 int Individual::GetMateNumber() {
-	return _arrOtherParentsForOffsprings.size();
+	return this->_arrOtherParentsForOffsprings.size();
 }
 
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
@@ -506,21 +521,27 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		throw "Males cannot give birth, r u nuts??";
 	}
 
-	nNum = nNum==-1? _arrOtherParentsForOffsprings.size():nNum;
+	nNum = nNum==-1? this->_arrOtherParentsForOffsprings.size():nNum;
 	
 	// do frequency-independent natural selection here!
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
-	list< pair< Parser *, int> > * pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(sPop);
+
+	list< pair< Parser *, int> > * pqParsers;
+	//#pragma omp critical 
+	//{
+		pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(sPop);
+	
+
 	//list< vector<string> > * pqvCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsCourter( sPop);
 	list< vector<string> > * pqvSelfSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsSelf( sPop);
 
 	
 	for(int i=0; i<nNum;i++) { 
-		if (_arrOtherParentsForOffsprings.size()==0) return;
+		if (this->_arrOtherParentsForOffsprings.size()==0) return;
 
-		int nRandDad = fnGetRandIndex(_arrOtherParentsForOffsprings.size() );
-		Individual * pOffSpring = new Individual( _arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
+		int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
+		Individual * pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
 		// See if it's lucky enough to survive the cruel nature!!
 		// Go through each selection rule:
 		
@@ -533,13 +554,16 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 			if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
 				//Set self symbol values
+				bool bLive = false;
+
 				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
 				{
 					pParser->symbols_[string("My_"+(*itSymbol))] = pOffSpring->GetPhenotype(*itSymbol);
 					pParser->symbols_[*itSymbol] = pOffSpring->GetPhenotype(*itSymbol); //set both variables
 				}
 
-				bool bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				
 
 				if (!bLive) {
 					delete pOffSpring; // uhoh, dead!!
@@ -550,16 +574,23 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 			++itSelfSymbols;
 		}
+		
 
 		if (!pOffSpring) { }
 		else {
-			vOffSprings.push_back(pOffSpring);
+
+				vOffSprings.push_back(pOffSpring);
+
 		}
+
+		
 		//_arrOtherParentsForOffsprings.erase(_arrOtherParentsForOffsprings.begin() + nRandDad);
 	}
 
+	//} //end critical
+
 	// now clear all gametes
-	_arrOtherParentsForOffsprings.clear();
+	this->_arrOtherParentsForOffsprings.clear();
 
 }
 
@@ -681,8 +712,8 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 				nEndIndex = (nArm == 1)? nCentromereIndex - 1 : nLastIndex;
 				nEndIndex_gene = (nArm == 1)? nCentromereIndex_gene - 1 : nLastIndex_gene ;
 
-				vector<Marker> * pvSourceMarkers = &_arrMarkers[nMainChr];
-				vector<Gene> * pvSourceGenes = &_arrGenes[nMainChr];
+				vector<Marker> * pvSourceMarkers = &this->_arrMarkers[nMainChr];
+				vector<Gene> * pvSourceGenes = &this->_arrGenes[nMainChr];
 				if (nStartIndex <= nEndIndex) {
 					copy(pvSourceMarkers->begin()+nStartIndex,pvSourceMarkers->begin()+nEndIndex+1,back_inserter(vNewMarkers));
 				}
@@ -700,8 +731,8 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 			{//Go over each break point
 				//find index using position:
 				int nChrIndex = bSelf? nMainChr:nOtherChr;
-				vector<Marker> * pvSourceMarkers = &_arrMarkers[nChrIndex];
-				vector<Gene> * pvSourceGenes = &_arrGenes[nChrIndex];
+				vector<Marker> * pvSourceMarkers = &this->_arrMarkers[nChrIndex];
+				vector<Gene> * pvSourceGenes = &this->_arrGenes[nChrIndex];
 
 				//printf("max size %d\n",  pvSourceMarkers->max_size());
 
@@ -802,8 +833,8 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 }
 
 void Individual::DumpMarkers(ofstream &fOutFile, int nChromosomeSide) { // nChromosomeSide is either 0 or 1
-	for (int i=nChromosomeSide; i< _arrMarkers.size(); i+=2) {
-		vector<Marker> * pMarkers = &(_arrMarkers.at(i));
+	for (int i=nChromosomeSide; i< this->_arrMarkers.size(); i+=2) {
+		vector<Marker> * pMarkers = &(this->_arrMarkers.at(i));
 		fOutFile << -1 << '\t'; // output chromosome spacer
 
 		for (vector<Marker>::iterator itMarker=pMarkers->begin(); itMarker != pMarkers->end() ; ++itMarker) {
@@ -814,8 +845,8 @@ void Individual::DumpMarkers(ofstream &fOutFile, int nChromosomeSide) { // nChro
 }
 
 void Individual::DumpGenes(ofstream &fOutFile, int nChromosomeSide) { // nChromosomeSide is either 0 or 1
-	for (int i=nChromosomeSide; i< _arrGenes.size(); i+=2) {
-		vector<Gene> * pGenes = &(_arrGenes.at(i));
+	for (int i=nChromosomeSide; i< this->_arrGenes.size(); i+=2) {
+		vector<Gene> * pGenes = &(this->_arrGenes.at(i));
 		fOutFile << -1 << '\t'; // output chromosome spacer
 
 		for (vector<Gene>::iterator itGene=pGenes->begin(); itGene != pGenes->end() ; ++itGene) {
@@ -828,7 +859,7 @@ void Individual::DumpGenes(ofstream &fOutFile, int nChromosomeSide) { // nChromo
 void Individual::DumpPhenotypes(ofstream &fOutFile) { // nChromosomeSide is either 0 or 1
 
 
-		for (map<string, double >::iterator itPheno=_mpPhenotypes.begin(); itPheno != _mpPhenotypes.end() ; ++itPheno) {
+		for (map<string, double >::iterator itPheno=this->_mpPhenotypes.begin(); itPheno != this->_mpPhenotypes.end() ; ++itPheno) {
 			fOutFile << (*itPheno).second << '\t';
 		}
 
@@ -838,7 +869,7 @@ void Individual::DumpPhenotypes(ofstream &fOutFile) { // nChromosomeSide is eith
 void Individual::WritePhenotypeHeader(ofstream &fOutFile) { // nChromosomeSide is either 0 or 1
 
 
-		for (map<string, double >::iterator itPheno=_mpPhenotypes.begin(); itPheno != _mpPhenotypes.end() ; ++itPheno) {
+		for (map<string, double >::iterator itPheno=this->_mpPhenotypes.begin(); itPheno != this->_mpPhenotypes.end() ; ++itPheno) {
 			fOutFile << (*itPheno).first << '\t';
 		}
 

@@ -92,7 +92,7 @@ class PhenotypeConfigurations {
 		string _szConfigFilename;
 		void * _pParentConfig;// convert to SimulationConfigurations!
 		map<string , string> _mpPhenotypes; //definition of phenotypes as functions of genotypes
-		map<string , Parser *> _mpPhenotypeFormulae; // similar as above, but the expression is parsed
+		map< int, map<string , Parser *> > _mpmpPhenotypeFormulae; // similar as above, but the expression is parsed. first level key is CPU core, second level key is name of phenotype.
 		map<string , vector< pair<int, double> > > _mpPhenotypeFormulaSymbols; // Symbols used by each formula
 		map<string , vector<string> > _mpPhenotypeFormulaSymbolStrings; // Symbols as strings
 };
@@ -110,15 +110,17 @@ class NaturalSelectionConfigurations {
 		list< vector<string> > * GetFormulaSymbolStringsPopChooser(string sPop);
 		list< pair< Parser *, int> > * GetFormulae(string sPop);
 		list< pair< Parser *, int> > * GetFreqDependentFormulae(string sPop);
+		map< int, map<string , list< pair<Parser *, int> > > > * GetFormulaeAllCPUs(); // 
+		map< int, map<string , list< pair<Parser *, int> > > > * GetFreqDependentFormulaeAllCPUs(); // 
 		bool IgnoreGlobalRules(int nGen);
 
 	private:
 		string _szConfigFilename;
 		void * _pParentConfig;// convert to SimulationConfigurations!
 		map<string , list< string > > _mpRules; //definition of selection rules (freq independent rules). key is population name
-		map<string , list< string > > _mpFreqDependentRules; //definition of selection rules (freq dependent rules). key is population name
-		map<string , list< pair< Parser *, int> > > _mpRuleFormulae; // similar as above, but the expression is parsed
-		map<string , list< pair< Parser *, int> > > _mpFreqDependentRuleFormulae; // similar as above, but the expression is parsed
+		map<string , list< string > >  _mpFreqDependentRules; //definition of selection rules (freq dependent rules).  key is population name
+		map< int, map<string , list< pair< Parser *, int> > > > _mpmpRuleFormulae; // similar as above, but the expression is parsed  first level key is CPU core, second level key is population name
+		map< int, map<string , list< pair< Parser *, int> > > > _mpmpFreqDependentRuleFormulae; // similar as above, but the expression is parsed
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStrings; // Symbols as strings
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCourter; // Symbols that are courter values
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsSelf; // Symbols that are self (female) values
@@ -133,6 +135,7 @@ class SexualSelectionConfigurations {
 	public:
 		SexualSelectionConfigurations(void * pParentConfig);
 		void LoadFromFile(string szConfigFile);
+		map< int, map<string , list< pair<Parser *, int> > > > * GetFormulaeAllCPUs(); // 
 		list< vector<string> > * GetFormulaSymbolStrings(string sPop);
 		list< vector<string> > * GetFormulaSymbolStringsCourter(string sPop);
 		list< vector<string> > * GetFormulaSymbolStringsSelf(string sPop);
@@ -157,7 +160,7 @@ class SexualSelectionConfigurations {
 		string _szConfigFilename;
 		void * _pParentConfig;// convert to SimulationConfigurations!
 		map<string , list< string > > _mpRules; //definition of selection rules. key is population name
-		map<string , list< pair<Parser *, int> > > _mpRuleFormulae; // similar as above, but the expression is parsed
+		map< int, map<string , list< pair<Parser *, int> > > > _mpmpRuleFormulae; // similar as above, but the expression is parsed, level one key is CPU core, level two key is pop name
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStrings; // Symbols as strings
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsCourter; // Symbols that are courter values
 		map<string , list< vector<string> > > _mpRuleFormulaSymbolStringsChooser; // Symbols that are self (female) values

@@ -139,16 +139,6 @@ void Population::SummarizePhenotype() {
 bool Population::Breed() {
 	
 	
-	#ifdef _OPENMP
-		int nThreads = (int)SimulConfig.GetNumericConfig("NumThreads");
-		if (nThreads <= 0 ) {
-			omp_set_num_threads( 2 );
-		}
-		else {
-			omp_set_num_threads( nThreads );
-		}
-	#endif
-	
 	int nCurrGen = SimulConfig.GetCurrGen(); // tell what is the current generation
 	bool bIgnoreGlobalRules = SimulConfig.pSexualSelConfig->IgnoreGlobalRules(nCurrGen); // is there special sexual selection rules for this generation?
 	bool bIgnoreGlobalRulesNa = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
@@ -166,87 +156,112 @@ bool Population::Breed() {
 
 	//set population level variables for freq dependent sexual selection:
 
-	list< pair< Parser *, int > > * pqParsers = SimulConfig.pSexualSelConfig->GetFormulae(this->_sPopName);
+	
+	map< int, map<string , list< pair<Parser *, int> > > > * mppqParsers = SimulConfig.pSexualSelConfig->GetFormulaeAllCPUs();
 
 	list< vector<string> > * pqvPopCourterSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPopCourter( this->_sPopName);
 	list< vector<string> > * pqvPopChooserSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPopChooser( this->_sPopName);
 	list< vector<string> > * pqvPopSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPop( this->_sPopName);
 
-	list< vector<string> >::iterator itPopCourterSymbols= pqvPopCourterSymbols->begin();
-	list< vector<string> >::iterator itPopChooserSymbols= pqvPopChooserSymbols->begin();
-	list< vector<string> >::iterator itPopSymbols= pqvPopSymbols->begin();
 
-	for (list< pair< Parser *, int > > ::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
-			vector<string> vSymbolsPopCourter = *itPopCourterSymbols;
-			vector<string> vSymbolsPopChooser = *itPopChooserSymbols;
-			vector<string> vSymbolsPop = *itPopSymbols;
 
-			Parser * pParser = itParser->first;
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();
+	#else
+		int nTotalCPUCore = 1;
+	#endif
 
-			//Set courter symbol values
-			for(vector<string>::iterator itSymbol=vSymbolsPop.begin();itSymbol!=vSymbolsPop.end();++itSymbol)
-			{
-				string sSymbol = (*itSymbol).substr(4);
-				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-				if (sType != "Avg" && sType != "Std") {
-					throw new Exception("Population parameter type unknown!");
+	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
+		list< vector<string> >::iterator itPopCourterSymbols= pqvPopCourterSymbols->begin();
+		list< vector<string> >::iterator itPopChooserSymbols= pqvPopChooserSymbols->begin();
+		list< vector<string> >::iterator itPopSymbols= pqvPopSymbols->begin();
+
+		for (list< pair< Parser *, int > > ::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+				vector<string> vSymbolsPopCourter = *itPopCourterSymbols;
+				vector<string> vSymbolsPopChooser = *itPopChooserSymbols;
+				vector<string> vSymbolsPop = *itPopSymbols;
+
+				Parser * pParser = itParser->first;
+
+				//Set courter symbol values
+				for(vector<string>::iterator itSymbol=vSymbolsPop.begin();itSymbol!=vSymbolsPop.end();++itSymbol)
+				{
+					string sSymbol = (*itSymbol).substr(4);
+					string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+					if (sType != "Avg" && sType != "Std") {
+						throw new Exception("Population parameter type unknown!");
+					}
+					if (this->_mpSumPhenotype.find(sSymbol) == _mpSumPhenotype.end()) {
+						throw new Exception("Unable to find population symbol");
+					}
+			
+					pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
+					pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
+
 				}
-				if (this->_mpSumPhenotype.find(sSymbol) == _mpSumPhenotype.end()) {
-					throw new Exception("Unable to find population symbol");
+
+				for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
+				{
+					string sSymbol = (*itSymbol).substr(4);
+					string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+					if (sType != "Avg" && sType != "Std") {
+						throw new Exception("Population parameter type unknown!");
+					}
+					if (this->_mpSumPhenotypeMale.find(sSymbol) == _mpSumPhenotypeMale.end()) {
+						throw new Exception("Unable to find population symbol: male");
+					}
+			
+					pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
+					pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
+
+				}
+
+				for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
+				{
+					string sSymbol = (*itSymbol).substr(4);
+					string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+					if (sType != "Avg" && sType != "Std") {
+						throw new Exception("Population parameter type unknown!");
+					}
+					if (this->_mpSumPhenotypeFemale.find(sSymbol) == _mpSumPhenotypeFemale.end()) {
+						throw new Exception("Unable to find population symbol: female");
+					}
+			
+					pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
+					pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
+
 				}
 			
-				pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
-				pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
-
-			}
-
-			for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
-			{
-				string sSymbol = (*itSymbol).substr(4);
-				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-				if (sType != "Avg" && sType != "Std") {
-					throw new Exception("Population parameter type unknown!");
-				}
-				if (this->_mpSumPhenotypeMale.find(sSymbol) == _mpSumPhenotypeMale.end()) {
-					throw new Exception("Unable to find population symbol: male");
-				}
-			
-				pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
-				pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
-
-			}
-
-			for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
-			{
-				string sSymbol = (*itSymbol).substr(4);
-				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-				if (sType != "Avg" && sType != "Std") {
-					throw new Exception("Population parameter type unknown!");
-				}
-				if (this->_mpSumPhenotypeFemale.find(sSymbol) == _mpSumPhenotypeFemale.end()) {
-					throw new Exception("Unable to find population symbol: female");
-				}
-			
-				pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
-				pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
-
-			}
-			
-			++itPopCourterSymbols;
-			++itPopChooserSymbols;
-			++itPopSymbols;
+				++itPopCourterSymbols;
+				++itPopChooserSymbols;
+				++itPopSymbols;
+		}
 	}
-
 
 	//for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
 	//enable omp. because this is random access, ideal for parallel
-	#pragma omp parallel shared(nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount)
+	std::set<int> stSampledFemales;//keep a list of the females already sampled so that they're not sampled twice.
+
+	#pragma omp parallel shared(stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
+	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
 
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) {
 		//Go over each female so that they can mate.
-		Individual * pFemale = this->_mpFemales[fnGetRandIndex(nNumFemales)]; //get random female
+		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
+
+		#pragma omp critical
+		{
+			while(stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) {
+				nRandFemaleInd=fnGetRandIndex(nNumFemales);
+			}
+			stSampledFemales.insert(nRandFemaleInd);
+		}
+
+		Individual * pFemale = this->_mpFemales[nRandFemaleInd]; //get random female
 
 		int nCourters =  (int)NormalExt(nSampleMate , 1, 0, 100);
 
@@ -256,10 +271,10 @@ bool Population::Breed() {
 				//printf("_mpMale.size() %d", _mpMales.size());
 				Individual * pCourter = this->_mpMales.at(fnGetRandIndex(this->_mpMales.size() ));
 				//printf("Breed::afterrandom\n");
-				#pragma omp critical
-				{
+				//#pragma omp critical
+				//{
 					pFemale->HandleCourter(pCourter , bIgnoreGlobalRules);
-				}
+				//}
 				//printf("Breed::aftercourterhandler\n");
 			}
 		
@@ -268,10 +283,10 @@ bool Population::Breed() {
 
 		vector<Individual *> vOffSprings;
 
-		#pragma omp critical
-		{
+		//#pragma omp critical
+		//{
 			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
-		}
+		//}
 
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) {
 
@@ -415,10 +430,20 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 }
 
 void Population::FreqDependentNaturalSelection() {
+
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+	#else
+		int nTotalCPUCore = 1;
+	#endif
+
 	int nCurrGen = SimulConfig.GetCurrGen();
 	bool bIgnoreGlobalRules = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
 	string sPop = this->_sPopName;
-	list< pair< Parser *, int> > * pqParsers = SimulConfig.pNaturalSelConfig->GetFreqDependentFormulae(sPop);
+
+	map< int, map<string , list< pair<Parser *, int> > > > * mppqParsers = SimulConfig.pNaturalSelConfig->GetFreqDependentFormulaeAllCPUs();
+
+
 	//list< vector<string> > * pqvCourterSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsCourter( sPop);
 	list< vector<string> > * pqvSelfSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsSelf( sPop);
 	list< vector<string> > * pqvPopSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsPop( sPop);
@@ -426,73 +451,78 @@ void Population::FreqDependentNaturalSelection() {
 	list< vector<string> > * pqvPopChooserSymbols = SimulConfig.pNaturalSelConfig->GetFormulaSymbolStringsPopChooser( sPop);
 
 	//set population level parameters
-	list< vector<string> >::iterator itPopSymbols = pqvPopSymbols->begin();
-	list< vector<string> >::iterator itPopCourterSymbols = pqvPopCourterSymbols->begin();
-	list< vector<string> >::iterator itPopChooserSymbols = pqvPopChooserSymbols->begin();
 
-	for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
-		vector<string> vSymbolsPop = *itPopSymbols;
-		vector<string> vSymbolsPopCourter = *itPopCourterSymbols;
-		vector<string> vSymbolsPopChooser = *itPopChooserSymbols;
 
-		Parser * pParser = itParser->first;
-		//set population level symbols
+	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
-		for(vector<string>::iterator itSymbol=vSymbolsPop.begin();itSymbol!=vSymbolsPop.end();++itSymbol)
-		{
-			string sSymbol = (*itSymbol).substr(4);
-			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-			if (sType != "Avg" && sType != "Std") {
-				throw new Exception("Population parameter type unknown!");
-			}
-			if (this->_mpSumPhenotype.find(sSymbol) == _mpSumPhenotype.end()) {
-				throw new Exception("Unable to find population symbol");
-			}
+		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
+		list< vector<string> >::iterator itPopSymbols = pqvPopSymbols->begin();
+		list< vector<string> >::iterator itPopCourterSymbols = pqvPopCourterSymbols->begin();
+		list< vector<string> >::iterator itPopChooserSymbols = pqvPopChooserSymbols->begin();
+
+		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			vector<string> vSymbolsPop = *itPopSymbols;
+			vector<string> vSymbolsPopCourter = *itPopCourterSymbols;
+			vector<string> vSymbolsPopChooser = *itPopChooserSymbols;
+
+			Parser * pParser = itParser->first;
+			//set population level symbols
+
+			for(vector<string>::iterator itSymbol=vSymbolsPop.begin();itSymbol!=vSymbolsPop.end();++itSymbol)
+			{
+				string sSymbol = (*itSymbol).substr(4);
+				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+				if (sType != "Avg" && sType != "Std") {
+					throw new Exception("Population parameter type unknown!");
+				}
+				if (this->_mpSumPhenotype.find(sSymbol) == _mpSumPhenotype.end()) {
+					throw new Exception("Unable to find population symbol");
+				}
 			
-			pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
-			pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
+				pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
+				pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
 
-		}
+			}
 
-		for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
-		{
-			string sSymbol = (*itSymbol).substr(4);
-			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-			if (sType != "Avg" && sType != "Std") {
-				throw new Exception("Population parameter type unknown!");
-			}
-			if (this->_mpSumPhenotypeMale.find(sSymbol) == _mpSumPhenotypeMale.end()) {
-				throw new Exception("Unable to find population symbol: male");
-			}
+			for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
+			{
+				string sSymbol = (*itSymbol).substr(4);
+				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+				if (sType != "Avg" && sType != "Std") {
+					throw new Exception("Population parameter type unknown!");
+				}
+				if (this->_mpSumPhenotypeMale.find(sSymbol) == _mpSumPhenotypeMale.end()) {
+					throw new Exception("Unable to find population symbol: male");
+				}
 			
-			pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
-			pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
+				pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
+				pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
 
-		}
+			}
 
-		for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
-		{
-			string sSymbol = (*itSymbol).substr(4);
-			string sType = (*itSymbol).substr(0, 3); //either Avg or Std
-			if (sType != "Avg" && sType != "Std") {
-				throw new Exception("Population parameter type unknown!");
-			}
-			if (this->_mpSumPhenotypeFemale.find(sSymbol) == _mpSumPhenotypeFemale.end()) {
-				throw new Exception("Unable to find population symbol: female");
-			}
+			for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
+			{
+				string sSymbol = (*itSymbol).substr(4);
+				string sType = (*itSymbol).substr(0, 3); //either Avg or Std
+				if (sType != "Avg" && sType != "Std") {
+					throw new Exception("Population parameter type unknown!");
+				}
+				if (this->_mpSumPhenotypeFemale.find(sSymbol) == _mpSumPhenotypeFemale.end()) {
+					throw new Exception("Unable to find population symbol: female");
+				}
 			
-			pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
-			pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
+				pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
+				pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
 
-		}
+			}
 
 		
-		++itPopSymbols;
-		++itPopCourterSymbols;
-		++itPopChooserSymbols;
+			++itPopSymbols;
+			++itPopCourterSymbols;
+			++itPopChooserSymbols;
+		}
+
 	}
-
-
 	//now go through each individual 
 	vector<int>::size_type nMale = this->_mpMales.size();
 	vector<int>::size_type nFemale = this->_mpFemales.size();
@@ -501,9 +531,17 @@ void Population::FreqDependentNaturalSelection() {
 	{
 
 	#pragma omp for
-	for (vector< Individual * >::size_type i=0; i< nMale; i++ ) {
+	//for (vector< Individual * >::size_type i=0; i< nMale; i++ ) {
+	for (signed long i=0; i< nMale; i++ ) {
 		Individual * pInd = _mpMales[i];
 
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+		#else
+		int nCPU = 0;
+		#endif
+
+		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
 		list< vector<string> >::iterator itSelfSymbols = pqvSelfSymbols->begin();
 		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
 			vector<string> vSymbolsSelf = *itSelfSymbols;
@@ -546,8 +584,17 @@ void Population::FreqDependentNaturalSelection() {
 	}
 
 	#pragma omp for
-	for (vector< Individual * >::size_type i=0; i< nFemale; i++ ) {
+	//for (vector< Individual * >::size_type i=0; i< nFemale; i++ ) {
+	for (signed long i=0; i< nFemale; i++ ) {
 		Individual * pInd = _mpFemales[i];
+
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+		#else
+		int nCPU = 0;
+		#endif
+
+		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
 
 		list< vector<string> >::iterator itSelfSymbols = pqvSelfSymbols->begin();
 		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {

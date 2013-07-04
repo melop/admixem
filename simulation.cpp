@@ -2,6 +2,10 @@
 #include "maths.h"
 #include <time.h>
 
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
 extern Normal NormalGen; 
 extern Uniform UniformGen;
 extern double nRandSeed;
@@ -13,6 +17,7 @@ void UISimulation() {
 
 		UILoadConfig();
 
+		
 		clock_t t;
 		t = clock();
 		PerformSimulation();
