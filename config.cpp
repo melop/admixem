@@ -537,15 +537,24 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 					continue;
 				}
 
-				string sTemp = it->first.substr(3);				
+				string sSymbolLabel = it->first;
+				string sTemp = it->first.substr(3);	
+				size_t nFirstUS = sTemp.find_first_of("_");
+				size_t nLastUS = sTemp.find_last_of("_");
+
+				if (nFirstUS != nLastUS) { // there is _a1 _a2 suffixes, delete the suffix
+					sTemp = sTemp.substr(0,nLastUS);
+					sSymbolLabel = "chr" + sTemp;				
+				}
+
 				sTemp = sTemp.replace(sTemp.find_first_of("_"), 1, " ");
 				if (sscanf(sTemp.c_str(), "%d %lf", &nSymbolChr, &nSymbolPos)!=2) 
-				{
+				{ // see if it's another format with _a1, a2 suffixes
 					continue;
 				};
 				pair<int,double> oSymbolPair( nSymbolChr, nSymbolPos);
 				vSymbols.push_back(oSymbolPair);
-				vSymbolStrings.push_back(it->first); // save label too
+				vSymbolStrings.push_back(sSymbolLabel); // save label too
 			}
 
 			for (int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {

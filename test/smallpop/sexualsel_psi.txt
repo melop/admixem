@@ -1,0 +1,5 @@
+Population	Gen	Selection
+malinche	-1	1
+birchmanni	-1	1
+hybridzone	1	1
+hybridzone	-1	if (Psi==0 , 1, if(Psi>0, exp( -pow( PrevGenCurrPopCourter_Avg_Signal  - Courter_Signal , 2)/(2*pow( if(Psi<2, 2, Psi) , 2))) , 1 - exp( -pow( PrevGenCurrPopCourter_Avg_Signal - Courter_Signal , 2)/(2*pow( if(abs(Psi)<2, 2, abs(Psi)) , 2)))) )
