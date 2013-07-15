@@ -1182,6 +1182,13 @@ GeneConfigurations::GeneConfigurations(void * pParentConfig) {
 }
 
 void GeneConfigurations::LoadFromFile(string szConfigFile) {
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		int nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
 
 	this->_nHaploidChrNum = ((SimulationConfigurations *)this->_pParentConfig)->pMarkerConfig->GetHaploidChromosomeNum();
 
@@ -1189,13 +1196,15 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 	//this->_mpGenes = new map<double, GeneProperties>[_nHaploidChrNum];
 	//this->_mpGeneIndex = new map<double, int>[_nHaploidChrNum];
 	vector<int> vIndexCounters;
+	vector< map<double , GeneProperties> > mpGenes;
+	vector< map<double, int> > mpGeneIndex;
 
 	for (int i=0;i<_nHaploidChrNum;i++) {
 		map<double , GeneProperties> oPlaceHolderMap1;
 		map<double, int> oPlaceHolderMap2;
 
-		this->_mpGenes.push_back(oPlaceHolderMap1);
-		this->_mpGeneIndex.push_back(oPlaceHolderMap2);
+		mpGenes.push_back(oPlaceHolderMap1);
+		mpGeneIndex.push_back(oPlaceHolderMap2);
 
 		vIndexCounters.push_back(0);
 	}
@@ -1249,8 +1258,8 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 		oGeneProp.DominantFreqPop1 = nDominantFreqPop1;
 		oGeneProp.DominantFreqPop2 = nDominantFreqPop2;
 
-		this->_mpGenes[nChr-1][nPos] = oGeneProp;
-		this->_mpGeneIndex[nChr-1][nPos] = vIndexCounters.at(nChr-1);
+		mpGenes[nChr-1][nPos] = oGeneProp;
+		mpGeneIndex[nChr-1][nPos] = vIndexCounters.at(nChr-1);
 		vIndexCounters.at(nChr-1) += 1;
 		//nIndexCounter++;
 		
@@ -1289,18 +1298,19 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 				continue;//empty line
 			}
 
-			if (this->_mpGenes.size() < nChr)
+			if (mpGenes.size() < nChr)
 			{
 				std::printf("Warning: Gene mutation definition applied to an undefined chromosome: %d", nChr);
 			}
-			else if (this->_mpGenes[nChr-1].find(nPos) == this->_mpGenes[nChr-1].end()) {//
+			else if (mpGenes[nChr-1].find(nPos) == mpGenes[nChr-1].end()) {//
 				std::printf("Warning: Gene mutation definition applied to an undefined location: %f on chromosome %d", nPos, nChr);
 			}
 			else {
-				this->_mpGenes[nChr-1][nPos].MutationProb = nMuteRate;
-				this->_mpGenes[nChr-1][nPos].LowerBound = nLowerBound;
-				this->_mpGenes[nChr-1][nPos].UpperBound = nUpperBound;
-				this->_mpGenes[nChr-1][nPos].pFormula = new Parser(szFormula);
+				mpGenes[nChr-1][nPos].MutationProb = nMuteRate;
+				mpGenes[nChr-1][nPos].LowerBound = nLowerBound;
+				mpGenes[nChr-1][nPos].UpperBound = nUpperBound;
+				mpGenes[nChr-1][nPos].pFormula = new Parser(szFormula);
+				mpGenes[nChr-1][nPos].sFormula = szFormula;
 				std::printf("Mutation rule %s loaded for chr %d : %f\n", szFormula, nChr, nPos);
 			}
 
@@ -1309,16 +1319,52 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 		
 	}
 
+	for( int nCPU=0; nCPU<nTotalCPUCore ; nCPU++) {
+		this->_mpmpGenes[nCPU] = mpGenes;
+		this->_mpmpGeneIndex[nCPU] = mpGeneIndex;
+
+	}
+
 	//printf("%f \n", this->_mpGenes[23][100.0].DominantFreqPop1);
 
 }
 
+GeneProperties& GeneProperties::operator=(const GeneProperties& oSource) { // overload the copy behavior
+	this->AlleleMode = oSource.AlleleMode;
+	this->DominantFreqPop1 = oSource.DominantFreqPop1;
+	this->DominantFreqPop2 = oSource.DominantFreqPop2;
+	this->DominantLabel = oSource.DominantLabel;
+	this->DominantValue = oSource.DominantValue;
+	this->GeneName = oSource.GeneName;
+	this->LowerBound = oSource.LowerBound;
+	this->MutationProb = oSource.MutationProb;
+	this->RecessiveLabel = oSource.RecessiveLabel;
+	this->RecessiveValue = oSource.RecessiveValue;
+	this->sFormula = oSource.sFormula;
+	this->UpperBound = oSource.UpperBound;
+	this->pFormula = new Parser(oSource.sFormula);
+
+	 return *this ;
+}
+
 vector< map<double , GeneProperties> > * GeneConfigurations::GetMpGenes() {
-	return &this->_mpGenes;
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+	#else
+		int nCPU = 0;
+	#endif
+
+	return &this->_mpmpGenes[nCPU];
 }
 
 vector< map<double, int> > *  GeneConfigurations::GetMpGeneIndex() {
-	return &this->_mpGeneIndex;
+	#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+	#else
+		int nCPU = 0;
+	#endif
+
+	return &this->_mpmpGeneIndex[nCPU];
 }
 
 SimulationConfigurations::SimulationConfigurations() {

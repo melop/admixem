@@ -202,6 +202,9 @@ struct GeneProperties {
 	double LowerBound;
 	double UpperBound;
 	Parser * pFormula;
+	string sFormula;
+
+	GeneProperties& operator=(const GeneProperties& oSource);
 };
 
 
@@ -216,8 +219,8 @@ class GeneConfigurations {
 		string _szConfigFilename;
 		int	_nHaploidChrNum;
 		void * _pParentConfig;// convert to SimulationConfigurations!
-		vector< map<double , GeneProperties> >  _mpGenes; //array by chromosome. each element is a map of genes, key is the position of genes
-		vector< map<double, int> > _mpGeneIndex; // same structured as above, this records the consecutive index of each gene on the chromosome.
+		map< int, vector< map<double , GeneProperties> > >  _mpmpGenes; //array by chromosome. each element is a map of genes, key is the position of genes
+		map< int, vector< map<double, int> > > _mpmpGeneIndex; // same structured as above, this records the consecutive index of each gene on the chromosome.
 };
 
 
