@@ -60,7 +60,7 @@ void PerformSimulation() {
 		string sPopString = PopId2PopString(nPopId);
 		Population * pNewPop = new Population();
 		printf((sPopString+"_size_limit\n").c_str());
-		if (SimulConfig.GetNumericConfig(sPopString+"_size_limit")==NULL) {
+		if (SimulConfig.GetNumericConfig(sPopString+"_size_limit")==-1) {
 			printf("%d populations defined in configuration.\n", (nPopId-1));
 			break;
 		}
@@ -167,7 +167,8 @@ void PerformSimulation() {
 
 		}
 		else {
-			string sMigrationParamLabelPrefix = (nCurrGen==0)? "gen1_":"";
+			string szCurrGen = fnIntToString(nCurrGen);
+			string sMigrationParamLabelPrefix = "gen" + szCurrGen + "_"; //generation specific rule prefix
 			for (vector< Population * >::iterator itpPop1 = vPops.begin() ; itpPop1 != vPops.end(); ++itpPop1)
 			{
 				for (vector< Population * >::iterator itpPop2 = vPops.begin() ; itpPop2 != vPops.end(); ++itpPop2) {
@@ -176,17 +177,26 @@ void PerformSimulation() {
 						continue; // same pops, no migration needed
 					}
 					string sMigrationParamLabel = sMigrationParamLabelPrefix + PopId2PopString((*itpPop1)->GetPopId()) + "_to_" + PopId2PopString((*itpPop2)->GetPopId()); 
-					if (!SimulConfig.GetNumericConfig(sMigrationParamLabel)) {
+					string sMigrationParamLabelGeneral = PopId2PopString((*itpPop1)->GetPopId()) + "_to_" + PopId2PopString((*itpPop2)->GetPopId()); 
+					if (SimulConfig.GetNumericConfig(sMigrationParamLabel)==-1 && SimulConfig.GetNumericConfig(sMigrationParamLabelGeneral)==-1) {
 						continue; // didn't find the configuration for this migration, move on
 					}
 					else {
 						int nNumberMigrants = SimulConfig.GetNumericConfig(sMigrationParamLabel);
-						if (nNumberMigrants == NULL) {
+						int nNumberMigrantsGeneral = SimulConfig.GetNumericConfig(sMigrationParamLabelGeneral);
+						if (nNumberMigrants == -1 && nNumberMigrantsGeneral!=-1) { // IF generation specific rule not available, use general rule
+							nNumberMigrants = nNumberMigrantsGeneral;
+						}
+						else if (nNumberMigrants == -1 && nNumberMigrantsGeneral==-1) {
 							continue;
 						}
 
 						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), nNumberMigrants);
 						for (int i=0; i<nNumberMigrants; i++) {
+							if ((*itpPop1)->GetPopSize(4) == 0) {
+								printf("Population size of %s is now 0, only migrated %d individuals.\n", (*itpPop1)->GetPopName().c_str(), i);
+								break;							
+							}
 							(*itpPop2)->Immigrate( (*itpPop1)->Emigrate(), true );
 						}
 					}
