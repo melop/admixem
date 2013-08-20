@@ -10,6 +10,9 @@
 *.lai
 *.la
 *.a
+*.tlog
+*.pdb
+*.obj
 x64/Debug/link.2024-cvtres.read.1.tlog
 x64/Debug/link.2024-cvtres.write.1.tlog
 x64/Debug/link.2024-rc.read.1.tlog
