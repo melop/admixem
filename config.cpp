@@ -517,9 +517,16 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 				pF->Evaluate(sFormula);
 			}
 			catch(std::runtime_error e) {
-				
-				printf("Error occured when trying to parse formula: %s \nErrMsg:%s\nPlease check formulae grammar!", sFormula.c_str(), e.what());
-				exit(100);
+				if ( string(e.what()) == "Divide by zero" ) {
+					
+					printf("Warning in formula: %s \nErrMsg:%s\nThis could simply be caused by uninitialized values", sFormula.c_str(), e.what());
+					
+					
+				}
+				else {
+					printf("Error occured when trying to parse formula: %s \nErrMsg:%s\nPlease check formulae grammar!", sFormula.c_str(), e.what());
+					exit(100);
+				}
 			}
 
 			vector< pair<int, double> > vSymbols;
