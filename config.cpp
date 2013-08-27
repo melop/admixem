@@ -671,6 +671,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
+		printf("Parsing natural rule for Pop %s : %s\n", sPopName.c_str(), sFormula.c_str());
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
 			
 			
@@ -939,6 +940,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
+		printf("Parsing sexual rule for Pop %s : %s\n", sPopName.c_str(), sFormula.c_str());
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
 			
 			
