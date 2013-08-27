@@ -649,7 +649,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 	_szConfigFilename = szConfigFile; // save name of config file
 
-	fsConfigFile.open(szConfigFile , std::ios_base::in);
+	fsConfigFile.open(szConfigFile );
 	//pConfigFile = fopen(szConfigFile.c_str(), "r");
 	
 
@@ -916,7 +916,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 	_szConfigFilename = szConfigFile; // save name of config file
 
-	fsConfigFile.open(szConfigFile , std::ios_base::in);
+	fsConfigFile.open(szConfigFile);
 	//pConfigFile = fopen(szConfigFile.c_str(), "r");
 	
 
