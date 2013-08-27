@@ -13,6 +13,7 @@
 #include "newran02/newran.h"
 #include "maths.h"
 
+#define MAXTEXT 1000000
 
 
 #pragma once

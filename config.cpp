@@ -629,10 +629,11 @@ NaturalSelectionConfigurations::NaturalSelectionConfigurations(void * pParentCon
 
 void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 {
-	FILE *pConfigFile;
-	char szBuffer[13049];
-	char szPopName[100];
-	char szFormula[12048];
+	//FILE *pConfigFile;
+	ifstream fsConfigFile;
+	string sBuffer;
+	char szPopName[MAXTEXT];
+	char szFormula[MAXTEXT];
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
@@ -648,22 +649,26 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 	_szConfigFilename = szConfigFile; // save name of config file
 
-	pConfigFile = fopen(szConfigFile.c_str(), "r");
+	fsConfigFile.open(szConfigFile , std::ios_base::in);
+	//pConfigFile = fopen(szConfigFile.c_str(), "r");
+	
 
-	if (!pConfigFile) {
+	if (!fsConfigFile.is_open()) {
 		printf("%s\n", "Cannot open natural selection file ...");
 		throw "Cannot open natural selection file!";
 	}
 
-	if (fgets(szBuffer, 2048, pConfigFile) == NULL) { // skip the header line
+	getline(fsConfigFile,sBuffer);
+	if (sBuffer == "") { // skip the header line
 		throw "Cannot read natural selection file!";
 	}
 
-	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
+	while(fsConfigFile.good()) 
 	{
+		getline(fsConfigFile,sBuffer);
 		string sPopName, sFormula;
 		int nGen;
-		sscanf(szBuffer, "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
+		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
@@ -896,10 +901,10 @@ SexualSelectionConfigurations::SexualSelectionConfigurations(void * pParentConfi
 
 void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 {
-	FILE *pConfigFile;
-	char szBuffer[13049];
-	char szPopName[100];
-	char szFormula[12048];
+	ifstream fsConfigFile;
+	string sBuffer;
+	char szPopName[MAXTEXT];
+	char szFormula[MAXTEXT];
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore = omp_get_max_threads();//omp_get_num_threads();
@@ -911,22 +916,27 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 	_szConfigFilename = szConfigFile; // save name of config file
 
-	pConfigFile = fopen(szConfigFile.c_str(), "r");
+	fsConfigFile.open(szConfigFile , std::ios_base::in);
+	//pConfigFile = fopen(szConfigFile.c_str(), "r");
+	
 
-	if (!pConfigFile) {
+	if (!fsConfigFile.is_open()) {
 		printf("%s\n", "Cannot open sexual selection file ...");
 		throw "Cannot open sexual selection file!";
 	}
 
-	if (fgets(szBuffer, 2048, pConfigFile) == NULL) { // skip the header line
+	getline(fsConfigFile,sBuffer);
+	if (sBuffer == "") { // skip the header line
 		throw "Cannot read sexual selection file!";
 	}
 
-	while(fgets(szBuffer, 13049, pConfigFile) != NULL) 
+
+	while(fsConfigFile.good()) 
 	{
+		getline(fsConfigFile,sBuffer);
 		string sPopName, sFormula;
 		int nGen = -1;
-		sscanf(szBuffer, "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
+		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
