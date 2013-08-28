@@ -47,15 +47,24 @@ void PerformSimulation() {
 	vector< Population * > vPops;
 
 	double nRandSeed = SimulConfig.GetNumericConfig("RandomSeed");
-	if (nRandSeed != -1) {
-		Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
-		srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
+	if (nRandSeed != -1 && nRandSeed>0.0 && nRandSeed<1.0) {
+		Random::Set(nRandSeed); //initialize random number generator
+		srand((int) (nRandSeed * (double)RAND_MAX));
 		printf("User-specified random seed is %f \n" , nRandSeed);
 	}
 	else {
-		nRandSeed = (double)rand()/10.0;
+		srand(time(NULL)); // set seed with time.
+		nRandSeed = (double)rand()/(double)RAND_MAX;
+		if (nRandSeed == 0.0) {
+			nRandSeed = 0.0001;
+		}
+
+		if (nRandSeed == 1.0) {
+			nRandSeed = 0.9999;
+		}
+
 		Random::Set(nRandSeed); //initialize random number generator
-		srand((int)nRandSeed * 10);
+		srand((int) (nRandSeed * (double)RAND_MAX));
 		printf("System chosen random seed is %f \n" , nRandSeed);
 		SimulConfig.SetNumericConfig("RandomSeed" , nRandSeed);
 	}
