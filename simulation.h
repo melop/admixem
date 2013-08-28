@@ -30,3 +30,4 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 string convertInt(int number);
 
 void fnMakeDir(const char * sPath);
+bool fnFileExists(const char *filename);

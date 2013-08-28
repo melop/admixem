@@ -50,9 +50,28 @@ void PerformSimulation() {
 	Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
 	srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
 
-	string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "/";
-	string sOutFileBase = sOutFolder + "Gen";
-	fnMakeDir(sOutFolder.c_str()); // make output folder
+	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
+	
+	if (!fnFileExists(sOutFolder.c_str())) {
+		fnMakeDir(sOutFolder.c_str()); // make output folder
+	}
+	else { //output folder already exists, try another name
+		int nTryFolder=1;
+		while(true) {
+			string sCurrFolderNum = fnIntToString(nTryFolder);
+			string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "_" + sCurrFolderNum;
+				if (!fnFileExists(sOutFolder.c_str())) {
+					fnMakeDir(sOutFolder.c_str()); // make output folder
+					SimulConfig.SetConfig("OutputFolder" , sOutFolder);
+					break;
+				}
+
+			nTryFolder++;
+		}
+
+	}
+
+	string sOutFileBase = sOutFolder + "/" + "Gen";
 
 	int nPopId = 1;//start from 1
 	while(true) { // now try to parse in populations.
@@ -483,4 +502,10 @@ void fnMakeDir(const char * sPath)
 	string szCmd("mkdir -m 777 -p ");
 	system((szCmd + "\"" + sPath + "\"").c_str());
 	#endif
+}
+
+bool fnFileExists(const char *filename)
+{
+  ifstream ifile(filename);
+  return ifile.is_open();
 }

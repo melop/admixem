@@ -1535,6 +1535,10 @@ const string SimulationConfigurations::GetConfig(string sKey) {
 
 };
 
+void SimulationConfigurations::SetConfig(string sKey, string sValue) {
+	this->_mpConfigs[sKey] = sValue;
+}
+
 const double SimulationConfigurations::GetNumericConfig(string sKey) {
 	
 	if (  this->_mpNumericConfigs.find(sKey) == this->_mpNumericConfigs.end()) { // the requested key is not found in the config

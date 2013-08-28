@@ -231,6 +231,7 @@ class SimulationConfigurations {
 		SimulationConfigurations();
 		void LoadFromFile(string szConfigFile);
 		const string GetConfig(string sKey);
+		void SetConfig(string sKey, string sValue);
 		const double GetNumericConfig(string sKey);
 		MarkerConfigurations * pMarkerConfig;
 		RecombProbConfigurations * pRecombProbConfig;
