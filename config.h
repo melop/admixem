@@ -233,6 +233,7 @@ class SimulationConfigurations {
 		const string GetConfig(string sKey);
 		void SetConfig(string sKey, string sValue);
 		const double GetNumericConfig(string sKey);
+		void SetNumericConfig(string sKey, double nValue);
 		MarkerConfigurations * pMarkerConfig;
 		RecombProbConfigurations * pRecombProbConfig;
 		PhenotypeConfigurations * pPhenotypeConfig;

@@ -1554,6 +1554,10 @@ const double SimulationConfigurations::GetNumericConfig(string sKey) {
 
 };
 
+void SimulationConfigurations::SetNumericConfig(string sKey, double nValue) {
+	this->_mpNumericConfigs[sKey] = nValue;
+}
+
 int SimulationConfigurations::GetCurrGen() {
 	return this->nCurrGen;
 }

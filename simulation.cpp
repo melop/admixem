@@ -46,9 +46,19 @@ void PerformSimulation() {
 	int nGenerations = (int)SimulConfig.GetNumericConfig("generations");
 	vector< Population * > vPops;
 
-
-	Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
-	srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
+	double nRandSeed = SimulConfig.GetNumericConfig("RandomSeed");
+	if (nRandSeed != -1) {
+		Random::Set(SimulConfig.GetNumericConfig("RandomSeed")); //initialize random number generator
+		srand((int)SimulConfig.GetNumericConfig("RandomSeed") * 10);
+		printf("User-specified random seed is %f \n" , nRandSeed);
+	}
+	else {
+		nRandSeed = (double)rand()/10.0;
+		Random::Set(nRandSeed); //initialize random number generator
+		srand((int)nRandSeed * 10);
+		printf("System chosen random seed is %f \n" , nRandSeed);
+		SimulConfig.SetNumericConfig("RandomSeed" , nRandSeed);
+	}
 
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
 	
