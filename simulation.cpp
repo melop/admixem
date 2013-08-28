@@ -59,7 +59,7 @@ void PerformSimulation() {
 		int nTryFolder=1;
 		while(true) {
 			string sCurrFolderNum = fnIntToString(nTryFolder);
-			string sOutFolder = SimulConfig.GetConfig("OutputFolder") + "_" + sCurrFolderNum;
+			sOutFolder = SimulConfig.GetConfig("OutputFolder") + "_" + sCurrFolderNum;
 				if (!fnFileExists(sOutFolder.c_str())) {
 					fnMakeDir(sOutFolder.c_str()); // make output folder
 					SimulConfig.SetConfig("OutputFolder" , sOutFolder);
