@@ -1487,7 +1487,7 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 	this->pNaturalSelConfig->LoadFromFile(this->GetConfig("NaturalSelection"));
 	this->pSexualSelConfig->LoadFromFile(this->GetConfig("SexualSelection"));
 	this->pMarkerConfig->CalculateMapDistances();
-
+	this->fnParseSampleGenDef();
 
 
 };
@@ -1495,6 +1495,63 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 const string SimulationConfigurations::GetConfigFileName() {
 	return _szConfigFilename;
 }
+
+void SimulationConfigurations::fnParseSampleGenDef() {
+	string sDefFile = this->GetConfig("samplegens");
+	if (sDefFile == "") {
+		return;
+	}
+
+	FILE *pDefFile;
+
+	printf("%s : %s\n", "Start loading sampling range file ...", sDefFile.c_str());
+
+	pDefFile = fopen(sDefFile.c_str(), "r");
+
+	if (!pDefFile) {
+		printf("%s : %s\n", "Cannot open sampling range file ...", sDefFile.c_str());
+		throw "Cannot open sampling range file!";
+	}
+
+	//Go over each line:
+	char szBuffer[MAXTEXT];
+
+
+	while(fgets(szBuffer, MAXTEXT, pDefFile) != NULL) 
+	{
+		int nStartGen = 0;
+		int nEndGen = 0;
+		int nReadField = sscanf(szBuffer, "%d %d", nStartGen, nEndGen);
+		if (nReadField <= 0 ) {
+			continue;
+		}
+
+		if (nReadField == 1) {
+			nEndGen = nStartGen;
+		}
+
+		this->_mvSampleGens.push_back( std::pair< int, int>( nStartGen ,  nEndGen ) );
+
+	}
+}
+
+bool SimulationConfigurations::IsInUserSpecifiedSamplingRange(int nGen) {
+	if ( (this->_mvSampleGens.size()) == 0) {
+		return true; // user didn't specify any generations to sample, return true by default.
+	}
+
+	for(std::vector< std::pair< int, int>>::iterator it = this->_mvSampleGens.begin(); it != this->_mvSampleGens.end(); ++it) {
+		int nBegin = it->first;
+		int nEnd = it->second;
+		if (nGen >= nBegin && nGen <= nEnd)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 void SimulationConfigurations::fnParseNumericConfigs() {
 

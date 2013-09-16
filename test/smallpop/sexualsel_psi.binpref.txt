@@ -1,0 +1,3 @@
+Population	Gen	Selection
+hybridzone	1	1
+hybridzone	-1	meansig=PrevGenCurrPopCourter_Avg_Signal2, courtsig=Courter_Signal2, midsig=4/2, if ( Psi==0, 1 ,(meansig=if (Psi > 0,meansig,midsig+(midsig-meansig)),if( meansig==midsig,1,if(meansig<midsig,if(courtsig<=meansig,1,exp(-pow(meansig-courtsig,2)/(2*pow(pow(abs(Psi), -1) , 2)))),if ( courtsig >=meansig , 1 ,exp( -pow( meansig  - courtsig , 2)/(2*pow(  pow(abs(Psi), -1) , 2))))))))

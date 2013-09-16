@@ -243,14 +243,17 @@ class SimulationConfigurations {
 		const string GetConfigFileName();
 		int GetCurrGen();
 		void SetCurrGen( int nGen);
+		bool IsInUserSpecifiedSamplingRange(int nGen);
 
 	private:
 		string _szConfigFilename;
 		std::map<string, string> _mpConfigs; 
 		std::map<string, double> _mpNumericConfigs;
+		std::vector< std::pair< int, int > > _mvSampleGens;
 		int nCurrGen;
 
 		void fnParseNumericConfigs();
+		void fnParseSampleGenDef() ;
 
 
 };

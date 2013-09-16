@@ -160,7 +160,7 @@ void PerformSimulation() {
 			printf("Warning: AllOutput is set to Off, no output will be written. \n");
 		}
 
-		if ( (!bAllOutputOff) && ((nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2)) {
+		if ( (!bAllOutputOff) && ((nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || nCurrGen==0 || nCurrGen==1 || nCurrGen==2 || SimulConfig.IsInUserSpecifiedSamplingRange(nCurrGen))) {
 
 		
 			printf("Writing to disk...\n");

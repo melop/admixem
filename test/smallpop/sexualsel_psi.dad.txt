@@ -1,0 +1,3 @@
+Population	Gen	Selection
+hybridzone	1	1
+hybridzone	-1	if (Psi==0 , 1, if(Psi>0, exp( -pow( Dad_Signal2  - Courter_Signal2 , 2)/(2*pow(  pow(Psi, -1) , 2))) , 1 - exp( -pow( Dad_Signal2 - Courter_Signal2 , 2)/(2*pow(  -pow(Psi,-1), 2)))) )
