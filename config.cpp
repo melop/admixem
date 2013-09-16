@@ -1537,7 +1537,7 @@ void SimulationConfigurations::fnParseSampleGenDef() {
 
 bool SimulationConfigurations::IsInUserSpecifiedSamplingRange(int nGen) {
 	if ( (this->_mvSampleGens.size()) == 0) {
-		return true; // user didn't specify any generations to sample, return true by default.
+		return false; // user didn't specify any generations to sample, return false by default.
 	}
 
 	for(std::vector< std::pair< int, int > >::iterator it = this->_mvSampleGens.begin(); it != this->_mvSampleGens.end(); ++it) {
