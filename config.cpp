@@ -1521,7 +1521,7 @@ void SimulationConfigurations::fnParseSampleGenDef() {
 	{
 		int nStartGen = 0;
 		int nEndGen = 0;
-		int nReadField = sscanf(szBuffer, "%d %d", nStartGen, nEndGen);
+		int nReadField = sscanf(szBuffer, "%d %d", &nStartGen, &nEndGen);
 		if (nReadField <= 0 ) {
 			continue;
 		}
