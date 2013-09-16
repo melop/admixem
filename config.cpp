@@ -1540,7 +1540,7 @@ bool SimulationConfigurations::IsInUserSpecifiedSamplingRange(int nGen) {
 		return true; // user didn't specify any generations to sample, return true by default.
 	}
 
-	for(std::vector< std::pair< int, int>>::iterator it = this->_mvSampleGens.begin(); it != this->_mvSampleGens.end(); ++it) {
+	for(std::vector< std::pair< int, int > >::iterator it = this->_mvSampleGens.begin(); it != this->_mvSampleGens.end(); ++it) {
 		int nBegin = it->first;
 		int nEnd = it->second;
 		if (nGen >= nBegin && nGen <= nEnd)
