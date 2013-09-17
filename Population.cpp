@@ -245,6 +245,7 @@ bool Population::Breed() {
 	std::set<int> stSampledFemales;//keep a list of the females already sampled so that they're not sampled twice.
 	//std::set<int> stExhaustedFemales; // a list of females without further gametes
 	int nExhaustedFemales=0;
+	bool bCourterHandeled = false;
 	#pragma omp parallel shared(nExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
@@ -274,6 +275,7 @@ bool Population::Breed() {
 
 		Individual * pFemale = this->_mpFemales[nRandFemaleInd]; //get random female
 
+		if (!bCourterHandeled) {
 		int nCourters =  (int)NormalExt(nSampleMate , 1, 0, 100);
 
 		
@@ -288,6 +290,7 @@ bool Population::Breed() {
 				//}
 				//printf("Breed::aftercourterhandler\n");
 			}
+		}
 		
 
 		//After mating, get the offspring out!
@@ -339,6 +342,7 @@ bool Population::Breed() {
 
 	}
 
+		bCourterHandeled = true;
 	} // end do block
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (nExhaustedFemales < this->_mpFemales.size()) ) ; //end do while block.
 

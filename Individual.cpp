@@ -591,7 +591,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 	//} //end critical
 
 	// now clear all gametes
-	this->_arrOtherParentsForOffsprings.clear();
+	//this->_arrOtherParentsForOffsprings.clear();
 
 }
 
