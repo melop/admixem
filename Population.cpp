@@ -294,7 +294,10 @@ bool Population::Breed() {
 		//}
 
 		if (vOffSprings.size() == 0) {
-			stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+			#pragma omp critical
+			{
+				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+			}
 		}
 
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
