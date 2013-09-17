@@ -269,7 +269,7 @@ bool Population::Breed() {
 
 		#pragma omp critical
 		{
-			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd)!= stExhaustedFemales.end())) {
+			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd)== stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 			}
 			stSampledFemales.insert(nRandFemaleInd);
