@@ -293,9 +293,9 @@ bool Population::Breed() {
 			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
-		if (vOffSprings.size() == 0) 
+		#pragma omp critical
 		{
-			#pragma omp critical
+			if (vOffSprings.size() == 0) 
 			{
 			
 				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
