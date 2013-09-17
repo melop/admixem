@@ -246,18 +246,20 @@ bool Population::Breed() {
 	//std::set<int> stExhaustedFemales; // a list of females without further gametes
 	int nExhaustedFemales=0;
 	bool bCourterHandeled = false;
+	do 
+	{
+		//#pragma omp critical
+		//{
+			if (stSampledFemales.size() != 0) {
+				stSampledFemales.clear();
+			}
+		//}
+
 	#pragma omp parallel shared(nExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
 	
-	do 
-	{
-		#pragma omp critical
-		{
-			if (stSampledFemales.size() != 0) {
-				stSampledFemales.clear();
-			}
-		}
+
 
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) 
@@ -343,10 +345,10 @@ bool Population::Breed() {
 	}
 
 		bCourterHandeled = true;
+	} //end parallel block
+	
 	} // end do block
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (nExhaustedFemales < this->_mpFemales.size()) ) ; //end do while block.
-
-	} //end parallel block
 
 	
 	this->_bBred = true; //set flag
