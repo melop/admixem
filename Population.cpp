@@ -255,7 +255,7 @@ bool Population::Breed() {
 			}
 		//}
 
-	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
+	#pragma omp parallel shared(bCourterHandeled, stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
 	
