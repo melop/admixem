@@ -243,13 +243,18 @@ bool Population::Breed() {
 	//for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
 	//enable omp. because this is random access, ideal for parallel
 	std::set<int> stSampledFemales;//keep a list of the females already sampled so that they're not sampled twice.
+	std::set<int> stExhaustedFemales; // a list of females without further gametes
+	do 
+	{
 
 	#pragma omp parallel shared(stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
-
+	
+	stSampledFemales.clear();
 	#pragma omp for 
-	for(int i=0;i<nNumFemales;i++) {
+	for(int i=0;i<nNumFemales;i++) 
+	{
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
 
@@ -288,7 +293,12 @@ bool Population::Breed() {
 			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
-		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) {
+		if (vOffSprings.size() == 0) {
+			stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+		}
+
+		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
+		{
 
 			if (nNewOffSpringCount <= this->_nPopMaxSize)
 			{
@@ -318,6 +328,10 @@ bool Population::Breed() {
 	}
 
 	} //end parallel block
+	
+	} // end do block
+
+	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
 	this->_bBred = true; //set flag
 	return true;
