@@ -243,16 +243,19 @@ bool Population::Breed() {
 	//for (vector<Individual *>::iterator itFemale = _mpFemales.begin(); itFemale!= _mpFemales.end(); ++itFemale) {
 	//enable omp. because this is random access, ideal for parallel
 	std::set<int> stSampledFemales;//keep a list of the females already sampled so that they're not sampled twice.
-	std::set<int> stExhaustedFemales; // a list of females without further gametes
-	
-	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
+	//std::set<int> stExhaustedFemales; // a list of females without further gametes
+	int nExhaustedFemales=0;
+	#pragma omp parallel shared(nExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
 	
 	do 
 	{
-		if (stSampledFemales.size() != 0) {
-			stSampledFemales.clear();
+		#pragma omp critical
+		{
+			if (stSampledFemales.size() != 0) {
+				stSampledFemales.clear();
+			}
 		}
 
 	#pragma omp for 
@@ -263,7 +266,7 @@ bool Population::Breed() {
 
 		#pragma omp critical
 		{
-			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd)!= stExhaustedFemales.end())) {
+			while(stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 			}
 			stSampledFemales.insert(nRandFemaleInd);
@@ -301,7 +304,8 @@ bool Population::Breed() {
 			if (vOffSprings.size() == 0) 
 			{
 			
-				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+				//stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+				nExhaustedFemales++;
 			}
 		}
 
@@ -336,7 +340,7 @@ bool Population::Breed() {
 	}
 
 	} // end do block
-	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
+	while( (nNewOffSpringCount < this->_nPopMaxSize) && (nExhaustedFemales < this->_mpFemales.size()) ) ; //end do while block.
 
 	} //end parallel block
 
