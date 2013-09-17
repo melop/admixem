@@ -244,16 +244,17 @@ bool Population::Breed() {
 	//enable omp. because this is random access, ideal for parallel
 	std::set<int> stSampledFemales;//keep a list of the females already sampled so that they're not sampled twice.
 	std::set<int> stExhaustedFemales; // a list of females without further gametes
+	
+	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
+	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
+	{
+	
 	do 
 	{
 		if (stSampledFemales.size() != 0) {
 			stSampledFemales.clear();
 		}
-	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
-	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
-	{
-	
-	
+
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) 
 	{
@@ -334,12 +335,12 @@ bool Population::Breed() {
 
 	}
 
-	} //end parallel block
-	
 	} // end do block
-
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
+	} //end parallel block
+
+	
 	this->_bBred = true; //set flag
 	return true;
 
