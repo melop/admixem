@@ -246,12 +246,12 @@ bool Population::Breed() {
 	std::set<int> stExhaustedFemales; // a list of females without further gametes
 	do 
 	{
-
+		stSampledFemales.clear();
 	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
 	
-	stSampledFemales.clear();
+	
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) 
 	{
@@ -260,7 +260,7 @@ bool Population::Breed() {
 
 		#pragma omp critical
 		{
-			while(stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) {
+			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd)!= stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 			}
 			stSampledFemales.insert(nRandFemaleInd);
@@ -293,9 +293,11 @@ bool Population::Breed() {
 			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
-		if (vOffSprings.size() == 0) {
+		if (vOffSprings.size() == 0) 
+		{
 			#pragma omp critical
 			{
+			
 				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
 			}
 		}
