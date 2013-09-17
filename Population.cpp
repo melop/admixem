@@ -246,7 +246,9 @@ bool Population::Breed() {
 	std::set<int> stExhaustedFemales; // a list of females without further gametes
 	do 
 	{
-		stSampledFemales.clear();
+		if (stSampledFemales.size() != 0) {
+			stSampledFemales.clear();
+		}
 	#pragma omp parallel shared(stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
