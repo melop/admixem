@@ -260,6 +260,7 @@ Individual::Individual(Individual * pFather, Individual * pMother) {
 	this->_pPop = pMother->GetPop();
 
 	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not implemented.
+		//return;
 		throw "Cannot create a new individual from same-sex parents!";
 	}
 	
@@ -554,7 +555,11 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		if (this->_arrOtherParentsForOffsprings.size()==0) return;
 
 		int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
-		Individual * pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
+		Individual * pOffSpring = NULL;
+		#pragma omp critical 
+		{
+			pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
+		}
 		// See if it's lucky enough to survive the cruel nature!!
 		// Go through each selection rule:
 		
