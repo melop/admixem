@@ -1,4 +1,4 @@
-﻿Build started 12/10/2013 7:20:09 PM.
+﻿Build started 12/10/2013 7:25:17 PM.
      1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Individual.cpp
@@ -10,18 +10,18 @@
      1>Individual.cpp(525): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>Individual.cpp(540): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
      1>Individual.cpp(541): warning C4018: '<=' : signed/unsigned mismatch
-     1>Individual.cpp(564): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(730): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(738): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(566): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(733): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
      1>Individual.cpp(741): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(749): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(750): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(778): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(779): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(788): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(796): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(801): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(810): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(744): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(752): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(753): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(781): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(782): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(791): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(799): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(804): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(813): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
@@ -42,4 +42,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.42
+Time Elapsed 00:00:02.34
