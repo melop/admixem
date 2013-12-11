@@ -286,9 +286,6 @@ Individual::Individual(Individual * pFather, Individual * pMother, bool &bSucces
 	#pragma omp critical 
 	{
 		pFather->GetGamete(vFatherMarkers, vFatherGenes);
-	}
-	#pragma omp critical 
-	{
 		pMother->GetGamete(vMotherMarkers, vMotherGenes);
 	}
 
