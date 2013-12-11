@@ -261,7 +261,8 @@ Individual::Individual(Individual * pFather, Individual * pMother, bool &bSucces
 
 	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not implemented.
 		bSuccess = false;
-		throw "Cannot create a new individual from same-sex parents!";
+		//throw "Cannot create a new individual from same-sex parents!";
+		return;
 	}
 	
 	this -> _nId = nCurrIndividualId;
