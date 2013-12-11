@@ -283,8 +283,14 @@ Individual::Individual(Individual * pFather, Individual * pMother, bool &bSucces
 	
 	vector< vector<Marker> > vFatherMarkers, vMotherMarkers;
 	vector< vector<Gene> > vFatherGenes, vMotherGenes;
-	pFather->GetGamete(vFatherMarkers, vFatherGenes);
-	pMother->GetGamete(vMotherMarkers, vMotherGenes);
+	#pragma omp critical 
+	{
+		pFather->GetGamete(vFatherMarkers, vFatherGenes);
+	}
+	#pragma omp critical 
+	{
+		pMother->GetGamete(vMotherMarkers, vMotherGenes);
+	}
 
 	//printf("vFatherMarkers.size() %d\n", vFatherMarkers.size());
 	//printf("vFatherGenes.size() %d\n", vFatherGenes.size());
