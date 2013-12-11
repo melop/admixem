@@ -1,4 +1,4 @@
-﻿Build started 12/10/2013 6:36:58 PM.
+﻿Build started 12/10/2013 6:42:06 PM.
      1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Individual.cpp
@@ -11,17 +11,17 @@
      1>Individual.cpp(538): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
      1>Individual.cpp(539): warning C4018: '<=' : signed/unsigned mismatch
      1>Individual.cpp(557): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(713): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(721): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(724): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(732): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(733): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(761): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(762): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(771): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(779): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(784): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(793): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(717): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(725): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(728): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(736): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(737): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(765): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(766): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(775): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(783): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(788): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(797): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
@@ -42,4 +42,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.48
+Time Elapsed 00:00:02.47

@@ -560,6 +560,10 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		{
 			pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
 		}
+		if (!pOffSpring) {
+			i--;
+			continue;
+		}
 		// See if it's lucky enough to survive the cruel nature!!
 		// Go through each selection rule:
 		
