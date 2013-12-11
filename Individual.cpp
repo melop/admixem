@@ -555,10 +555,18 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 	for(int i=0; i<nNum;i++) { 
 		if (this->_arrOtherParentsForOffsprings.size()==0) return;
 
-		int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
+		
 		Individual * pOffSpring = NULL;
+		Individual * pDad = NULL;
+
+		do {
+			int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
+			pDad = this->_arrOtherParentsForOffsprings.at(nRandDad);
+		}
+		while(pDad==NULL);
+
 		bool bSuccess = false;
-		pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this , bSuccess); // create a new kid
+		pOffSpring = new Individual( pDad, this , bSuccess); // create a new kid
 		if (!bSuccess) {
 			i--;
 			continue;

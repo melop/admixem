@@ -29,8 +29,14 @@ int fnCompare (const void * a, const void * b)
 }
 
 int fnGetRandIndex(int nSizeOfArray) {
-	int nRet = (int)floor(UniformGen.Next() * (double)nSizeOfArray - 0.01);
-	return nRet>=0? nRet:0;
+	int nRet;
+	do {
+		nRet = (int)floor(UniformGen.Next() * (double)nSizeOfArray - 0.01);
+		nRet = nRet>=0? nRet:0;
+	}
+	while(nRet >= nSizeOfArray);
+
+	return nRet;
 };
 
 double round(double nNum) {
