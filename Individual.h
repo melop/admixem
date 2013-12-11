@@ -71,7 +71,7 @@ class Individual {
     public:
 	Individual(void);
 	Individual(void * pPop, char nAncestryLabel); //constructor for founders
-	Individual(Individual * pFather, Individual * pMother); //Constructor . Fertilize a new individual given parents
+	Individual(Individual * pFather, Individual * pMother, bool &bSuccess); //Constructor . Fertilize a new individual given parents
 	
 	enum Sex {Male, Female};
 	//Genome CurrentGenome;

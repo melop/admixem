@@ -254,13 +254,13 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 }
 
 
-Individual::Individual(Individual * pFather, Individual * pMother) {
+Individual::Individual(Individual * pFather, Individual * pMother, bool &bSuccess) {
 	this->_bDead = false;
 	this->_pPrevPop = NULL;
 	this->_pPop = pMother->GetPop();
 
 	if (pFather->GetSex() != Male || pMother -> GetSex() != Female) { // gay sex not implemented.
-		//return;
+		bSuccess = false;
 		throw "Cannot create a new individual from same-sex parents!";
 	}
 	
@@ -306,6 +306,7 @@ Individual::Individual(Individual * pFather, Individual * pMother) {
 	//printf("_arrGenes.size() %d\n", _arrGenes.size());
 	this->fnDeterminePhenotypes();
 	this->fnDetermineSex();
+	bSuccess = true;
 };
 
 bool Individual::Court(Individual * pChooser) {
@@ -556,10 +557,13 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 		int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
 		Individual * pOffSpring = NULL;
-		#pragma omp critical 
-		{
-			pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this); // create a new kid
+		bool bSuccess = false;
+		pOffSpring = new Individual( this->_arrOtherParentsForOffsprings.at(nRandDad), this , bSuccess); // create a new kid
+		if (!bSuccess) {
+			i--;
+			continue;
 		}
+
 		if (!pOffSpring) {
 			i--;
 			continue;
