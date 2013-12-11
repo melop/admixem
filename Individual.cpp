@@ -475,11 +475,19 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 		return 0;
 	}
 
-	this->_arrOtherParentsForOffsprings.push_back(pCourter);
-	// just for now, inseminate one egg:
-	this->_nAvailableGametes--; // one less gamete!
+	int nSuccess;
+	#pragma omp critical 
+	{
+		if (pCourter) {
+			this->_arrOtherParentsForOffsprings.push_back(pCourter);
+			nSuccess = 1;
+		}
+		else {
+			nSuccess = 0;
+		}
+	}//end critical
 
-	return 1;
+	return nSuccess;
 	
 }
 
@@ -516,6 +524,10 @@ int Individual::GetMateNumber() {
 
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
+	if (this->_nAvailableGametes == 0) {
+		return; //no more offsprings.
+	}
+
 	int nCurrGen = SimulConfig.GetCurrGen();
 	//Go through the parenthood of each inseminated gamete:
 	if (this->_bSex == Male) {
@@ -523,7 +535,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 	}
 
 	nNum = nNum==-1? this->_arrOtherParentsForOffsprings.size():nNum;
-	
+	nNum = (nNum <= this->_nAvailableGametes)? nNum : this->_nAvailableGametes;
 	// do frequency-independent natural selection here!
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
@@ -581,6 +593,8 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		else {
 
 				vOffSprings.push_back(pOffSpring);
+				// just for now, inseminate one egg:
+				this->_nAvailableGametes --; // one less gamete!
 
 		}
 
