@@ -16,6 +16,8 @@ int omp_thread_count() {
 }
 */
 
+#define MAXLINE    250000
+
 void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 
 	FILE *pConfigFile;
@@ -119,7 +121,7 @@ void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 			else
 			{
 
-				//printf("Warning: repetitive definition of position  %f on chromosome %d found. second one will be ignored\n", nAbsPos, nCurrChr );
+				printf("Warning: repetitive definition of position  %f on chromosome %d found. second one will be ignored\n", nAbsPos, nCurrChr );
 			}
 		}
 
@@ -431,6 +433,7 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 		size_t nLowerBoundIndex = std::distance(pvAccuProb[nChr].begin(), oLowerBound);
 		if (nLowerBoundIndex == 0 || nLowerBoundIndex==nEndIndex) {
 			// the first element
+			i--;
 			continue; //break point cannot be inserted at the tips
 		}
 		//vector<double>::iterator oPreviousPoint = oLowerBound - 1;
@@ -632,8 +635,8 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	//FILE *pConfigFile;
 	ifstream fsConfigFile;
 	string sBuffer;
-	char szPopName[MAXTEXT];
-	char szFormula[MAXTEXT];
+	char szPopName[MAXLINE];
+	char szFormula[MAXLINE];
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
@@ -904,8 +907,8 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 {
 	ifstream fsConfigFile;
 	string sBuffer;
-	char szPopName[MAXTEXT];
-	char szFormula[MAXTEXT];
+	char szPopName[MAXLINE];
+	char szFormula[MAXLINE];
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore = omp_get_max_threads();//omp_get_num_threads();
@@ -1514,10 +1517,10 @@ void SimulationConfigurations::fnParseSampleGenDef() {
 	}
 
 	//Go over each line:
-	char szBuffer[MAXTEXT];
+	char szBuffer[MAXLINE];
 
 
-	while(fgets(szBuffer, MAXTEXT, pDefFile) != NULL) 
+	while(fgets(szBuffer, MAXLINE, pDefFile) != NULL) 
 	{
 		int nStartGen = 0;
 		int nEndGen = 0;

@@ -6,8 +6,8 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>analysisFreq.cfg</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>$(ProjectDir)/test/smallpop</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommandArguments>admixsimul.cfg</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>K:\apps\debugdata</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

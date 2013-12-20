@@ -704,7 +704,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 					
 		size_t nLastIndex = pMarkerIndexOnChr->size()-1;
 		map<double,int>::iterator oMarkerCentromereIt = pMarkerIndexOnChr->upper_bound(nCentromerePos);
-		nLastIndex =  pMarkerIndexOnChr->size()-1;
+		//nLastIndex =  pMarkerIndexOnChr->size()-1;
 
 		size_t nCentromereIndex = (oMarkerCentromereIt == pMarkerIndexOnChr->end())? nLastIndex + 1 :oMarkerCentromereIt->second ;
 			
@@ -799,7 +799,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 					}
 					else {
 						if (!bNoNeedContinueMarker) {
-							nEndIndex = (oMarkerBreakPosIt->second < nCentromereIndex)? oMarkerBreakPosIt->second : nCentromereIndex - 1; // 
+							nEndIndex = (oMarkerBreakPosIt->second < nCentromereIndex)? oMarkerBreakPosIt->second - 1: nCentromereIndex - 1; // need to minus 1 so that all markers on left but not right of Break point are copied
 						}
 					}
 
@@ -813,7 +813,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 					}
 					else {
 						if (!bNoNeedContinueGene) {
-							nEndIndex_gene = ( oGeneBreakPosIt->second < nCentromereIndex_gene)? oGeneBreakPosIt->second : nCentromereIndex_gene - 1 ;
+							nEndIndex_gene = ( oGeneBreakPosIt->second < nCentromereIndex_gene)? oGeneBreakPosIt->second - 1: nCentromereIndex_gene - 1 ;
 						}
 					}
 
