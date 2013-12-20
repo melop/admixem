@@ -13,6 +13,7 @@
 extern SimulationConfigurations SimulConfig;
 extern Normal NormalGen; 
 extern Uniform UniformGen;
+extern Binomial BinomGen(1, 0.5);
 
 int nCurrIndividualId = 1; //Global counter
 /*
@@ -688,7 +689,8 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 		
 
 		int nMainChr, nOtherChr;
-		int nWhichToPick = (UniformGen.Next() <=0.5)? 0:1;
+		//int nWhichToPick = (UniformGen.Next() <=0.5)? 0:1;
+		int nWhichToPick = (int)BinomGen.Next();
 		nMainChr = nChr*2 + nWhichToPick;
 		nOtherChr = nWhichToPick==0? nMainChr+1:nMainChr-1;
 		map<double, int> * pMarkerIndexOnChr = & (pMarkerIndex->at(nChr));
