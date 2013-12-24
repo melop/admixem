@@ -173,7 +173,11 @@ void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 };
 
 void MarkerConfigurations::CalculateMapDistances() { // calculate map distances for each marker
+	
 	vector<double> * pvMaleMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(1);
+
+	if (!pvMaleMapDistances) return; //The recombination mode is not predetermined mode , not available;
+
 	vector<double> * pvFemaleMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(0);
 	vector<double> * pvAvgMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(2);
 	vector<double> * pvBreakpointSamplePositions = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointSamplePositions();
@@ -469,6 +473,10 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 };
 
 vector<double> * RecombProbConfigurations::GetBreakPointMapDistances(int nMode) {
+	if (this->_bUseUniform) {
+		return NULL;
+	}
+
 	return nMode==1? this->pvMaleMapDistance: (nMode==0)? this->pvFemaleMapDistance:this->pvAvgMapDistance;
 }
 
