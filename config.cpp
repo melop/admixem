@@ -320,10 +320,10 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	
 	printf("Start loading marker probability file %s ...\n", szConfigFile.c_str());
 
-	if (szConfigFile == "%UNIFORM%") {
-		printf("Instructed by configuration to use uniform distribution, won't use recombination file.\n");
+	if (((SimulationConfigurations *)this->_pParentConfig)->GetConfig("UseUniformRec") == "yes") {
+		printf("Instructed by configuration to use uniform distribution, will ignore candidate breakpoints in recombination file. But expected number of recombinations will still be used.\n");
 		this->_bUseUniform = true;
-		return;
+		
 	}
 	else {
 		this->_bUseUniform = false;
