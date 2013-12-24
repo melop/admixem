@@ -316,6 +316,15 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	
 	printf("Start loading marker probability file %s ...\n", szConfigFile.c_str());
 
+	if (szConfigFile == "%UNIFORM%") {
+		printf("Instructed by configuration to use uniform distribution, won't use recombination file.\n");
+		this->_bUseUniform = true;
+		return;
+	}
+	else {
+		this->_bUseUniform = false;
+	}
+
 	_szConfigFilename = szConfigFile; // save name of config file
 
 	pConfigFile = fopen(szConfigFile.c_str(), "r");
@@ -414,13 +423,17 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 	double nStart = (nArm==1)? 0.0 : nCentromerePos;
 	double nEnd   = (nArm==1)? nCentromerePos : nChrLen;
 
+	vector<double> * pvAccuProb;
+	size_t nCentromereIndex, nLastIndex, nStartIndex, nEndIndex;
+
+	if (!this->_bUseUniform) {
+		pvAccuProb = true==bSex? pvMaleAccuProb : pvFemaleAccuProb;
 	
-	vector<double> * pvAccuProb = true==bSex? pvMaleAccuProb : pvFemaleAccuProb;
-	
-	size_t nCentromereIndex = std::distance( pvBreakpointSamplePositions[nChr].begin(), lower_bound(pvBreakpointSamplePositions[nChr].begin(),pvBreakpointSamplePositions[nChr].end(), nCentromerePos));
-	size_t nLastIndex = std::distance(pvBreakpointSamplePositions[nChr].begin() , pvBreakpointSamplePositions[nChr].end());
-	size_t nStartIndex = (nArm==1)? 0 : nCentromereIndex + 1;
-	size_t nEndIndex = (nArm==1)? nCentromereIndex : nLastIndex;
+		nCentromereIndex = std::distance( pvBreakpointSamplePositions[nChr].begin(), lower_bound(pvBreakpointSamplePositions[nChr].begin(),pvBreakpointSamplePositions[nChr].end(), nCentromerePos));
+		nLastIndex = std::distance(pvBreakpointSamplePositions[nChr].begin() , pvBreakpointSamplePositions[nChr].end());
+		nStartIndex = (nArm==1)? 0 : nCentromereIndex + 1;
+		nEndIndex = (nArm==1)? nCentromereIndex : nLastIndex;
+	}
 	
 	//printf("Breakpointstoput for sex %d Chr %d Arm %d: %d\n", bSex, nChr, nArm, nBreakPointsToPut);
 	//vector<double>::iterator it_start = lower_bound(pvAccuProb[nChr]begin(), pvAccuProb->end(), nStart);
@@ -428,19 +441,25 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 	for (int i=0;i<nBreakPointsToPut;i++) {
 
 		double nRand = UniformGen.Next();
-		std::vector<double>::iterator oLowerBound;
-		oLowerBound = lower_bound( pvAccuProb[nChr].begin() + nStartIndex, pvAccuProb[nChr].begin() + nEndIndex, nRand);
-		size_t nLowerBoundIndex = std::distance(pvAccuProb[nChr].begin(), oLowerBound);
-		if (nLowerBoundIndex == 0 || nLowerBoundIndex==nEndIndex) {
-			// the first element
-			i--;
-			continue; //break point cannot be inserted at the tips
+		if (!this->_bUseUniform) {
+			std::vector<double>::iterator oLowerBound;
+			oLowerBound = lower_bound( pvAccuProb[nChr].begin() + nStartIndex, pvAccuProb[nChr].begin() + nEndIndex, nRand);
+			size_t nLowerBoundIndex = std::distance(pvAccuProb[nChr].begin(), oLowerBound);
+			if (nLowerBoundIndex == 0 || nLowerBoundIndex==nEndIndex) {
+				// the first element
+				i--;
+				continue; //break point cannot be inserted at the tips
+			}
+			//vector<double>::iterator oPreviousPoint = oLowerBound - 1;
+			double nPos1 = pvBreakpointSamplePositions[nChr].at(nLowerBoundIndex - 1);
+			double nPos2 = pvBreakpointSamplePositions[nChr].at(nLowerBoundIndex);
+			//interpolate
+			vRet.push_back( (nPos1 + nPos2) / 2 );
+		} else {
+			double nArmLen = nEnd - nStart;
+			double nBpPos = (nArm==1)? (nArmLen * nRand) : (nCentromerePos + nArmLen * nRand);
+			vRet.push_back(nBpPos);
 		}
-		//vector<double>::iterator oPreviousPoint = oLowerBound - 1;
-		double nPos1 = pvBreakpointSamplePositions[nChr].at(nLowerBoundIndex - 1);
-		double nPos2 = pvBreakpointSamplePositions[nChr].at(nLowerBoundIndex);
-		//interpolate
-		vRet.push_back( (nPos1 + nPos2) / 2 );
 		
 	}
 

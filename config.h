@@ -67,6 +67,7 @@ class RecombProbConfigurations {
 		double * _nExpectedMaleRecPerMeiosisArm2;
 		double * _nExpectedFemaleRecPerMeiosisArm1;
 		double * _nExpectedFemaleRecPerMeiosisArm2;
+		bool _bUseUniform;
 
 		vector<double> * pvBreakpointSamplePositions; // array of vectors containing absolute positions of the sample break points
 		vector<double> * pvMaleAccuProb; //array of vectors containing male accumulative rec. prob. restart at centromere
