@@ -269,7 +269,7 @@ bool Population::Breed() {
 
 		#pragma omp critical
 		{
-			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) || (stExhaustedFemales.find(nRandFemaleInd) != stExhaustedFemales.end())) {
+			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd) == stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 			}
 			stSampledFemales.insert(nRandFemaleInd);
@@ -301,7 +301,7 @@ bool Population::Breed() {
 
 		//#pragma omp critical
 		//{
-			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,100)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
 		#pragma omp critical
