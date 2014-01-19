@@ -278,7 +278,7 @@ bool Population::Breed() {
 		Individual * pFemale = this->_mpFemales[nRandFemaleInd]; //get random female
 
 		if (!bCourterHandeled) {
-		int nCourters =  (int)NormalExt(nSampleMate , 1, 0, 100);
+		int nCourters = (int)nSampleMate; //(int)NormalExt(nSampleMate , 1, 0, 100);
 
 		
 			for (int j=0;j<nCourters;j++) {
