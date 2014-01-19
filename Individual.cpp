@@ -626,7 +626,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 				vOffSprings.push_back(pOffSpring);
 				// just for now, inseminate one egg:
-				this->_nAvailableGametes --; // one less gamete!
+				this->_nAvailableGametes--; // one less gamete!
 
 		}
 
