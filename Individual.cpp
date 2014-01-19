@@ -604,8 +604,11 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 					pParser->symbols_[*itSymbol] = pOffSpring->GetPhenotype(*itSymbol); //set both variables
 				}
 
-				bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
-				
+				double nSurvivalProb = pParser->Evaluate();
+				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
+				/*if (SimulConfig.GetConfig("DumpNaturalSelProb") == "On") {
+					printf("%f\n",nSurvivalProb);
+				}*/
 
 				if (!bLive) {
 					delete pOffSpring; // uhoh, dead!!

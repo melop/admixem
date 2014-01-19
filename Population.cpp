@@ -344,8 +344,10 @@ bool Population::Breed() {
 
 	}
 
-		bCourterHandeled = true;
+		
 	} //end parallel block
+
+	bCourterHandeled = true;
 	
 	} // end do block
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
