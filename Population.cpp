@@ -166,7 +166,7 @@ bool Population::Breed() {
 
 
 	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();
+		int nTotalCPUCore =  omp_get_num_threads();
 	#else
 		int nTotalCPUCore = 1;
 	#endif
@@ -466,7 +466,7 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 void Population::FreqDependentNaturalSelection() {
 
 	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		int nTotalCPUCore =  omp_get_num_threads();//omp_get_num_threads();
 	#else
 		int nTotalCPUCore = 1;
 	#endif

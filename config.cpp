@@ -510,7 +510,7 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 	char szFormula[2048];
 	
 	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		int nTotalCPUCore =  omp_get_num_threads();//omp_get_num_threads();
 		//printf("OpenMP enabled\n");
 	#else
 		int nTotalCPUCore = 1;
@@ -666,7 +666,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	char szFormula[MAXLINE];
 	
 	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		int nTotalCPUCore =  omp_get_num_threads();//omp_get_num_threads();
 		//printf("OpenMP enabled\n");
 	#else
 		int nTotalCPUCore = 1;
@@ -938,7 +938,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 	char szFormula[MAXLINE];
 	
 	#ifdef _OPENMP
-		int nTotalCPUCore = omp_get_max_threads();//omp_get_num_threads();
+		int nTotalCPUCore = omp_get_num_threads();//omp_get_num_threads();
 	#else
 		int nTotalCPUCore = 1;
 	#endif
@@ -1256,7 +1256,7 @@ GeneConfigurations::GeneConfigurations(void * pParentConfig) {
 
 void GeneConfigurations::LoadFromFile(string szConfigFile) {
 	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		int nTotalCPUCore =  omp_get_num_threads();//omp_get_num_threads();
 		//printf("OpenMP enabled\n");
 	#else
 		int nTotalCPUCore = 1;
