@@ -47,6 +47,7 @@ private:
 	int    _nCurrFemales;
 	double _nMaleRatio;
 	bool _bBred; //already bred.
+	bool _bRecordNatSelProb;
 	vector< Individual *> _mpMales;  // array storing males
 	vector< Individual *> _mpFemales; //array storing females
 	vector< Individual *> _mpNewGenMales;  // array storing males

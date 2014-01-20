@@ -13,6 +13,7 @@ Population::Population(void)
 	this->_nCurrMales=0;
 	this->_nCurrFemales = 0;
 	this->_bBred = false;
+	this->_bRecordNatSelProb = (SimulConfig.GetConfig("DumpNatSelProb") == "On");
 }
 
 
@@ -778,7 +779,7 @@ void Population::fnWriteIndividualPhenotypes(ofstream &fOutFile, Individual * pI
 }
 
 void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
-	if (SimulConfig.GetConfig("DumpNatSelProb") != "On") {
+	if (!_bRecordNatSelProb) {
 		return;
 	}
 	fNaturalProbOutFile << "NatSelProb_Pop" << this->GetPopId() << "\tSurvived" << endl;
@@ -788,7 +789,10 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 }
 
 void Population::fnAddNatSelProb(double nProb, bool bSurvived) {
-	_mpOffSpringNaturalProb.push_back(pair< double, bool >(nProb, bSurvived));
+	if (!_bRecordNatSelProb) return;
+	#pragma omp critical {
+		_mpOffSpringNaturalProb.push_back(pair< double, bool >(nProb, bSurvived));
+	}
 }
 
 void Population::fnWriteIndividualID(ofstream &fOutFile, Individual * pInd) {
