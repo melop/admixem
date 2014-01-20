@@ -91,7 +91,7 @@ class Individual {
 	double GetPhenotype(string sPhenotype);
 
 	void GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Gene> > &vGenes );
-	void GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules, vector< pair< double, bool > > &_mpOffSpringNaturalProb); // give birth to any number inseminated eggs, pass -1 to nNum to get all. this takes a lot of memory so be careful.
+	void GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules); // give birth to any number inseminated eggs, pass -1 to nNum to get all. this takes a lot of memory so be careful.
 	
 	void DumpMarkers(ofstream &fOutFile, int nChromosomeSide); // write all markers to file stream. each chromosome separated by -1.
 	void DumpGenes(ofstream &fOutFile, int nChromosomeSide); // write all markers to file stream. each chromosome separated by -1.

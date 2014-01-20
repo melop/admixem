@@ -67,6 +67,7 @@ private:
 	void fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex);
 	void fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile);
 	void fnDumpNaturalProb(ofstream &fNaturalProbOutFile);
+	void fnAddNatSelProb(double nProb, bool bSurvived);
 };
 
 #endif

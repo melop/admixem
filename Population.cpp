@@ -302,7 +302,7 @@ bool Population::Breed() {
 
 		//#pragma omp critical
 		//{
-			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa, this->_mpOffSpringNaturalProb); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
 		#pragma omp critical
@@ -785,6 +785,10 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 	for (vector< pair< double, bool > >::iterator itInd=this->_mpOffSpringNaturalProb.begin(); itInd!=this->_mpOffSpringNaturalProb.end(); ++ itInd) {
 		fNaturalProbOutFile << itInd->first << "\t" << itInd->second << endl;
 	}
+}
+
+void Population::fnAddNatSelProb(double nProb, bool bSurvived) {
+	_mpOffSpringNaturalProb.push_back(pair< double, bool >(nProb, bSurvived));
 }
 
 void Population::fnWriteIndividualID(ofstream &fOutFile, Individual * pInd) {

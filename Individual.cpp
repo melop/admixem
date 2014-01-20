@@ -529,7 +529,7 @@ int Individual::GetMateNumber() {
 	return this->_arrOtherParentsForOffsprings.size();
 }
 
-void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules, vector< pair< double, bool > > &pOffSpringNaturalProb) {
+void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
 	if (this->_nAvailableGametes <= 0) {
 		return; //no more offsprings.
@@ -606,7 +606,8 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 				double nSurvivalProb = pParser->Evaluate();
 				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
-				pOffSpringNaturalProb.push_back(pair< double, bool >(nSurvivalProb, bLive));
+				((Population*)this->_pPop)->fnAddNatSelProb(nSurvivalProb , bLive);
+
 				/*if (SimulConfig.GetConfig("DumpNaturalSelProb") == "On") {
 					printf("%f\n",nSurvivalProb);
 				}*/
