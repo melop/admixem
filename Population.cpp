@@ -274,6 +274,7 @@ bool Population::Breed() {
 			}
 			stSampledFemales.insert(nRandFemaleInd);
 		}
+		printf("%d\n", nRandFemaleInd);
 
 		Individual * pFemale = this->_mpFemales[nRandFemaleInd]; //get random female
 
