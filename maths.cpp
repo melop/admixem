@@ -33,8 +33,7 @@ int fnCompare (const void * a, const void * b)
 
 int fnGetRandIndex(int nSizeOfArray) {
 	int nRet;
-	#pragma omp critical 
-	{
+
 	do {
 		
 			nRet = (int)floor(UniformGen.Next() * (double)nSizeOfArray - 0.01);
@@ -42,7 +41,7 @@ int fnGetRandIndex(int nSizeOfArray) {
 		nRet = nRet>=0? nRet:0;
 	}
 	while(nRet >= nSizeOfArray);
-	}
+	
 	return nRet;
 };
 
