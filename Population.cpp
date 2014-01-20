@@ -789,8 +789,11 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 }
 
 void Population::fnAddNatSelProb(double nProb, bool bSurvived) {
-	if (!_bRecordNatSelProb) return;
-	#pragma omp critical {
+	if (!_bRecordNatSelProb) {
+		return;
+	}
+	#pragma omp critical 
+	{
 		_mpOffSpringNaturalProb.push_back(pair< double, bool >(nProb, bSurvived));
 	}
 }
