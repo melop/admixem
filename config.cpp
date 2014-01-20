@@ -4,12 +4,8 @@
  #include <omp.h>
 #endif
 SimulationConfigurations SimulConfig; //Global configuration object
-
-
-
-extern Normal * arrNormalGen; 
-extern Uniform * arrUniformGen;
-
+extern Normal NormalGen; 
+extern Uniform UniformGen;
 
 /*
 int omp_thread_count() {
@@ -421,15 +417,10 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 };
 
 void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm,vector<double> &vRet) { // return a vector of break points for a given arm of a given chromosome for a given sex
-	#ifdef _OPENMP
-		int nCurrProccess =  omp_get_thread_num();
-	#else
-		int nCurrProccess = 0;
-	#endif
-
+	
 	double nExpectedPoints = (true==bSex? (nArm==1? _nExpectedMaleRecPerMeiosisArm1[nChr] : _nExpectedMaleRecPerMeiosisArm2[nChr]) : (nArm==1? _nExpectedFemaleRecPerMeiosisArm1[nChr] : _nExpectedFemaleRecPerMeiosisArm2[nChr]));
 	int nBreakPointsToPut = (int)nExpectedPoints; // get integral part
-	nBreakPointsToPut += (arrUniformGen[nCurrProccess].Next() <= (nExpectedPoints - (double)nBreakPointsToPut)) ? 1:0;
+	nBreakPointsToPut += (UniformGen.Next() <= (nExpectedPoints - (double)nBreakPointsToPut)) ? 1:0;
 	double nCentromerePos = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetCentromerePosition(nChr);
 	double nChrLen = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetChromosomeLength(nChr);
 
@@ -453,7 +444,7 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 
 	for (int i=0;i<nBreakPointsToPut;i++) {
 
-		double nRand = arrUniformGen[nCurrProccess].Next();
+		double nRand = UniformGen.Next();
 		if (!this->_bUseUniform) {
 			std::vector<double>::iterator oLowerBound;
 			oLowerBound = lower_bound( pvAccuProb[nChr].begin() + nStartIndex, pvAccuProb[nChr].begin() + nEndIndex, nRand);

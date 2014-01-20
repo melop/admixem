@@ -4,30 +4,13 @@
  #include <omp.h>
 #endif
 
-#ifdef _RANGEN_ARRAYS_
-#else
-
-	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_num_threads();
-	#else
-		int nTotalCPUCore = 1;
-	#endif
-
-Normal * arrNormalGen = new Normal[nTotalCPUCore]; 
-Uniform * arrUniformGen = new Uniform[nTotalCPUCore];
-#define _RANGEN_ARRAYS_
-#endif
-
+Normal NormalGen; 
+Uniform UniformGen;
 double nRandSeed;
 
 double NormalExt(double nMean, double nStdDev, double nLowBound, double nHighBound) {
-	#ifdef _OPENMP
-		int nCurrProccess = omp_get_thread_num();
-	#else
-		int nCurrProccess = 0;
-	#endif
-
-	double nRet = nStdDev * arrNormalGen[nCurrProccess].Next() + nMean;
+	
+	double nRet = nStdDev * NormalGen.Next() + nMean;
 	return  ( nRet  > nHighBound ) ? nHighBound : ( nRet < nLowBound? nLowBound: nRet );
 }
 
@@ -50,20 +33,16 @@ int fnCompare (const void * a, const void * b)
 
 int fnGetRandIndex(int nSizeOfArray) {
 	int nRet;
-	#ifdef _OPENMP
-		int nCurrProccess =  omp_get_thread_num();
-	#else
-		int nCurrProccess = 0;
-	#endif
-
+	#pragma omp critical 
+	{
 	do {
 		
-			nRet = (int)floor(arrUniformGen[nCurrProccess].Next() * (double)nSizeOfArray - 0.01);
+			nRet = (int)floor(UniformGen.Next() * (double)nSizeOfArray - 0.01);
 		
 		nRet = nRet>=0? nRet:0;
 	}
 	while(nRet >= nSizeOfArray);
-
+	}
 	return nRet;
 };
 
