@@ -6,8 +6,11 @@
  #include <omp.h>
 #endif
 
-extern Normal NormalGen; 
-extern Uniform UniformGen;
+extern SimulationConfigurations SimulConfig;
+extern Normal * arrNormalGen; 
+extern Uniform * arrUniformGen;
+
+
 extern double nRandSeed;
 
 extern SimulationConfigurations SimulConfig; // defined in config.cpp
@@ -369,6 +372,11 @@ void UIExportResults() {
 }
 
 void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed) {
+	#ifdef _OPENMP
+		int nCurrProccess =  omp_get_thread_num();
+	#else
+		int nCurrProccess = 0;
+	#endif
 
 	Random::Set(nRandSeed);
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
@@ -421,7 +429,7 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 
 		for (map<double,double>::iterator itMarker = pmMarkerMapDistanceOnChr->begin(); itMarker!=pmMarkerMapDistanceOnChr->end(); ++itMarker) {
 
-			if (UniformGen.Next() <= nProbToKeep) {
+			if (arrUniformGen[nCurrProccess].Next() <= nProbToKeep) {
 
 				fLoci << "chr" << (nChr+1) << "_" << nCurrMarker << "\t2\t";
 				fSampledMarkers << nChr << "\t" << ( nCurrMarker -1 ) << "\t" << itMarker->first << endl;

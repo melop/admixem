@@ -4,8 +4,11 @@
 
 #include "Population.h"
 
-extern Normal NormalGen; 
-extern Uniform UniformGen;
+extern SimulationConfigurations SimulConfig;
+extern Normal * arrNormalGen; 
+extern Uniform * arrUniformGen;
+
+
 extern SimulationConfigurations SimulConfig;
 
 Population::Population(void)
@@ -391,10 +394,16 @@ void Population::KillOldGen() { //
 }
 
 Individual * Population::Emigrate() {
+	#ifdef _OPENMP
+		int nCurrProccess =  omp_get_thread_num();
+	#else
+		int nCurrProccess = 0;
+	#endif
+
 	int nMales = _mpMales.size();
 	int nFemales = _mpFemales.size();
 	int nTotal = nMales + nFemales;
-	bool bWhichSex = (UniformGen.Next() <= (double)nMales / (double)nTotal)? true:false;
+	bool bWhichSex = (arrUniformGen[nCurrProccess].Next() <= (double)nMales / (double)nTotal)? true:false;
 	vector< Individual *> * pIndividuals = bWhichSex? &_mpMales:&_mpFemales;
 
 	if (pIndividuals->size() == 0) { // no more individuals to return
@@ -596,7 +605,7 @@ void Population::FreqDependentNaturalSelection() {
 				bool bLive = true;
 				#pragma omp critical 
 				{
-					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+					bLive = (arrUniformGen[nCPU].Next() <= pParser->Evaluate())? true : false;
 				}
 
 				if (!bLive) {
@@ -650,7 +659,7 @@ void Population::FreqDependentNaturalSelection() {
 				bool bLive = true;
 				#pragma omp critical 
 				{
-					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+					bLive = (arrUniformGen[nCPU].Next() <= pParser->Evaluate())? true : false;
 				}
 
 				if (!bLive) {

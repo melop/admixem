@@ -18,16 +18,23 @@
 #include "makemarkerfile.h"
 #include "newran02/newran.h"
 #include "maths.h"
+#include <omp.h>
 
 
 using namespace std;
 
-extern Normal NormalGen; 
-extern Uniform UniformGen;
+extern Normal * arrNormalGen; 
+extern Uniform * arrUniformGen;
 extern double nRandSeed;
 
 
 void UIMakeNewMarkerFile() {
+	#ifdef _OPENMP
+		int nCurrProccess =  omp_get_thread_num();
+	#else
+		int nCurrProccess = 0;
+	#endif
+
 
 int nCurrChromosome = 1;
 int nHaploidChromosomeNum, nTotalMarkers;
@@ -249,7 +256,7 @@ double nChromosomeSize, nCentromerePos, nPop1AvgAlleleFreq, nPop1AvgAlleleFreqSt
 			
 			double * pPos = new double[nNumMarkers];
 			for (int j=0;j<nNumMarkers;j++) {
-				pPos[j] = UniformGen.Next(); // create random set of uniformly distributed markers
+				pPos[j] = arrUniformGen[nCurrProccess].Next(); // create random set of uniformly distributed markers
 			}
 			
 			//cout<< "MarkerNum:" << nNumMarkers << endl;
@@ -297,7 +304,12 @@ double nChromosomeSize, nCentromerePos, nPop1AvgAlleleFreq, nPop1AvgAlleleFreqSt
 }
 
 void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, double * pChromosomeSizes, double * pCentromerePos) { //UI generating recombination map
-		
+	#ifdef _OPENMP
+		int nCurrProccess =  omp_get_thread_num();
+	#else
+		int nCurrProccess = 0;
+	#endif
+
 		//double nLogMaxAvgRecombRate; // Log(Max(recombination rate));
 		char nRate; //1 - uniform, 2 - parabola
 		double nTotalExpectedRecombPerMeiosis; // The total expected recombination events per meiosis in the whole genome
@@ -481,7 +493,7 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 			
 			for (int j=0; j < nNumSamplePoints; j++) {
 			
-				double nPos = nChrLen * UniformGen.Next(); // random position
+				double nPos = nChrLen * arrUniformGen[nCurrProccess].Next(); // random position
 				
 				double nDistanceFromCentromere = ( nPos - nCentromerePos ) / nLargestChromSize; //  distance from centromere standarized by the longest chromosome
 				nDistanceFromCentromere = (nDistanceFromCentromere >= 0 )? nDistanceFromCentromere: -nDistanceFromCentromere;
