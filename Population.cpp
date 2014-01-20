@@ -276,7 +276,7 @@ bool Population::Breed() {
 		}
 		printf("%d\n", nRandFemaleInd);
 
-		Individual * pFemale = this->_mpFemales[nRandFemaleInd]; //get random female
+		Individual * pFemale = this->_mpFemales.at(nRandFemaleInd); //get random female
 
 		if (!bCourterHandeled) {
 		int nCourters = (int)nSampleMate; //(int)NormalExt(nSampleMate , 1, 0, 100);

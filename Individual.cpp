@@ -531,7 +531,7 @@ int Individual::GetMateNumber() {
 
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
-	if (this->_nAvailableGametes == 0) {
+	if (this->_nAvailableGametes <= 0) {
 		return; //no more offsprings.
 	}
 
