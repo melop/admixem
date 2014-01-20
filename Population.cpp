@@ -302,7 +302,7 @@ bool Population::Breed() {
 
 		//#pragma omp critical
 		//{
-			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa, this->_mpOffSpringNaturalProb); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
 		#pragma omp critical
@@ -455,13 +455,15 @@ int Population::GetPopSize(int nMode) {
 	}
 }
 
-void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile,  ofstream &fPhenoSumOutFile ) {
+void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile,  ofstream &fPhenoSumOutFile, ofstream &fOffSpringNatSelProb ) {
 	// now dump all the males:
 	this->fnSample(fMarkerOutFile, fGeneOutFile,  fPhenotypeOutFile , Individual::Male);
 	// dump all females:
 	this->fnSample(fMarkerOutFile, fGeneOutFile,  fPhenotypeOutFile , Individual::Female);
 
 	this->fnSamplePhenotypeStats(fPhenoSumOutFile);
+
+	this->fnDumpNaturalProb(fOffSpringNatSelProb);
 }
 
 void Population::FreqDependentNaturalSelection() {
@@ -773,6 +775,16 @@ void Population::fnWriteIndividualPhenotypes(ofstream &fOutFile, Individual * pI
 	pInd->DumpPhenotypes(fOutFile);
 	fOutFile << endl;
 
+}
+
+void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
+	if (SimulConfig.GetConfig("DumpNatSelProb") != "On") {
+		return;
+	}
+	fNaturalProbOutFile << "NatSelProb_Pop" << this->GetPopId() << "\tSurvived" << endl;
+	for (vector< pair< double, bool > >::iterator itInd=this->_mpOffSpringNaturalProb.begin(); itInd!=this->_mpOffSpringNaturalProb.end(); ++ itInd) {
+		fNaturalProbOutFile << itInd->first << "\t" << itInd->second << endl;
+	}
 }
 
 void Population::fnWriteIndividualID(ofstream &fOutFile, Individual * pInd) {

@@ -170,16 +170,17 @@ void PerformSimulation() {
 			*/
 			string szCurrGen = fnIntToString(nCurrGen);
 			//FILE * pOutFile = fopen( (sOutFileBase + szCurrGen + ".txt").c_str(), "w" );
-			ofstream fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile;
+			ofstream fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile, fOffSpringNatSelProb;
 			fMarkerOutFile.open((sOutFileBase + szCurrGen + "_markers.txt").c_str());// output file stream
 			fGeneOutFile.open((sOutFileBase + szCurrGen + "_genes.txt").c_str());// output file stream
 			fPhenotypeOutFile.open((sOutFileBase + szCurrGen + "_phenotypes.txt").c_str());// output file stream
 			fPhenoSumFile.open((sOutFileBase + szCurrGen + "_phenostats.txt").c_str());// output file stream
+			fOffSpringNatSelProb.open((sOutFileBase + szCurrGen + "_natselprobdump.txt").c_str());// output file stream
 
 			//dump everything to disk:
 			for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
 			{
-				(*itpPop)->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile);
+				(*itpPop)->Sample(fMarkerOutFile, fGeneOutFile, fPhenotypeOutFile, fPhenoSumFile, fOffSpringNatSelProb);
 			}
 		
 			fMarkerOutFile.close();

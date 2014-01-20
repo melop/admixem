@@ -28,7 +28,7 @@ public:
 	Individual * Emigrate(); // delete individual from the population and return it 
 	bool Breed();
 	void KillOldGen();
-	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, ofstream &fPhenoSumOutFile);
+	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, ofstream &fPhenoSumOutFile, ofstream &fOffSpringNatSelProb);
 	void FreqDependentNaturalSelection(); //Frequency-dependent natural selection
 	void SummarizePhenotype(); // get pop level statisticss
 	//static bool IsNULL(Individual * pPtr);
@@ -58,6 +58,7 @@ private:
 	map< string , pair< double, double> > _mpPrevGenSumPhenotype; // prev gen population statistics
 	map< string , pair< double, double> > _mpPrevGenSumPhenotypeMale; // prev gen population statistics for males
 	map< string , pair< double, double> > _mpPrevGenSumPhenotypeFemale; // prev gen population statistics for females
+	vector< pair< double, bool > > _mpOffSpringNaturalProb; // survival probabilities and whether the offspring past non freq dependent selection
 
 	void fnWriteIndividualMarkers(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualGenes(ofstream &fOutFile, Individual * pInd);
@@ -65,6 +66,7 @@ private:
 	void fnWriteIndividualID(ofstream &fOutFile, Individual * pInd);
 	void fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex);
 	void fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile);
+	void fnDumpNaturalProb(ofstream &fNaturalProbOutFile);
 };
 
 #endif
