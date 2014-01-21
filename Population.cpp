@@ -250,6 +250,7 @@ bool Population::Breed() {
 	do 
 	{
 		if (nNewOffSpringCount >= this->_nPopMaxSize) {
+			printf("Max Pop Size met.\n");
 			break; //no need to continue;
 		}
 		//#pragma omp critical
@@ -347,6 +348,7 @@ bool Population::Breed() {
 				}
 			}
 			else {
+				printf("No need to insert more offsprings, break;\n");
 				break; // no need to do anything more, already exceeded limit;
 			}
 		}

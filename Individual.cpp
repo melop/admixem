@@ -543,6 +543,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 	nNum = nNum==-1? this->_arrOtherParentsForOffsprings.size():nNum;
 	nNum = (nNum <= this->_nAvailableGametes)? nNum : this->_nAvailableGametes;
+	printf("Female %d: %d offsprings\n", this->GetID(), nNum);
 	// do frequency-independent natural selection here!
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
@@ -576,11 +577,13 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		bool bSuccess = false;
 		pOffSpring = new Individual( pDad, this , bSuccess); // create a new kid
 		if (!bSuccess) {
+			printf("Something wrong when creating new individual. return false\n");
 			i--;
 			continue;
 		}
 
 		if (!pOffSpring) {
+			printf("Something wrong when creating new individual. return NULL\n");
 			i--;
 			continue;
 		}
