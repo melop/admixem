@@ -311,6 +311,7 @@ Individual::Individual(Individual * pFather, Individual * pMother, bool &bSucces
 	//printf("_arrGenes.size() %d\n", _arrGenes.size());
 	this->fnDeterminePhenotypes();
 	this->fnDetermineSex();
+	this->fnDetermineNumGametes();
 	bSuccess = true;
 };
 
