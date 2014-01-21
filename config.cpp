@@ -698,6 +698,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 		getline(fsConfigFile,sBuffer);
 		string sPopName, sFormula;
 		int nGen;
+		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
@@ -967,6 +968,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 		getline(fsConfigFile,sBuffer);
 		string sPopName, sFormula;
 		int nGen = -1;
+		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;

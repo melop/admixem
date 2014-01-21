@@ -533,7 +533,7 @@ int Individual::GetMateNumber() {
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
 	if (this->_nAvailableGametes <= 0) {
-		printf("Not enough gametes left.\n");
+		//printf("Not enough gametes left.\n");
 		return; //no more offsprings.
 	}
 
@@ -545,7 +545,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 	nNum = nNum==-1? this->_arrOtherParentsForOffsprings.size():nNum;
 	nNum = (nNum <= this->_nAvailableGametes)? nNum : this->_nAvailableGametes;
-	printf("Female %d: %d offsprings\n", this->GetID(), nNum);
+	//printf("Female %d: %d offsprings\n", this->GetID(), nNum);
 	// do frequency-independent natural selection here!
 
 	string sPop = ((Population*)(this->_pPop))->GetPopName();
