@@ -249,6 +249,9 @@ bool Population::Breed() {
 	bool bCourterHandeled = false;
 	do 
 	{
+		if (nNewOffSpringCount >= this->_nPopMaxSize) {
+			break; //no need to continue;
+		}
 		//#pragma omp critical
 		//{
 			if (stSampledFemales.size() != 0) {
