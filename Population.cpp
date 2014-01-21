@@ -319,7 +319,7 @@ bool Population::Breed() {
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
 		{
 
-			if (nNewOffSpringCount <= this->_nPopMaxSize)
+			if (nNewOffSpringCount < this->_nPopMaxSize)
 			{
 				if ( (*itOffSpring)->GetSex() == Individual::Male) {
 
@@ -388,7 +388,7 @@ void Population::KillOldGen() { //
 
 	_mpNewGenMales.clear();
 	_mpNewGenFemales.clear();
-
+	_mpOffSpringNaturalProb.clear();
 	this->_bBred = false;
 }
 
