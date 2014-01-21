@@ -388,7 +388,7 @@ void Population::KillOldGen() { //
 
 	_mpNewGenMales.clear();
 	_mpNewGenFemales.clear();
-	_mpOffSpringNaturalProb.clear();
+	
 	this->_bBred = false;
 }
 
@@ -465,6 +465,8 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 	this->fnSamplePhenotypeStats(fPhenoSumOutFile);
 
 	this->fnDumpNaturalProb(fOffSpringNatSelProb);
+
+	this->_mpOffSpringNaturalProb.clear();
 }
 
 void Population::FreqDependentNaturalSelection() {
