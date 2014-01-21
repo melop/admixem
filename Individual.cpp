@@ -532,6 +532,7 @@ int Individual::GetMateNumber() {
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
 	if (this->_nAvailableGametes <= 0) {
+		printf("Not enough gametes left.\n");
 		return; //no more offsprings.
 	}
 
