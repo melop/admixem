@@ -265,6 +265,10 @@ bool Population::Breed() {
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) 
 	{
+		if (nNewOffSpringCount >= this->_nPopMaxSize) {
+			continue; // first see if new pop already filled up by other threads. if so then do nothing.
+		}
+
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
 

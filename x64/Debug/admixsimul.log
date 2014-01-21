@@ -1,22 +1,22 @@
-﻿Build started 1/20/2014 8:23:48 PM.
+﻿Build started 1/20/2014 8:34:14 PM.
      1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Population.cpp
          Population.cpp
      1>Population.cpp(155): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(289): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(306): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>Population.cpp(396): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(397): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(406): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(437): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(450): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(451): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(452): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(453): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(293): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(310): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>Population.cpp(400): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(401): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(410): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(441): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
      1>Population.cpp(454): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>Population.cpp(455): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>k:\apps\github\admixsimul\population.cpp(457): warning C4715: 'Population::GetPopSize' : not all control paths return a value
+     1>Population.cpp(456): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(457): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(458): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(459): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>k:\apps\github\admixsimul\population.cpp(461): warning C4715: 'Population::GetPopSize' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
@@ -37,4 +37,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.37
+Time Elapsed 00:00:02.38
