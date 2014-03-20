@@ -1,7 +1,71 @@
-﻿Build started 1/20/2014 9:32:04 PM.
-     1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
+﻿Build started 3/20/2014 3:20:27 PM.
+     1>Project "C:\Users\rcui\Documents\GitHub\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Individual.cpp config.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt config.cpp filesystem.cpp Individual.cpp main.cpp makemarkerfile.cpp maths.cpp newran02\extreal.cpp newran02\hist.cpp newran02\myexcept.cpp newran02\newran.cpp parser\parser.cpp Population.cpp simulation.cpp testexpression.cpp
+         testexpression.cpp
+         simulation.cpp
+     1>simulation.cpp(56): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>simulation.cpp(224): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+     1>simulation.cpp(225): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+     1>simulation.cpp(335): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
+     1>simulation.cpp(347): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
+     1>simulation.cpp(359): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
+     1>simulation.cpp(420): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+         Population.cpp
+     1>Population.cpp(155): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(297): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(314): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>Population.cpp(405): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(406): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(415): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(446): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(459): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(460): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(461): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(462): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(463): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(464): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+         parser.cpp
+     1>parser\parser.cpp(53): warning C4244: 'return' : conversion from 'double' to 'const int', possible loss of data
+     1>parser\parser.cpp(85): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         newran.cpp
+         myexcept.cpp
+     1>newran02\myexcept.cpp(68): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>newran02\myexcept.cpp(69): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(110) : see declaration of 'strcpy'
+     1>newran02\myexcept.cpp(72): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(191) : see declaration of 'strncpy'
+         hist.cpp
+         extreal.cpp
+         maths.cpp
+         makemarkerfile.cpp
+     1>makemarkerfile.cpp(523): warning C4101: 'nMaleAccum' : unreferenced local variable
+     1>makemarkerfile.cpp(523): warning C4101: 'nFemaleAccum' : unreferenced local variable
+         main.cpp
+         Individual.cpp
+     1>Individual.cpp(188): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+     1>Individual.cpp(189): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+     1>Individual.cpp(190): warning C4244: '=' : conversion from 'double' to 'unsigned int', possible loss of data
+     1>Individual.cpp(326): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>Individual.cpp(530): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(546): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(547): warning C4018: '<=' : signed/unsigned mismatch
+     1>Individual.cpp(573): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(753): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(761): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(764): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(772): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(773): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(801): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(802): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(811): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(819): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(824): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Individual.cpp(833): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+         filesystem.cpp
          config.cpp
      1>config.cpp(29): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
@@ -47,29 +111,10 @@
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
      1>config.cpp(1556): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-         Individual.cpp
-     1>Individual.cpp(188): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
-     1>Individual.cpp(189): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
-     1>Individual.cpp(190): warning C4244: '=' : conversion from 'double' to 'unsigned int', possible loss of data
-     1>Individual.cpp(326): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
-     1>Individual.cpp(530): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(546): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(547): warning C4018: '<=' : signed/unsigned mismatch
-     1>Individual.cpp(573): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(750): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(758): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(761): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(769): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(770): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(798): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(799): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(808): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(816): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(821): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Individual.cpp(830): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
          Generating Code...
+     1>c:\users\rcui\documents\github\admixsimul\population.cpp(466): warning C4715: 'Population::GetPopSize' : not all control paths return a value
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
          x64\Debug\Individual.obj
          x64\Debug\main.obj
@@ -83,9 +128,10 @@
          x64\Debug\Population.obj
          x64\Debug\simulation.obj
          x64\Debug\testexpression.obj
-         admixsimul.vcxproj -> K:\apps\github\admixsimul\x64\Debug\admixsimul.exe
-     1>Done Building Project "K:\apps\github\admixsimul\admixsimul.vcxproj" (Build target(s)).
+         LINK : C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.exe not found or not built by the last incremental link; performing full link
+         admixsimul.vcxproj -> C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.exe
+     1>Done Building Project "C:\Users\rcui\Documents\GitHub\admixsimul\admixsimul.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:06.24
+Time Elapsed 00:00:52.69

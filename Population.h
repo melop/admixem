@@ -59,7 +59,7 @@ private:
 	map< string , pair< double, double> > _mpPrevGenSumPhenotype; // prev gen population statistics
 	map< string , pair< double, double> > _mpPrevGenSumPhenotypeMale; // prev gen population statistics for males
 	map< string , pair< double, double> > _mpPrevGenSumPhenotypeFemale; // prev gen population statistics for females
-	vector< pair< double, bool > > _mpOffSpringNaturalProb; // survival probabilities and whether the offspring past non freq dependent selection
+	vector< vector< double > > _mpOffSpringNaturalProb; // survival probabilities and whether the offspring past non freq dependent selection
 
 	void fnWriteIndividualMarkers(ofstream &fOutFile, Individual * pInd);
 	void fnWriteIndividualGenes(ofstream &fOutFile, Individual * pInd);
@@ -68,7 +68,7 @@ private:
 	void fnSample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, Individual::Sex bSex);
 	void fnSamplePhenotypeStats(ofstream &fPhenoSumOutFile);
 	void fnDumpNaturalProb(ofstream &fNaturalProbOutFile);
-	void fnAddNatSelProb(double nProb, bool bSurvived);
+	void fnAddNatSelProb(double nDadID, double nDadPop, double nMomID, double nMomPop, double nProb, bool bSurvived);
 };
 
 #endif

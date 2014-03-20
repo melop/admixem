@@ -611,7 +611,10 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 
 				double nSurvivalProb = pParser->Evaluate();
 				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
-				((Population*)this->_pPop)->fnAddNatSelProb(nSurvivalProb , bLive);
+
+				((Population*)this->_pPop)->fnAddNatSelProb(pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
+															this->GetID(), ((Population*)this->GetPrevPop())->GetPopId(),
+															nSurvivalProb , bLive);
 
 				/*if (SimulConfig.GetConfig("DumpNaturalSelProb") == "On") {
 					printf("%f\n",nSurvivalProb);
