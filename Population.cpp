@@ -795,7 +795,10 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 	}
 	fNaturalProbOutFile << "DadID\tDadPrevPop\tMomID\tMomPrevPop\tNatSelProb_Pop" << this->GetPopId() << "\tSurvived" << endl;
 	for (vector< vector< double > >::iterator itInd=this->_mpOffSpringNaturalProb.begin(); itInd!=this->_mpOffSpringNaturalProb.end(); ++ itInd) {
-		fNaturalProbOutFile << itInd->at(0) << "\t" << itInd->at(1) << "\t" << itInd->at(2) << "\t" << itInd->at(3) << "\t" << itInd->at(4) << "\t" << itInd->at(5) << endl;
+		for(vector< double >::iterator itFields=itInd->begin(); itFields!=itInd->end(); ++ itFields) {
+			fNaturalProbOutFile << *itFields << "\t";
+		}
+		fNaturalProbOutFile << endl;
 	}
 }
 
