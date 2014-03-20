@@ -813,6 +813,7 @@ void Population::fnAddNatSelProb(double nDadID, double nDadPop, double nMomID, d
 		vRecord.push_back(nDadPop);
 		vRecord.push_back(nMomID);
 		vRecord.push_back(nMomPop);
+		vRecord.push_back(nProb);
 		vRecord.push_back(bSurvived? 1.0:0.0);
 		_mpOffSpringNaturalProb.push_back(vRecord);
 	}
