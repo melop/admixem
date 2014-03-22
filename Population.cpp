@@ -144,6 +144,8 @@ bool Population::Breed() {
 	bool bIgnoreGlobalRules = SimulConfig.pSexualSelConfig->IgnoreGlobalRules(nCurrGen); // is there special sexual selection rules for this generation?
 	bool bIgnoreGlobalRulesNa = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);
 	double nSampleMate = SimulConfig.GetNumericConfig("SampleMate");
+	string sOffSpringCountFunc = SimulConfig.GetConfig("kids_per_female_func");
+	int nOffSpringCountFunc = (sOffSpringCountFunc=="Poisson")? 1:0; //1 - Poisson, 0- normal distribution with variance being 1/4 of mean
 
 	if (_mpMales.size()==0 || _mpFemales.size()==0) {
 		printf("Pop %s cannot breed because one of the sexes is 0...\n", _sPopName.c_str());
@@ -154,6 +156,8 @@ bool Population::Breed() {
 	int nNewOffSpringCount = 0;
 	int nNumFemales = _mpFemales.size();
 	double nAvgKidPerFemale = (double)_nPopMaxSize / (double)nNumFemales;
+	vector< Poisson* > vOffSpringPoissonGen; 
+	
 
 	//set population level variables for freq dependent sexual selection:
 
@@ -173,6 +177,12 @@ bool Population::Breed() {
 	#endif
 
 	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+		//initialize poisson generators for offspring numbers
+		if (nOffSpringCountFunc == 1 ) {
+			Poisson * OffSpPois = new Poisson(nAvgKidPerFemale);
+			vOffSpringPoissonGen.push_back(OffSpPois);
+		}
 
 		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
 		list< vector<string> >::iterator itPopCourterSymbols= pqvPopCourterSymbols->begin();
@@ -272,6 +282,13 @@ bool Population::Breed() {
 		if (nNewOffSpringCount >= this->_nPopMaxSize) {
 			continue; // first see if new pop already filled up by other threads. if so then do nothing.
 		}
+		
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			//printf("%s : %d\n", "SexSelFormulae # ", nCPU);
+		#else
+			int nCPU = 0;
+		#endif
 
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
@@ -309,9 +326,14 @@ bool Population::Breed() {
 
 		vector<Individual *> vOffSprings;
 
+		int nTargetOffSpringCount =  round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000));
+
+		if ( nOffSpringCountFunc == 1 ) { //use poisson distribution for offspring number
+			nTargetOffSpringCount = vOffSpringPoissonGen[nCPU]->Next();
+		}
 		//#pragma omp critical
 		//{
-			pFemale->GiveBirth(vOffSprings, round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000)), bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+			pFemale->GiveBirth(vOffSprings, nTargetOffSpringCount, bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
 		#pragma omp critical
@@ -360,9 +382,18 @@ bool Population::Breed() {
 
 	bCourterHandeled = true;
 	
+
+
 	} // end do block
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
+	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+		//delete poisson generators for offspring numbers
+		if (nOffSpringCountFunc == 1 ) {
+			delete vOffSpringPoissonGen[nCPU];
+		}
+	}
 	
 	this->_bBred = true; //set flag
 	return true;

@@ -14,6 +14,7 @@ double NormalExt(double nMean, double nStdDev, double nLowBound, double nHighBou
 	return  ( nRet  > nHighBound ) ? nHighBound : ( nRet < nLowBound? nLowBound: nRet );
 }
 
+
 double fnSum( double * pNums, int nSize ) {
 
 	double nRet = 0;
