@@ -155,7 +155,7 @@ bool Population::Breed() {
 	printf("Pop %s breeding...\n", _sPopName.c_str());
 	int nNewOffSpringCount = 0;
 	int nNumFemales = _mpFemales.size();
-	double nAvgKidPerFemale = (double)_nPopMaxSize / (double)nNumFemales;
+	
 	vector< Poisson* > vOffSpringPoissonGen; 
 	
 
@@ -177,12 +177,6 @@ bool Population::Breed() {
 	#endif
 
 	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
-
-		//initialize poisson generators for offspring numbers
-		if (nOffSpringCountFunc == 1 ) {
-			Poisson * OffSpPois = new Poisson(nAvgKidPerFemale);
-			vOffSpringPoissonGen.push_back(OffSpPois);
-		}
 
 		list< pair< Parser *, int > > * pqParsers = &(*mppqParsers)[nCPU][this->_sPopName];
 		list< vector<string> >::iterator itPopCourterSymbols= pqvPopCourterSymbols->begin();
@@ -269,6 +263,17 @@ bool Population::Breed() {
 				stSampledFemales.clear();
 			}
 		//}
+	double nAvgKidPerFemale = (double)(_nPopMaxSize - nNewOffSpringCount) / (double)nNumFemales; // average kid per female, given the number offsprings left to fill the pop
+	vOffSpringPoissonGen.clear();
+
+	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+		//initialize poisson generators for offspring numbers
+		if (nOffSpringCountFunc == 1 ) {
+			Poisson * OffSpPois = new Poisson(nAvgKidPerFemale);
+			vOffSpringPoissonGen.push_back(OffSpPois);
+		}
+	}
 
 	#pragma omp parallel shared(bCourterHandeled, stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
@@ -382,18 +387,20 @@ bool Population::Breed() {
 
 	bCourterHandeled = true;
 	
+		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+			//delete poisson generators for offspring numbers
+			if (nOffSpringCountFunc == 1 ) {
+				delete vOffSpringPoissonGen[nCPU];
+				vOffSpringPoissonGen[nCPU] = NULL;
+			}
+		}
 
 
 	} // end do block
 	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
-	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
-		//delete poisson generators for offspring numbers
-		if (nOffSpringCountFunc == 1 ) {
-			delete vOffSpringPoissonGen[nCPU];
-		}
-	}
 	
 	this->_bBred = true; //set flag
 	return true;

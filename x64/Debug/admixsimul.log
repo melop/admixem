@@ -1,23 +1,23 @@
-﻿Build started 3/22/2014 4:38:08 PM.
+﻿Build started 3/23/2014 10:49:47 PM.
      1>Project "K:\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Population.cpp
          Population.cpp
      1>Population.cpp(157): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(314): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(329): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>Population.cpp(332): warning C4244: '=' : conversion from 'Real' to 'int', possible loss of data
-     1>Population.cpp(436): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(437): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(446): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(477): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(490): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(491): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(492): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(493): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(494): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(495): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>k:\apps\github\admixsimul\population.cpp(497): warning C4715: 'Population::GetPopSize' : not all control paths return a value
+     1>Population.cpp(319): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(334): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>Population.cpp(337): warning C4244: '=' : conversion from 'Real' to 'int', possible loss of data
+     1>Population.cpp(443): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(444): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(453): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(484): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(497): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(498): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(499): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(500): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(501): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(502): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>k:\apps\github\admixsimul\population.cpp(504): warning C4715: 'Population::GetPopSize' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"K:\apps\github\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"K:\apps\github\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
@@ -38,4 +38,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.14
+Time Elapsed 00:00:09.14
