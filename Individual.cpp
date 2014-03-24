@@ -589,6 +589,9 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 			i--;
 			continue;
 		}
+
+		this->_nAvailableGametes--; // one less gamete!
+
 		// See if it's lucky enough to survive the cruel nature!!
 		// Go through each selection rule:
 		
@@ -630,6 +633,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 			++itSelfSymbols;
 		}
 		
+		
 
 		if (!pOffSpring) {
 			
@@ -637,8 +641,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		else {
 
 				vOffSprings.push_back(pOffSpring);
-				// just for now, inseminate one egg:
-				this->_nAvailableGametes--; // one less gamete!
+				// just for now, inseminate one egg:			
 
 		}
 
