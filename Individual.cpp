@@ -597,7 +597,9 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		
 		//list< vector<string> >::iterator itCourterSymbols= pqvCourterSymbols->begin();
 		list< vector<string> >::iterator itSelfSymbols= pqvSelfSymbols->begin();
+		int nParserCount = -1;
 		for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+			nParserCount++;
 			vector<string> vSymbolsSelf = *itSelfSymbols;
 			Parser * pParser = itParser->first;
 			int nGen = itParser->second;
@@ -615,7 +617,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 				double nSurvivalProb = pParser->Evaluate();
 				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
 
-				((Population*)this->_pPop)->fnAddNatSelProb(pOffSpring->GetID(), pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
+				((Population*)this->_pPop)->fnAddNatSelProb(nParserCount, pOffSpring->GetID(), pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
 															this->GetID(), ((Population*)this->GetPrevPop())->GetPopId(),
 															nSurvivalProb , bLive);
 
