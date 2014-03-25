@@ -341,6 +341,9 @@ bool Population::Breed() {
 		}
 		//#pragma omp critical
 		//{
+		if (nTargetOffSpringCount == 0) {
+			continue;
+		}
 			pFemale->GiveBirth(vOffSprings, nTargetOffSpringCount, bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
