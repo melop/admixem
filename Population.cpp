@@ -275,6 +275,8 @@ bool Population::Breed() {
 		}
 	}
 
+	printf("AvgKidPerFemale: %f\n", nAvgKidPerFemale);
+
 	#pragma omp parallel shared(bCourterHandeled, stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
@@ -335,6 +337,7 @@ bool Population::Breed() {
 
 		if ( nOffSpringCountFunc == 1 ) { //use poisson distribution for offspring number
 			nTargetOffSpringCount = vOffSpringPoissonGen[nCPU]->Next();
+			printf("%d\n", nTargetOffSpringCount );
 		}
 		//#pragma omp critical
 		//{
