@@ -662,7 +662,8 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	//FILE *pConfigFile;
 	ifstream fsConfigFile;
 	string sBuffer;
-
+	char szPopName[MAXLINE];
+	char szFormula[MAXLINE];
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
@@ -692,18 +693,27 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 		throw "Cannot read natural selection file!";
 	}
 
+	string sPopName="";
+	string sFormula="";
+	string sPrevPopName="";
+	string sPrevFormula="";
+
 	while(fsConfigFile.good()) 
 	{
 		getline(fsConfigFile,sBuffer);
-		char szPopName[MAXLINE];
-		char szFormula[MAXLINE];
-		string sPopName, sFormula;
+		
 		int nGen;
 		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
-
+		sPrevPopName = sPopName;
+		sPrevFormula = sFormula;
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
+		if (sPopName==sPrevPopName && sFormula == sPrevFormula) {
+			printf("Warning: %s already loaded for pop %s, skipping...\n", sFormula.c_str(), sPopName.c_str());
+			continue;
+		}
+
 		printf("Parsing natural rule for Pop %s : %s\n", sPopName.c_str(), sFormula.c_str());
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
 			
