@@ -349,7 +349,7 @@ bool Population::Breed() {
 
 		#pragma omp critical
 		{
-			if (vOffSprings.size() == 0) 
+			if (pFemale->GetGameteNum() == 0) 
 			{
 			
 				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.

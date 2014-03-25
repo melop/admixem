@@ -530,6 +530,10 @@ int Individual::GetMateNumber() {
 	return this->_arrOtherParentsForOffsprings.size();
 }
 
+int Individual::GetGameteNum() {
+	return this->_nAvailableGametes;
+}
+
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
 
 	if (this->_nAvailableGametes <= 0) {

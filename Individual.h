@@ -87,6 +87,7 @@ class Individual {
 	unsigned int GetID();
 	unsigned int GetFatherId();
 	unsigned int GetMotherId();
+	int GetGameteNum();
 	int GetMateNumber();
 	double GetPhenotype(string sPhenotype);
 
