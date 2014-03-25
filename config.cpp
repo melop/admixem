@@ -1464,6 +1464,10 @@ SimulationConfigurations::SimulationConfigurations() {
 	_szConfigFilename="";
 };
 
+int SimulationConfigurations::GetLogVerboseLevel() {
+	return this->_nVerboseLogLevel;
+}
+
 void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 
 
@@ -1533,6 +1537,12 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 	this->pMarkerConfig->CalculateMapDistances();
 	this->fnParseSampleGenDef();
 
+	if (this->GetNumericConfig("LogVerbose") == -1) {
+		this->_nVerboseLogLevel = 0;//default, not verbose
+	}
+	else {
+		this->_nVerboseLogLevel = this->GetNumericConfig("LogVerbose");
+	}
 
 };
 

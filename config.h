@@ -35,6 +35,7 @@ class MarkerConfigurations {
 		void CalculateMapDistances();
 		vector<map<double, double> > * GetMpMarkerMapDistance(int nMode);
 		double GetChrToGenomeRatio(int nChr);
+
 		
 	private:
 		void * _pParentConfig; // convert to SimulationConfigurations!
@@ -245,8 +246,10 @@ class SimulationConfigurations {
 		int GetCurrGen();
 		void SetCurrGen( int nGen);
 		bool IsInUserSpecifiedSamplingRange(int nGen);
+		int GetLogVerboseLevel();
 
 	private:
+		int _nVerboseLogLevel;
 		string _szConfigFilename;
 		std::map<string, string> _mpConfigs; 
 		std::map<string, double> _mpNumericConfigs;
