@@ -831,7 +831,7 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 	if (!_bRecordNatSelProb) {
 		return;
 	}
-	fNaturalProbOutFile << "DadID\tDadPrevPop\tMomID\tMomPrevPop\tNatSelProb_Pop" << this->GetPopId() << "\tSurvived" << endl;
+	fNaturalProbOutFile << "IndID\tDadID\tDadPrevPop\tMomID\tMomPrevPop\tNatSelProb_Pop" << this->GetPopId() << "\tSurvived" << endl;
 	for (vector< vector< double > >::iterator itInd=this->_mpOffSpringNaturalProb.begin(); itInd!=this->_mpOffSpringNaturalProb.end(); ++ itInd) {
 		for(vector< double >::iterator itFields=itInd->begin(); itFields!=itInd->end(); ++ itFields) {
 			fNaturalProbOutFile << *itFields << "\t";
@@ -840,13 +840,14 @@ void Population::fnDumpNaturalProb(ofstream &fNaturalProbOutFile) {
 	}
 }
 
-void Population::fnAddNatSelProb(double nDadID, double nDadPop, double nMomID, double nMomPop, double nProb, bool bSurvived) {
+void Population::fnAddNatSelProb(double nIndID, double nDadID, double nDadPop, double nMomID, double nMomPop, double nProb, bool bSurvived) {
 	if (!_bRecordNatSelProb) {
 		return;
 	}
 	#pragma omp critical 
 	{
 		vector< double > vRecord;
+		vRecord.push_back(nIndID);
 		vRecord.push_back(nDadID);
 		vRecord.push_back(nDadPop);
 		vRecord.push_back(nMomID);

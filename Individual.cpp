@@ -615,7 +615,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 				double nSurvivalProb = pParser->Evaluate();
 				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
 
-				((Population*)this->_pPop)->fnAddNatSelProb(pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
+				((Population*)this->_pPop)->fnAddNatSelProb(pOffSpring->GetID(), pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
 															this->GetID(), ((Population*)this->GetPrevPop())->GetPopId(),
 															nSurvivalProb , bLive);
 
