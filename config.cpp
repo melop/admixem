@@ -662,8 +662,7 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	//FILE *pConfigFile;
 	ifstream fsConfigFile;
 	string sBuffer;
-	char szPopName[MAXLINE];
-	char szFormula[MAXLINE];
+
 	
 	#ifdef _OPENMP
 		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
@@ -696,10 +695,13 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 	while(fsConfigFile.good()) 
 	{
 		getline(fsConfigFile,sBuffer);
+		char szPopName[MAXLINE];
+		char szFormula[MAXLINE];
 		string sPopName, sFormula;
 		int nGen;
 		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
+
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
 		printf("Parsing natural rule for Pop %s : %s\n", sPopName.c_str(), sFormula.c_str());
