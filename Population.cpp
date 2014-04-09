@@ -251,8 +251,12 @@ bool Population::Breed() {
 	std::set<int> stExhaustedFemales; // a list of females without further gametes
 	//int nExhaustedFemales=0;
 	bool bCourterHandeled = false;
+	int nMaxLoop = SimulConfig.GetNumericConfig("FemaleGiveBirthMaxIterations");
+	nMaxLoop = (nMaxLoop==-1)? 20:nMaxLoop; //do at most 20 loops.
+	int nLoopCount = 0;
 	do 
 	{
+		nLoopCount++;
 		if (nNewOffSpringCount >= this->_nPopMaxSize) {
 			printf("Max Pop Size met.\n");
 			break; //no need to continue;
@@ -404,7 +408,7 @@ bool Population::Breed() {
 
 
 	} // end do block
-	while( (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
+	while( (nLoopCount <= nMaxLoop) && (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
 
 	
