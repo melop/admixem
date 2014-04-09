@@ -910,13 +910,13 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 
 				//}
 				//else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
-					#pragma omp critical
-					{
+					//#pragma omp critical
+					//{
 						double nCurrVal = pChrmToMutate->at(nInx).Value;
 						(*it2).second.pFormula->symbols_["CurrVal"] = nCurrVal; //give value to symbol;
 						double nNewVal = (*it2).second.pFormula->Evaluate();
 						pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
-					}
+					//}
 				//}
 			}
 			nInx++;
