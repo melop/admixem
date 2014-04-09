@@ -253,9 +253,11 @@ void PerformSimulation() {
 				
 				if ((*itpPop)->Breed())
 				{
-					(*itpPop)->KillOldGen();
+					
 					bAtLeastOneBred = true;
 				}
+
+				(*itpPop)->KillOldGen();
 				
 		}
 

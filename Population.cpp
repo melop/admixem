@@ -149,6 +149,7 @@ bool Population::Breed() {
 
 	if (_mpMales.size()==0 || _mpFemales.size()==0) {
 		printf("Pop %s cannot breed because one of the sexes is 0...\n", _sPopName.c_str());
+		this->_bBred = true;
 		return false;
 	}
 
