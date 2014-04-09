@@ -882,21 +882,37 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 		vector< Gene > * pChrmToMutate = &vGenes.at(nChr);
 		int nInx = 0;
 		for (map<double, GeneProperties>::iterator it2=pGenes->at(nChr).begin(); it2!=pGenes->at(nChr).end(); ++it2) {// genes
-			
-			double nMuteProb = (*it2).second.MutationProb;
-			if (nMuteProb==0) {//no mutation needed for this locus
+			//see if apply mutation rule:
+			if ( ((*it2).second.Pop == ((Population*)this->GetPop())->GetPopName())
+				   &&
+				   (
+						(*it2).second.StartGen==-1
+							||
+						(
+							SimulConfig.GetCurrGen() >= (*it2).second.StartGen
+							&&
+							SimulConfig.GetCurrGen() <= (*it2).second.EndGen
+						)
 
-			}
-			else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
-				#pragma omp critical
-				{
-					double nCurrVal = pChrmToMutate->at(nInx).Value;
-					(*it2).second.pFormula->symbols_["CurrVal"] = nCurrVal; //give value to symbol;
-					double nNewVal = (*it2).second.pFormula->Evaluate();
-					pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
+				   )
+				
+				)
+			{
+			
+				double nMuteProb = (*it2).second.MutationProb;
+				if (nMuteProb==0) {//no mutation needed for this locus
+
+				}
+				else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
+					#pragma omp critical
+					{
+						double nCurrVal = pChrmToMutate->at(nInx).Value;
+						(*it2).second.pFormula->symbols_["CurrVal"] = nCurrVal; //give value to symbol;
+						double nNewVal = (*it2).second.pFormula->Evaluate();
+						pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
+					}
 				}
 			}
-
 			nInx++;
 		}
 	}

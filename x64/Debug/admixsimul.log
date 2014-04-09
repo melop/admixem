@@ -1,4 +1,4 @@
-﻿Build started 3/25/2014 2:08:53 PM.
+﻿Build started 4/9/2014 2:53:51 PM.
      1>Project "C:\Users\rcui\Documents\GitHub\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt Individual.cpp Population.cpp config.cpp main.cpp simulation.cpp
@@ -35,49 +35,21 @@
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
      1>config.cpp(1329): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1370): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1371): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1384): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1385): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1480): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1388): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
+     1>config.cpp(1502): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1495): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1517): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1544): warning C4244: '=' : conversion from 'const double' to 'int', possible loss of data
-     1>config.cpp(1563): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1566): warning C4244: '=' : conversion from 'const double' to 'int', possible loss of data
+     1>config.cpp(1585): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1578): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1600): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-         Population.cpp
-     1>Population.cpp(157): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(321): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(336): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>Population.cpp(339): warning C4244: '=' : conversion from 'Real' to 'int', possible loss of data
-     1>Population.cpp(449): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(450): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(459): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(490): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(503): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(504): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(505): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(506): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(507): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(508): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-         Generating Code...
-     1>c:\users\rcui\documents\github\admixsimul\population.cpp(510): warning C4715: 'Population::GetPopSize' : not all control paths return a value
-         Compiling...
-         simulation.cpp
-     1>simulation.cpp(56): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>simulation.cpp(224): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
-     1>simulation.cpp(225): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
-     1>simulation.cpp(335): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
-     1>simulation.cpp(347): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
-     1>simulation.cpp(359): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : see declaration of 'scanf'
-     1>simulation.cpp(420): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-         main.cpp
          Individual.cpp
      1>Individual.cpp(188): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
      1>Individual.cpp(189): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
@@ -99,6 +71,10 @@
      1>Individual.cpp(833): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
      1>Individual.cpp(842): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
          Generating Code...
+         Skipping... (no relevant changes detected)
+         simulation.cpp
+         main.cpp
+         Population.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\rcui\Documents\GitHub\admixsimul\x64\Debug\admixsimul.lib" /MACHINE:X64 x64\Debug\config.obj
          x64\Debug\filesystem.obj
@@ -119,4 +95,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:28.33
+Time Elapsed 00:01:05.43

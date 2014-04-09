@@ -206,6 +206,9 @@ struct GeneProperties {
 	double UpperBound;
 	Parser * pFormula;
 	string sFormula;
+	string Pop;
+	int StartGen;
+	int EndGen;
 
 	GeneProperties& operator=(const GeneProperties& oSource);
 };
