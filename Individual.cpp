@@ -883,9 +883,13 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 		int nInx = 0;
 		for (map<double, GeneProperties>::iterator it2=pGenes->at(nChr).begin(); it2!=pGenes->at(nChr).end(); ++it2) {// genes
 			//see if apply mutation rule:
-			if ( ((*it2).second.Pop == ((Population*)this->GetPop())->GetPopName())
+			if ( (
+					(*it2).second.Pop == "!ANYPOP"
+						||
+					(*it2).second.Pop == ((Population*)this->GetPop())->GetPopName()
+				  )
 				   &&
-				   (
+				  (
 						(*it2).second.StartGen==-1
 							||
 						(
@@ -894,7 +898,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 							SimulConfig.GetCurrGen() <= (*it2).second.EndGen
 						)
 
-				   )
+				  )
 				
 				)
 			{
