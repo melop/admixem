@@ -291,7 +291,7 @@ bool Population::Breed() {
 	#pragma omp for 
 	for(int i=0;i<nNumFemales;i++) 
 	{
-		if (nNewOffSpringCount >= this->_nPopMaxSize) {
+		if (nNewOffSpringCount >= this->_nPopMaxSize || stExhaustedFemales.size() >= this->_mpFemales.size()) {
 			continue; // first see if new pop already filled up by other threads. if so then do nothing.
 		}
 		
