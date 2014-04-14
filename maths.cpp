@@ -48,7 +48,7 @@ int fnGetRandIndex(int nSizeOfArray) {
     const unsigned long divisor = (RAND_MAX + 1) / n;
 
     unsigned long nRet;
-    do { nRet = std::rand() / divisor; } while (nRet >= n);
+    do { nRet = rand() / divisor; } while (nRet >= n);
 
 	return nRet;
 };
