@@ -253,7 +253,7 @@ bool Population::Breed() {
 	//int nExhaustedFemales=0;
 	bool bCourterHandeled = false;
 	int nMaxLoop = SimulConfig.GetNumericConfig("FemaleGiveBirthMaxIterations");
-	nMaxLoop = (nMaxLoop==-1)? 20:nMaxLoop; //do at most 20 loops.
+	nMaxLoop = (nMaxLoop==-1)? 1000:nMaxLoop; //do at most 20 loops.
 	int nLoopCount = 0;
 	do 
 	{
@@ -304,15 +304,24 @@ bool Population::Breed() {
 
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
-
+		bool bGetRandSuccess = true;
 		#pragma omp critical
 		{
 			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd) == stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
+				if (stExhaustedFemales.size() >= this->_mpFemales.size()) {
+					bGetRandSuccess = false;
+					break;
+				}
 			}
-			stSampledFemales.insert(nRandFemaleInd);
+			if (bGetRandSuccess) {
+				stSampledFemales.insert(nRandFemaleInd);
+			}
 		}
 		//printf("%d\n", nRandFemaleInd);
+		if (!bGetRandSuccess) {
+			continue;
+		}
 
 		Individual * pFemale = this->_mpFemales.at(nRandFemaleInd); //get random female
 
