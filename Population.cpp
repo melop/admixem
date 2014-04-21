@@ -325,6 +325,19 @@ bool Population::Breed() {
 
 		Individual * pFemale = this->_mpFemales.at(nRandFemaleInd); //get random female
 
+		if (pFemale->GetGameteNum() == 0) 
+		{
+				#pragma omp critical
+				{
+			
+			
+						stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
+
+				}
+				continue; //if already no gamete then don't bother.
+				//nExhaustedFemales++;
+		}
+
 		if (!bCourterHandeled) {
 		int nCourters = (int)nSampleMate; //(int)NormalExt(nSampleMate , 1, 0, 100);
 
@@ -361,10 +374,11 @@ bool Population::Breed() {
 			pFemale->GiveBirth(vOffSprings, nTargetOffSpringCount, bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
 		//}
 
-		#pragma omp critical
+		if (pFemale->GetGameteNum() == 0) 
 		{
-			if (pFemale->GetGameteNum() == 0) 
+			#pragma omp critical
 			{
+			
 			
 				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
 				//nExhaustedFemales++;
