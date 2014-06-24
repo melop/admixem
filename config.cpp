@@ -52,6 +52,7 @@ void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 
 	//initialize arrays:
 	this->pChrLen = new double[nHaploidChrNum];
+	this->pPaternalTransBias = new double[nHaploidChrNum];
 	this->pCentromerePos = new double[nHaploidChrNum];
 
 	vector<int> vIndexCounters; //init index counter
@@ -84,9 +85,13 @@ void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 
 			double nChrLen;
 			double nCentromerePos;
+			double nPaternalTransBias; // when transmitting gametes, the bias towards paternal chr. 0.5 is neutral, 0 is maternal
 
-			sscanf(szBuffer, ":chr %d len = %lf centromere = %lf", &nCurrChr, &nChrLen , &nCentromerePos);
+			int nItemsRead = sscanf(szBuffer, ":chr %d len = %lf centromere = %lf paternaltransbias = %lf", &nCurrChr, &nChrLen , &nCentromerePos, &nPaternalTransBias);
 
+			if (nItemsRead < 4) {
+				nPaternalTransBias = 0.5;
+			}
 			//nCurrChr = (int)strtol( sCurrChr , NULL, 10);
 			//nChrLen = strtod( sChrLen, NULL );
 			//nCentromerePos = strtod( sCentromerePos , NULL);
@@ -103,9 +108,10 @@ void MarkerConfigurations::LoadFromFile(string szConfigFile) {
 
 			// save chromosome information:
 			pChrLen[nCurrChr] = nChrLen;
+			pPaternalTransBias[nCurrChr] = nPaternalTransBias;
 			nTotalGenomeLen += nChrLen;
 			pCentromerePos[nCurrChr] = nCentromerePos;
-			printf("Reading markers on chromosome %d , length=%f, centromere=%f ...\n", (nCurrChr + 1), nChrLen, nCentromerePos);
+			printf("Reading markers on chromosome %d , length=%f, centromere=%f paternalTransBias=%f ...\n", (nCurrChr + 1), nChrLen, nCentromerePos,nPaternalTransBias);
 
 		}
 		else if (sscanf(szBuffer, "%d %*lf %lf %lf %lf", &nNum, &nAbsPos, &nFreqPop1, &nFreqPop2)==4) {
@@ -494,6 +500,10 @@ double MarkerConfigurations::GetCentromerePosition(int nChr) {
 
 double MarkerConfigurations::GetChromosomeLength(int nChr) {
 	return this->pChrLen[nChr];
+}
+
+double MarkerConfigurations::GetPaternalTransBias(int nChr) {
+	return this->pPaternalTransBias[nChr];
 }
 
 PhenotypeConfigurations::PhenotypeConfigurations(void * pParentConfig) {

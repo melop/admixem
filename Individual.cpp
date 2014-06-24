@@ -711,10 +711,11 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 
 	for (int nChr=0;nChr<this->_nHaploidChrNum;nChr++) { // go over each chromosome
 		
-
 		int nMainChr, nOtherChr;
 		//int nWhichToPick = (UniformGen.Next() <=0.5)? 0:1;
-		int nWhichToPick = (int)BinomGen.Next();
+		double nPaternalTransBias = SimulConfig.pMarkerConfig->GetPaternalTransBias(nChr);
+		// 0 is paternal chr, 1 is maternal chr.
+		int nWhichToPick = nPaternalTransBias==0.5? (int)BinomGen.Next() : ( UniformGen.Next()<=nPaternalTransBias? 0:1 );
 		nMainChr = nChr*2 + nWhichToPick;
 		nOtherChr = nWhichToPick==0? nMainChr+1:nMainChr-1;
 		map<double, int> * pMarkerIndexOnChr = & (pMarkerIndex->at(nChr));

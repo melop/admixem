@@ -7,7 +7,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerCommandArguments>admixsimul.cfg</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>K:\Ray\learning\lab\admixsimul\troubleshooting_for_Ray</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>C:\data\Ray\learning\lab\admixsimul\troubleshooting_for_Ray</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
   </PropertyGroup>
 </Project>

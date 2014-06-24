@@ -31,6 +31,7 @@ class MarkerConfigurations {
 		map<double, double> * GetMarkersInfoByPop(int nPopId);
 		double GetCentromerePosition(int nChr);
 		double GetChromosomeLength(int nChr);
+		double GetPaternalTransBias(int nChr);
 		vector<map<double, int> > * GetMpMarkerIndex();
 		void CalculateMapDistances();
 		vector<map<double, double> > * GetMpMarkerMapDistance(int nMode);
@@ -42,6 +43,7 @@ class MarkerConfigurations {
 		int	_nHaploidChrNum;
 		string _szConfigFilename;
 		double * pChrLen; // array containing chromosome lengths.
+		double * pPaternalTransBias;
 		double nTotalGenomeLen;
 		double * pCentromerePos; //array containing centromere positions
 		vector< map<double, double> * > vMarkerFreq; // array containing array. first dimension is population, second dimension is chromosome, and the key for the map is marker position, value of map is frequency of the dominant allele
