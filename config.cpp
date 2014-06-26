@@ -1418,17 +1418,17 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 				mpGenes[nChr-1][nPos].pFormula = new Parser(szFormula);
 				mpGenes[nChr-1][nPos].sFormula = szFormula;
 				if (bLongLineFormat) {
-					mpGenes[nChr-1][nPos].Pop = szPopName;
+					mpGenes[nChr-1][nPos].Pops.insert( szPopName );
 					mpGenes[nChr-1][nPos].StartGen = nStartGen;
 					mpGenes[nChr-1][nPos].EndGen = nEndGen;
 				}
 				else {
 					//SHORT FORMAT DEFAULT TO ANY POP, ANY GEN
-					mpGenes[nChr-1][nPos].Pop = "!ANYPOP";
+					mpGenes[nChr-1][nPos].Pops.insert(  "!ANYPOP" );
 					mpGenes[nChr-1][nPos].StartGen = -1;
 					mpGenes[nChr-1][nPos].EndGen = -1;
 				}
-				std::printf("Mutation rule %s (prob=%f) loaded for chr %d : %f, at Generations %d to %d in population %s\n", szFormula, nMuteRate, nChr, nPos, mpGenes[nChr-1][nPos].StartGen, mpGenes[nChr-1][nPos].EndGen, mpGenes[nChr-1][nPos].Pop.c_str());
+				std::printf("Mutation rule %s (prob=%f) loaded for chr %d : %f, at Generations %d to %d in population %s\n", szFormula, nMuteRate, nChr, nPos, mpGenes[nChr-1][nPos].StartGen, mpGenes[nChr-1][nPos].EndGen, mpGenes[nChr-1][nPos].Pops );
 			}
 
 			
@@ -1462,7 +1462,7 @@ GeneProperties& GeneProperties::operator=(const GeneProperties& oSource) { // ov
 	this->pFormula = new Parser(oSource.sFormula);
 	this->StartGen = oSource.StartGen;
 	this->EndGen = oSource.EndGen;
-	this->Pop = oSource.Pop;
+	this->Pops = oSource.Pops;
 	 return *this ;
 }
 

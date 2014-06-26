@@ -887,9 +887,9 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 			if (  (*it2).second.MutationProb > 0
 					&&
 				  (
-					(*it2).second.Pop == "!ANYPOP"
+					(*it2).second.Pops.find("!ANYPOP")!=(*it2).second.Pops.end()
 						||
-					(*it2).second.Pop == ((Population*)this->GetPop())->GetPopName()
+					(*it2).second.Pops.find( ((Population*)this->GetPop())->GetPopName()) !=(*it2).second.Pops.end()
 				  )
 				   &&
 				  (

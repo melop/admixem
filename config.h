@@ -208,7 +208,7 @@ struct GeneProperties {
 	double UpperBound;
 	Parser * pFormula;
 	string sFormula;
-	string Pop;
+	set<string> Pops;
 	int StartGen;
 	int EndGen;
 
