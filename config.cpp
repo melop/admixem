@@ -1429,7 +1429,7 @@ void GeneConfigurations::LoadFromFile(string szConfigFile) {
 					mpGenes[nChr-1][nPos].StartGen = -1;
 					mpGenes[nChr-1][nPos].EndGen = -1;
 				}
-				std::printf("Mutation rule %s (prob=%f) loaded for chr %d : %f, at Generations %d to %d in population %s\n", szFormula, nMuteRate, nChr, nPos, mpGenes[nChr-1][nPos].StartGen, mpGenes[nChr-1][nPos].EndGen, sPopName );
+				std::printf("Mutation rule %s (prob=%f) loaded for chr %d : %f, at Generations %d to %d in population %s\n", szFormula, nMuteRate, nChr, nPos, mpGenes[nChr-1][nPos].StartGen, mpGenes[nChr-1][nPos].EndGen, sPopName.c_str() );
 			}
 
 			
