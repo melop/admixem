@@ -906,11 +906,11 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 				)
 			{
 			
-				//double nMuteProb = (*it2).second.MutationProb;
-				//if (nMuteProb==0) {//no mutation needed for this locus
+				double nMuteProb = (*it2).second.MutationProb;
+				if (nMuteProb==0) {//no mutation needed for this locus
 
-				//}
-				//else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
+				}
+				else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
 					//#pragma omp critical
 					//{
 						double nCurrVal = pChrmToMutate->at(nInx).Value;
@@ -918,7 +918,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 						double nNewVal = (*it2).second.pFormula->Evaluate();
 						pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
 					//}
-				//}
+				}
 			}
 			nInx++;
 		}
