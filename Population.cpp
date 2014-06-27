@@ -318,7 +318,7 @@ bool Population::Breed() {
 				stSampledFemales.insert(nRandFemaleInd);
 			}
 		}
-		printf("%d\n", nRandFemaleInd);
+		printf("Female Id: %d\n", nRandFemaleInd);
 		if (!bGetRandSuccess) {
 			continue;
 		}
@@ -344,7 +344,7 @@ bool Population::Breed() {
 		
 			for (int j=0;j<nCourters;j++) {
 				printf("Breed::beforerandom\n");
-				printf("_mpMale.size() %d", _mpMales.size());
+				printf("_mpMale.size() %d\n", _mpMales.size());
 				Individual * pCourter = this->_mpMales.at(fnGetRandIndex(this->_mpMales.size() ));
 				printf("Breed::afterrandom\n");
 				//#pragma omp critical
@@ -367,7 +367,7 @@ bool Population::Breed() {
 				{
 			nTargetOffSpringCount = vOffSpringPoissonGen[nCPU]->Next();
 				}
-			printf("%d\n", nTargetOffSpringCount );
+			printf("Target offspring: %d\n", nTargetOffSpringCount );
 		}
 		//#pragma omp critical
 		//{
@@ -381,6 +381,7 @@ bool Population::Breed() {
 
 		if (pFemale->GetGameteNum() == 0) 
 		{
+			printf("CPU %d: Exhausted female before\n", nCPU);
 			#pragma omp critical
 			{
 			
@@ -388,8 +389,10 @@ bool Population::Breed() {
 				stExhaustedFemales.insert(nRandFemaleInd); // this female cannot produce more offsprings.
 				//nExhaustedFemales++;
 			}
+			printf("CPU %d: Exhausted female after\n", nCPU);
 		}
 
+		printf("CPU %d: Start insert offspring\n", nCPU);
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
 		{
 
@@ -419,6 +422,8 @@ bool Population::Breed() {
 			}
 		}
 
+		printf("CPU %d: end insert offspring\n", nCPU);
+
 	}
 
 		
@@ -426,10 +431,12 @@ bool Population::Breed() {
 
 	bCourterHandeled = true;
 	
+		
 		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
 			//delete poisson generators for offspring numbers
 			if (nOffSpringCountFunc == 1 ) {
+				printf("CPU %d: Realease poisson generator\n", nCPU);
 				delete vOffSpringPoissonGen[nCPU];
 				vOffSpringPoissonGen[nCPU] = NULL;
 			}
