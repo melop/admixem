@@ -363,7 +363,10 @@ bool Population::Breed() {
 		int nTargetOffSpringCount =  round(NormalExt(nAvgKidPerFemale,nAvgKidPerFemale/4, 0,10000));
 
 		if ( nOffSpringCountFunc == 1 ) { //use poisson distribution for offspring number
+			#pragma omp critical
+				{
 			nTargetOffSpringCount = vOffSpringPoissonGen[nCPU]->Next();
+				}
 			printf("%d\n", nTargetOffSpringCount );
 		}
 		//#pragma omp critical
