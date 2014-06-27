@@ -915,8 +915,8 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 					//{
 						double nCurrVal = pChrmToMutate->at(nInx).Value;
 						(*it2).second.pFormula->symbols_["CurrVal"] = nCurrVal; //give value to symbol;
-						double nNewVal = (*it2).second.pFormula->Evaluate();
-						//pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
+						double nNewVal = 0;//(*it2).second.pFormula->Evaluate();
+						pChrmToMutate->at(nInx).Value = (nNewVal > (*it2).second.UpperBound)? (*it2).second.UpperBound : ((nNewVal < (*it2).second.LowerBound)? (*it2).second.LowerBound : nNewVal);
 					//}
 				}
 			}
