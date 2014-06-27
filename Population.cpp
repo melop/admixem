@@ -173,6 +173,7 @@ bool Population::Breed() {
 
 	#ifdef _OPENMP
 		int nTotalCPUCore =  omp_get_num_threads();
+		printf("TotalCPUCore: %d\n", nTotalCPUCore);
 	#else
 		int nTotalCPUCore = 1;
 	#endif
