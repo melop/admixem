@@ -1463,7 +1463,9 @@ GeneProperties& GeneProperties::operator=(const GeneProperties& oSource) { // ov
 	this->pFormula = new Parser(oSource.sFormula);
 	this->StartGen = oSource.StartGen;
 	this->EndGen = oSource.EndGen;
-	this->Pops = oSource.Pops;
+	for(set< string >::iterator it=oSource.Pops.begin(); it != oSource.Pops.end(); ++it) {
+		this->Pops.insert(*it);
+	}
 	 return *this ;
 }
 
