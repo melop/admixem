@@ -297,7 +297,7 @@ bool Population::Breed() {
 		
 		#ifdef _OPENMP
 		int nCPU = omp_get_thread_num();
-			//printf("%s : %d\n", "SexSelFormulae # ", nCPU);
+			printf("%s : %d\n", "SexSelFormulae # ", nCPU);
 		#else
 			int nCPU = 0;
 		#endif
@@ -318,7 +318,7 @@ bool Population::Breed() {
 				stSampledFemales.insert(nRandFemaleInd);
 			}
 		}
-		//printf("%d\n", nRandFemaleInd);
+		printf("%d\n", nRandFemaleInd);
 		if (!bGetRandSuccess) {
 			continue;
 		}
@@ -343,15 +343,15 @@ bool Population::Breed() {
 
 		
 			for (int j=0;j<nCourters;j++) {
-				//printf("Breed::beforerandom\n");
-				//printf("_mpMale.size() %d", _mpMales.size());
+				printf("Breed::beforerandom\n");
+				printf("_mpMale.size() %d", _mpMales.size());
 				Individual * pCourter = this->_mpMales.at(fnGetRandIndex(this->_mpMales.size() ));
-				//printf("Breed::afterrandom\n");
+				printf("Breed::afterrandom\n");
 				//#pragma omp critical
 				//{
 					pFemale->HandleCourter(pCourter , bIgnoreGlobalRules);
 				//}
-				//printf("Breed::aftercourterhandler\n");
+				printf("Breed::aftercourterhandler\n");
 			}
 		}
 		
@@ -364,7 +364,7 @@ bool Population::Breed() {
 
 		if ( nOffSpringCountFunc == 1 ) { //use poisson distribution for offspring number
 			nTargetOffSpringCount = vOffSpringPoissonGen[nCPU]->Next();
-			//printf("%d\n", nTargetOffSpringCount );
+			printf("%d\n", nTargetOffSpringCount );
 		}
 		//#pragma omp critical
 		//{
