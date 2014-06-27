@@ -371,7 +371,9 @@ bool Population::Breed() {
 		if (nTargetOffSpringCount == 0) {
 			continue;
 		}
+		printf("CPU %d: Breed::GiveBirth before\n", nCPU);
 			pFemale->GiveBirth(vOffSprings, nTargetOffSpringCount, bIgnoreGlobalRulesNa); // to save memory, natural selection that isn't frequency dependent is carried out in the GiveBirth Function!
+		printf("CPU %d: Breed::GiveBirth after\n", nCPU);
 		//}
 
 		if (pFemale->GetGameteNum() == 0) 
