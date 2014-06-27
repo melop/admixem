@@ -284,11 +284,11 @@ Individual::Individual(Individual * pFather, Individual * pMother, bool &bSucces
 	
 	vector< vector<Marker> > vFatherMarkers, vMotherMarkers;
 	vector< vector<Gene> > vFatherGenes, vMotherGenes;
-	#pragma omp critical 
-	{
+	//#pragma omp critical 
+	//{
 		pFather->GetGamete(vFatherMarkers, vFatherGenes);
 		pMother->GetGamete(vMotherMarkers, vMotherGenes);
-	}
+	//}
 
 	//printf("vFatherMarkers.size() %d\n", vFatherMarkers.size());
 	//printf("vFatherGenes.size() %d\n", vFatherGenes.size());
@@ -581,7 +581,10 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		while(pDad==NULL);
 
 		bool bSuccess = false;
-		pOffSpring = new Individual( pDad, this , bSuccess); // create a new kid
+		#pragma omp critical 
+		{
+			pOffSpring = new Individual( pDad, this , bSuccess); // create a new kid
+		}
 		if (!bSuccess) {
 			printf("Something wrong when creating new individual. return false\n");
 			i--;
