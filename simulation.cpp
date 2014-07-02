@@ -49,11 +49,18 @@ void PerformSimulation() {
 	double nRandSeed = SimulConfig.GetNumericConfig("RandomSeed");
 	if (nRandSeed != -1 && nRandSeed>0.0 && nRandSeed<1.0) {
 		Random::Set(nRandSeed); //initialize random number generator
+		#ifndef SRANDCALLED		
 		srand((int) (nRandSeed * (double)RAND_MAX));
+		#define SRANDCALLED
+		#endif
+
 		printf("User-specified random seed is %f \n" , nRandSeed);
 	}
 	else {
+		#ifndef SRANDCALLED
 		srand(time(NULL)); // set seed with time.
+		#define SRANDCALLED
+		#endif
 		nRandSeed = (double)rand()/(double)RAND_MAX;
 		if (nRandSeed == 0.0) {
 			nRandSeed = 0.0001;
@@ -64,7 +71,7 @@ void PerformSimulation() {
 		}
 
 		Random::Set(nRandSeed); //initialize random number generator
-		srand((int) (nRandSeed * (double)RAND_MAX));
+		//srand((int) (nRandSeed * (double)RAND_MAX));
 		printf("System chosen random seed is %f \n" , nRandSeed);
 		SimulConfig.SetNumericConfig("RandomSeed" , nRandSeed);
 	}

@@ -82,7 +82,10 @@ const bool percent (const int prob)
 
 static int initRandom ()
   {
+#ifndef SRANDCALLED
   srand   (time (NULL));
+#define SRANDCALLED
+#endif
 #ifndef WIN32
   srand48 (time (NULL));
 #endif
