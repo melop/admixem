@@ -84,9 +84,9 @@ class Individual {
 	double EvaluateCourter(Individual * pCourter); //Assign a probability for the female to mate with the given courter. This is the preference function of the female.
 	int HandleCourter(Individual * pCourter, bool bIgnoreGlobalRules); // Handling the courtship. Only available to females. EvaluateCourter() will be called, then self condition will also be considered. If accepted, will inseminate some eggs. return value are the eggs inseminated
 	Sex	GetSex();
-	unsigned int GetID();
-	unsigned int GetFatherId();
-	unsigned int GetMotherId();
+	unsigned long long int GetID();
+	unsigned long long int GetFatherId();
+	unsigned long long int GetMotherId();
 	int GetGameteNum();
 	int GetMateNumber();
 	double GetPhenotype(string sPhenotype);
@@ -113,9 +113,9 @@ class Individual {
 	 void fnDetermineNumGametes(); //determines how many gametes does this female have.
 	 bool fnSetParserPopWide(Parser * pParser,  vector<string> &vSymbols, const string &sPrefix,  map< string , pair< double, double> > &mpSumPhenotypes);
 
-	 unsigned int _nFatherId; //id of father
-	 unsigned int _nMotherId; //id of mother
-	 unsigned int _nId; // fish id
+	 unsigned long long int _nFatherId; //id of father
+	 unsigned long long int _nMotherId; //id of mother
+	 unsigned long long int _nId; // fish id
 	 void * _pPop; //pointer to the current population it's living in.
 	 void * _pPrevPop; // pointer to the previous population, before migration. this is relavant in oblique imprinting, where the individual learned before migration.
 	 Sex _bSex;

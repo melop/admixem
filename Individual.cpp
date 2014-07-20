@@ -15,7 +15,7 @@ extern Normal NormalGen;
 extern Uniform UniformGen;
 extern Binomial BinomGen(1, 0.5);
 
-int nCurrIndividualId = 1; //Global counter
+long long int nCurrIndividualId = 1; //Global counter
 /*
 void Genome::BuildGenome(Chromosome * pPaternalGamete, Chromosome * pMaternalGamete) {
 
@@ -691,15 +691,15 @@ Individual::Sex Individual::GetSex() {
 	return this-> _bSex;
 };
 
-unsigned int Individual::GetID() {
+unsigned long long int Individual::GetID() {
 	return this-> _nId;
 }
 
-unsigned int Individual::GetFatherId() {
+unsigned long long int Individual::GetFatherId() {
 	return this->_nFatherId;
 }
 
-unsigned int Individual::GetMotherId() {
+unsigned long long int Individual::GetMotherId() {
 	return this->_nMotherId;
 }
 
