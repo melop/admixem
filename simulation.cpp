@@ -184,6 +184,11 @@ void PerformSimulation() {
 			fPhenoSumFile.open((sOutFileBase + szCurrGen + "_phenostats.txt").c_str());// output file stream
 			fOffSpringNatSelProb.open((sOutFileBase + szCurrGen + "_natselprobdump.txt").c_str());// output file stream
 
+			fMarkerOutFile.setf(std::ios_base::fixed);
+			fGeneOutFile.setf(std::ios_base::fixed);
+			fPhenotypeOutFile.setf(std::ios_base::fixed);
+			fOffSpringNatSelProb.setf(std::ios_base::fixed);
+
 			//dump everything to disk:
 			for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
 			{
