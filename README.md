@@ -1,4 +1,4 @@
-admixsimul
+Admixem
 ==========
 
 Admixture simulator
