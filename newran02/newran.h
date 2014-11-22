@@ -317,7 +317,7 @@ class Binomial : public Random            // generate binomial rv
 
 public:
    char* Name();                          // identification
-   Binomial(int p, Real n);               // constructor (int=n, Real=p)
+   Binomial(int n, Real p);               // constructor (int=n, Real=p)
    ~Binomial() { delete method; }
    Real Next() { return method->Next(); }
    ExtReal Mean() const { return method->Mean(); }
