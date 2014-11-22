@@ -475,6 +475,10 @@ Poisson::Poisson(Real mu)
 
 Binomial::Binomial(int nx, Real px)
 {
+   if (nx <= 0) {
+	   printf("Binomial: nx <=0\n");
+	   exit(6);
+   }
    if (nx < 40 || nx * px <= 8.0) method = new Binomial2(nx, px);
    else method = new Binomial1(nx, px);
    if (!method) ErrorNoSpace();

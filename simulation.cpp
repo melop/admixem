@@ -242,10 +242,11 @@ void PerformSimulation() {
 							continue;
 						}
 
-						if (SimulConfig.GetConfig("UseBinomMigrateRate") == "yes" && nNumberMigrants!=0 ) {
-							if (nNumberMigrants <=0 && nNumberMigrants > 1) {
+						if (SimulConfig.GetConfig("UseBinomMigrateRate") == "yes" && nNumberMigrants!=0 && (*itpPop1)->GetPopSize(4)>0) {
+							if (nNumberMigrants <=0 || nNumberMigrants > 1) {
 								printf("ERROR: When UseBinomMigrateRate is turned on, migrational rates must be 0-1.\n");
-								exit(6);
+								Throw(Out_of_range("ERROR: When UseBinomMigrateRate is turned on, migrational rates must be 0-1."));
+								
 							}
 							Binomial oBinom((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
 							nNumberMigrants = round((*itpPop1)->GetPopSize(4) * oBinom.Next());
