@@ -233,8 +233,8 @@ void PerformSimulation() {
 						continue; // didn't find the configuration for this migration, move on
 					}
 					else {
-						int nNumberMigrants = SimulConfig.GetNumericConfig(sMigrationParamLabel);
-						int nNumberMigrantsGeneral = SimulConfig.GetNumericConfig(sMigrationParamLabelGeneral);
+						double nNumberMigrants = SimulConfig.GetNumericConfig(sMigrationParamLabel);
+						double nNumberMigrantsGeneral = SimulConfig.GetNumericConfig(sMigrationParamLabelGeneral);
 						if (nNumberMigrants == -1 && nNumberMigrantsGeneral!=-1) { // IF generation specific rule not available, use general rule
 							nNumberMigrants = nNumberMigrantsGeneral;
 						}
@@ -242,7 +242,11 @@ void PerformSimulation() {
 							continue;
 						}
 
-						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), nNumberMigrants);
+						if (SimulConfig.GetConfig("UseBinomMigrateRate") == "yes") {
+							Binomial oBinom((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
+							nNumberMigrants = round((*itpPop1)->GetPopSize(4) * oBinom.Next());
+						}
+						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), (int)nNumberMigrants);
 						for (int i=0; i<nNumberMigrants; i++) {
 							if ((*itpPop1)->GetPopSize(4) == 0) {
 								printf("Population size of %s is now 0, only migrated %d individuals.\n", (*itpPop1)->GetPopName().c_str(), i);
