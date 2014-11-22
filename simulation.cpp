@@ -249,7 +249,9 @@ void PerformSimulation() {
 								
 							}
 							Binomial oBinom((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
-							nNumberMigrants = round((*itpPop1)->GetPopSize(4) * oBinom.Next());
+							printf("Migrant number drawn from Binom(n=%d , p=%f)\n", (*itpPop1)->GetPopSize(4) , nNumberMigrants);
+							nNumberMigrants = round( oBinom.Next());
+							
 						}
 						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), (int)nNumberMigrants);
 						for (int i=0; i<nNumberMigrants; i++) {
