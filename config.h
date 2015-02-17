@@ -90,15 +90,20 @@ class PhenotypeConfigurations {
 		void InitKeys( map<string, double> * pMap);
 		void GetKeys( vector<string> &vKeys);
 		vector<pair<int, double> > * GetFormulaSymbols(string sPhenotypeName);
-		vector<string> * GetFormulaSymbolStrings(string sPhenotypeName);
+		vector< string > * GetFormulaParentSymbols(string sPhenotypeName, int nParent);
+		vector< string > * GetFormulaSymbolStrings(string sPhenotypeName);
 		Parser * GetFormula(string sPhenotypeName);
+		bool IsReferToParentPhe(string sPhenotypeName); //does this phenotype depend on parent's phenotype?
 
 	private:
 		string _szConfigFilename;
+		map<string, bool > _mpIsReferToParentPhe;
 		void * _pParentConfig;// convert to SimulationConfigurations!
 		map<string , string> _mpPhenotypes; //definition of phenotypes as functions of genotypes
 		map< int, map<string , Parser *> > _mpmpPhenotypeFormulae; // similar as above, but the expression is parsed. first level key is CPU core, second level key is name of phenotype.
 		map<string , vector< pair<int, double> > > _mpPhenotypeFormulaSymbols; // Symbols used by each formula
+		map<string , vector< string > > _mpPhenotypeFormulaDadSymbols; // Symbols used by each formula, referring to dad's phenotypes
+		map<string , vector< string > > _mpPhenotypeFormulaMomSymbols; // Symbols used by each formula, referring to dad's phenotypes
 		map<string , vector<string> > _mpPhenotypeFormulaSymbolStrings; // Symbols as strings
 };
 

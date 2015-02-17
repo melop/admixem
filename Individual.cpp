@@ -249,6 +249,23 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 			oSymbolString++;
 		}
 
+		//next see if need to add references to parent's phenotypes
+		if (SimulConfig.pPhenotypeConfig->IsReferToParentPhe(sPhenoName)) { // fill in reference to parents' phenotypes
+
+			for(int nParentSym=0;nParentSym<=1;nParentSym++) {
+				vector<string> * pvParentSymbols = SimulConfig.pPhenotypeConfig->GetFormulaParentSymbols(sPhenoName , nParentSym);
+				map< string, double > *mpParentPhes = (nParentSym ==0 )? &this->_mpDadPhenotypes : &this->_mpMomPhenotypes;
+				string sSymPrefix = "Phe_";
+				sSymPrefix = sSymPrefix + ((nParentSym==0)? "Mom" : "Dad") + "_";
+				for (vector< string >::iterator oSymbol = pvParentSymbols->begin(); oSymbol != pvParentSymbols->end(); ++oSymbol) 
+				{
+					if (mpParentPhes->find(oSymbol->c_str()) != mpParentPhes->end() ) {
+						pFormula->symbols_[sSymPrefix + *oSymbol ] = mpParentPhes->at(*oSymbol );
+					}
+				}
+			}
+		}
+
 		this->_mpPhenotypes[sPhenoName] = pFormula->Evaluate(); // re-evaluate.
 	}
 

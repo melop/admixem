@@ -570,6 +570,8 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 			}
 
 			vector< pair<int, double> > vSymbols;
+			vector< string > vDadPheSymbols;
+			vector< string > vMomPheSymbols;
 			vector<string> vSymbolStrings;
 			//list all the symbols used in this formula
 			for(map<string,double>::iterator it = pF->symbols_.begin(); it != pF->symbols_.end(); ++it) 
@@ -588,6 +590,28 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 				string sTemp = it->first.substr(3);	
 				size_t nFirstUS = sTemp.find_first_of("_");
 				size_t nLastUS = sTemp.find_last_of("_");
+
+				if (sSymbolLabel.find_first_of("Phe") == 0) { //if referring to the phenotype of dad or mum
+					string sWhichParent = sSymbolLabel.substr(  nFirstUS+1, 3);
+					string sPhenotype = sSymbolLabel.substr(  nLastUS+1 );
+
+					if (sWhichParent == "Dad" ) {
+						vDadPheSymbols.push_back(sPhenotype);
+						//vSymbolStrings.push_back(sSymbolLabel); //don't add this
+						this->_mpIsReferToParentPhe[sPhenotypeName] = true;
+					}
+
+					if (sWhichParent == "Mom" ) {
+						vMomPheSymbols.push_back(sPhenotype);
+						//vSymbolStrings.push_back(sSymbolLabel); //don't add this.
+						this->_mpIsReferToParentPhe[sPhenotypeName] = true;
+
+					}
+
+					continue;
+				}
+
+
 
 				if (nFirstUS != nLastUS) { // there is _a1 _a2 suffixes, delete the suffix
 					sTemp = sTemp.substr(0,nLastUS);
@@ -609,6 +633,8 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 				this->_mpmpPhenotypeFormulae[nCPU][sPhenotypeName] = new Parser(sFormula);//pF;
 			}
 			this->_mpPhenotypeFormulaSymbols[sPhenotypeName] = vSymbols;
+			this->_mpPhenotypeFormulaDadSymbols[sPhenotypeName] = vDadPheSymbols;
+			this->_mpPhenotypeFormulaMomSymbols[sPhenotypeName] = vMomPheSymbols;
 			this->_mpPhenotypeFormulaSymbolStrings[sPhenotypeName] = vSymbolStrings;
 		}
 	}
@@ -644,6 +670,10 @@ vector< pair<int, double> > * PhenotypeConfigurations::GetFormulaSymbols(string 
 	
 };
 
+vector< string > * PhenotypeConfigurations::GetFormulaParentSymbols(string sPhenotypeName, int nParent) { //nparent = 0 mom, 1 dad
+	return (nParent == 0)? &this->_mpPhenotypeFormulaMomSymbols[sPhenotypeName] : &this->_mpPhenotypeFormulaDadSymbols[sPhenotypeName];
+};
+
 vector<string> * PhenotypeConfigurations::GetFormulaSymbolStrings(string sPhenotypeName) {
 
 	return &this->_mpPhenotypeFormulaSymbolStrings[sPhenotypeName];
@@ -660,6 +690,10 @@ Parser * PhenotypeConfigurations::GetFormula(string sPhenotypeName) {
 
 	return this->_mpmpPhenotypeFormulae[nCPU][sPhenotypeName];
 };
+
+bool PhenotypeConfigurations::IsReferToParentPhe(string sPhenotypeName) {
+	return this->_mpIsReferToParentPhe[sPhenotypeName];
+}
 
 NaturalSelectionConfigurations::NaturalSelectionConfigurations(void * pParentConfig) {
 
