@@ -260,7 +260,11 @@ void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values fr
 				for (vector< string >::iterator oSymbol = pvParentSymbols->begin(); oSymbol != pvParentSymbols->end(); ++oSymbol) 
 				{
 					if (mpParentPhes->find(oSymbol->c_str()) != mpParentPhes->end() ) {
-						pFormula->symbols_[sSymPrefix + *oSymbol ] = mpParentPhes->at(*oSymbol );
+						if (mpParentPhes->find(*oSymbol ) != mpParentPhes->end()) {
+							pFormula->symbols_[sSymPrefix + *oSymbol ] = mpParentPhes->at(*oSymbol );
+						} else {
+							pFormula->symbols_[sSymPrefix + *oSymbol ] = 0; //for gen 0, parent phenotypes are all 0.
+						}
 					}
 				}
 			}
