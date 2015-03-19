@@ -587,9 +587,8 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 				}
 
 				string sSymbolLabel = it->first;
-				string sTemp = it->first.substr(3);	
-				size_t nFirstUS = sTemp.find_first_of("_");
-				size_t nLastUS = sTemp.find_last_of("_");
+				size_t nFirstUS = sSymbolLabel.find_first_of("_");
+				size_t nLastUS = sSymbolLabel.find_last_of("_");
 
 				if (sSymbolLabel.find_first_of("Phe") == 0) { //if referring to the phenotype of dad or mum
 					string sWhichParent = sSymbolLabel.substr(  nFirstUS+1, 3);
@@ -611,7 +610,9 @@ void PhenotypeConfigurations::LoadFromFile(string szConfigFile)
 					continue;
 				}
 
-
+				string sTemp = it->first.substr(3);	
+				nFirstUS = sTemp.find_first_of("_");
+				nLastUS = sTemp.find_last_of("_");
 
 				if (nFirstUS != nLastUS) { // there is _a1 _a2 suffixes, delete the suffix
 					sTemp = sTemp.substr(0,nLastUS);
