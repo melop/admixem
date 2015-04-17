@@ -345,7 +345,7 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 			break;
 		}
 		*/
-		nRate = 1;
+		nRate = '1';
 		
 		if (nRate == '2') { 
 				while(true) { //  Get std. dev of the more abundant allele in pop 2
