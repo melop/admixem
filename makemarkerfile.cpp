@@ -331,7 +331,7 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 			
 			break;
 		}
-
+		/*
 		while(true) { //  Get std. dev of the more abundant allele in pop 2
 		
 			std::cout << "\nDistribution of recombination frequencies 1 - Uniform, 2 - Parabola ... ";
@@ -344,6 +344,8 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 			
 			break;
 		}
+		*/
+		nRate = 1;
 		
 		if (nRate == '2') { 
 				while(true) { //  Get std. dev of the more abundant allele in pop 2
@@ -377,12 +379,14 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 		if (nRate == '1') { // if uniform, just put two since users can specify Use UseUniformRec = yes
 			std::cout << "===========================================" <<endl;
 			std::cout  <<endl;
-			std::cout << "You have chosen to use the uniform rate" <<endl;
+			std::cout << "By default Admixem uses the uniform rate" <<endl;
 			std::cout << "In addition to files generated here," <<endl;
 			std::cout << "Please make sure you ADD THE FOLLOWING OPTION" <<endl;
 			std::cout << "in your MAIN CONFIGURATION file:" <<endl;
 			std::cout << endl << "        UseUniformRec  =  yes" <<endl;
 			std::cout  <<endl;
+			std::cout  <<"In case you really want to use the candidate ";
+			std::cout  <<"break point approach, refer to the manual. ";
 			std::cout << "===========================================" <<endl;
 
 			nTotalSamplePoint = 20 * nChromosomes;
