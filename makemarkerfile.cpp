@@ -103,6 +103,10 @@ double nChromosomeSize, nCentromerePos, nPop1AvgAlleleFreq, nPop1AvgAlleleFreqSt
 				pChromosomeSizes[nCurrChromosome-1] = nChromosomeSize;
 			}
 			
+			/*
+			Now do not allow users to move centromere any more since centromere can be simply a marker, and it's forced 
+			to the end of the chromosome.
+
 			std::cout << "\nEnter the centromere position of chromosome " << nCurrChromosome << " (in same unit as chromosome size. -1 default: at 50% of chromosome, enter 0 set it to the same as the previous): ";
 			std::cin >> nCentromerePos;
 			 
@@ -123,6 +127,10 @@ double nChromosomeSize, nCentromerePos, nPop1AvgAlleleFreq, nPop1AvgAlleleFreqSt
 			else {
 				pCentromerePos[nCurrChromosome-1] =  nCentromerePos;
 			}
+
+			*/
+
+			pCentromerePos[nCurrChromosome-1] = nChromosomeSize;
 			
 			nCurrChromosome++;
 			if (nCurrChromosome > nHaploidChromosomeNum ) {
@@ -366,17 +374,32 @@ void UIGenerateRecombinationFreqMap(int nChromosomes, double nLargestChromSize, 
 				}
 		}
 		
-		while(true) { //  Get std. dev of the more abundant allele in pop 2
+		if (nRate == '1') { // if uniform, just put two since users can specify Use UseUniformRec = yes
+			std::cout << "===========================================" <<endl;
+			std::cout  <<endl;
+			std::cout << "You have chosen to use the uniform rate" <<endl;
+			std::cout << "In addition to files generated here," <<endl;
+			std::cout << "Please make sure you ADD THE FOLLOWING OPTION" <<endl;
+			std::cout << "in your MAIN CONFIGURATION file:" <<endl;
+			std::cout << endl << "        UseUniformRec  =  yes" <<endl;
+			std::cout  <<endl;
+			std::cout << "===========================================" <<endl;
+
+			nTotalSamplePoint = 20 * nChromosomes;
+		}
+		else {
+			while(true) { //  Get std. dev of the more abundant allele in pop 2
 		
-			std::cout << "\nHow many sample points to put in total?: ";
-			std::cin >> nTotalSamplePoint;
+				std::cout << "\nHow many sample points to put in total?: ";
+				std::cin >> nTotalSamplePoint;
 			
-			if (nTotalSamplePoint <= 0  ) {
-				std::cout << "Input out of bound, retry." <<endl;
-				continue; // 
+				if (nTotalSamplePoint <= 0  ) {
+					std::cout << "Input out of bound, retry." <<endl;
+					continue; // 
+				}
+			
+				break;
 			}
-			
-			break;
 		}
 		
 		while(true) { //  Get std. dev of the more abundant allele in pop 2

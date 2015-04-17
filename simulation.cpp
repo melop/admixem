@@ -354,6 +354,7 @@ void UIExportResults() {
 			
 		}
 
+	/*
 	while(true) { //
 		
 			std::cout << "\n How many individuals to sample for each pop (-1 to include all) in the order of pop1 pop2 pophybrid :" ;
@@ -365,6 +366,10 @@ void UIExportResults() {
 			}
 			
 		}
+		*/
+	nPop1Size = -1;
+	nPop2Size = -1;
+	nPop3Size = -1;
 
 	while(true) { //
 		
