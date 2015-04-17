@@ -1,7 +1,7 @@
 #
-# Makefile for 'admixsimul'.
+# Makefile for 'admixem'.
 #
-# Type 'make' or 'make admixsimul' to create the binary.
+# Type 'make' or 'make admixem' to create the binary.
 # Type 'make clean' or 'make clear' to delete all temporaries.
 # Type 'make run' to execute the binary.
 # Type 'make debug' to debug the binary using gdb(1).
@@ -9,18 +9,18 @@
 
 # build target specs
 CC = g++
-CFLAGS = -O3 
+CFLAGS = -fopenmp -O3 
 OUT_DIR = release_build
 NEW_RAN_DIR = ./newran02
 PARSER_DIR = ./parser
 LIBS =
 
 # first target entry is the target invoked when typing 'make'
-default: admixsimul
+default: admixemp
 
-admixsimul: $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o
-	@echo -n 'Linking admixsimul... '
-	@$(CC) $(CFLAGS) -o bin/admixsimul $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o  $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o $(LIBS)
+admixemp: $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o
+	@echo -n 'Linking admixem... '
+	@$(CC) $(CFLAGS) -o bin/admixemp $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o  $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o $(LIBS)
 	@echo Done.
 	
 	
@@ -116,18 +116,18 @@ $(OUT_DIR)/parser.cpp.o: $(PARSER_DIR)/parser.cpp $(PARSER_DIR)/parser.h
 	@echo Done.
 
 run:
-	./admixsimul 
+	./admixemp 
 
 debug:
-	gdb ./admixsimul
+	gdb ./admixemp
 
 clean:
 	@echo -n 'Removing all temporary binaries... '
-	@rm -f admixsimul $(OUT_DIR)/*.o
+	@rm -f admixemp $(OUT_DIR)/*.o
 	@echo Done.
 
 clear:
 	@echo -n 'Removing all temporary binaries... '
-	@rm -f admixsimul $(OUT_DIR)/*.o
+	@rm -f admixemp $(OUT_DIR)/*.o
 	@echo Done.
 
