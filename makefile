@@ -20,9 +20,7 @@ MKDIR_P = mkdir -p
 # first target entry is the target invoked when typing 'make'
 default: directories admixemp
 
-directories: ${OUT_DIR}
-
-${OUT_DIR}:
+directories:
         ${MKDIR_P} ${OUT_DIR}
 
 
