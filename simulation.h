@@ -25,7 +25,7 @@ void UISimulation();
 void PerformSimulation();
 void UILoadConfig() ;
 void UIExportResults();
-void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed);
+void PerformExport(int nGen, int nRep, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed);
 
 string convertInt(int number);
 

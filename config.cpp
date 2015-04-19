@@ -182,7 +182,7 @@ void MarkerConfigurations::CalculateMapDistances() { // calculate map distances 
 	
 	vector<double> * pvMaleMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(1);
 
-	if (!pvMaleMapDistances) return; //The recombination mode is not predetermined mode , not available;
+	//if (!pvMaleMapDistances) return; //The recombination mode is not predetermined mode , not available;
 
 	vector<double> * pvFemaleMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(0);
 	vector<double> * pvAvgMapDistances = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->GetBreakPointMapDistances(2);
@@ -193,6 +193,15 @@ void MarkerConfigurations::CalculateMapDistances() { // calculate map distances 
 
 
 	for (int nChr=0 ; nChr < this->_nHaploidChrNum; nChr++ ) {
+
+		double nMaleExpBreakpoints = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->HowManyBreakpointsOnArm(true, nChr, 1) + 
+										((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->HowManyBreakpointsOnArm(true, nChr, 2);
+		double nFemaleExpBreakpoints = ((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->HowManyBreakpointsOnArm(false, nChr, 1) + 
+										((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->HowManyBreakpointsOnArm(false, nChr, 2);
+		double nAvgExpBreakpoints = (nMaleExpBreakpoints + nFemaleExpBreakpoints) / 2;
+
+		double nChrLen = this->pChrLen[nChr];
+
 		vector<double> * pvBreakpointSamplePositionsOnChr = &pvBreakpointSamplePositions[nChr];
 		vector<double> * pvMaleMapDistancesOnChr = &pvMaleMapDistances[nChr];
 		vector<double> * pvFemaleMapDistancesOnChr = &pvFemaleMapDistances[nChr];
@@ -203,68 +212,77 @@ void MarkerConfigurations::CalculateMapDistances() { // calculate map distances 
 
 		double nPosLastSample = 0;
 
-		for (map<double,int>::iterator itMarker=pmMarkerIndexOnChr->begin(); itMarker!= pmMarkerIndexOnChr->end(); ++itMarker) {
+		for (map<double,int>::iterator itMarker=pmMarkerIndexOnChr->begin(); itMarker!= pmMarkerIndexOnChr->end(); ++itMarker) 
+		{
+
 			double nPos = (*itMarker).first;
 			double nAbsSampleDistance, nMapMaleSampleDistance, nMapFemaleSampleDistance, nMapAvgSampleDistance, nMapMaleDistance, nMapFemaleDistance, nMapAvgDistance;
 
-			vector<double>::iterator itClosestFollowingBreakpoint = upper_bound(pvBreakpointSamplePositionsOnChr->begin(), pvBreakpointSamplePositionsOnChr->end(), nPos);
-			if (itClosestFollowingBreakpoint ==pvBreakpointSamplePositionsOnChr->end() ) {
-				int nIndexLastSample = pvBreakpointSamplePositionsOnChr->size()-1;
-				int nIndexSecondToLastSample = nIndexLastSample - 1;
-				double nPosLastSample = pvBreakpointSamplePositionsOnChr->at(nIndexLastSample);//Last breakpoint sample
-				double nPosSecondToLastSample = pvBreakpointSamplePositionsOnChr->at(nIndexSecondToLastSample);
-				nAbsSampleDistance = (nPosLastSample - nPosSecondToLastSample);
-				nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(nIndexLastSample);// - pvMaleMapDistancesOnChr->at(nIndexSecondToLastSample);
-				nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(nIndexLastSample);// - pvFemaleMapDistancesOnChr->at(nIndexSecondToLastSample);
-				nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(nIndexLastSample);// - pvAvgMapDistancesOnChr->at(nIndexSecondToLastSample);
-
-				//extrapolate
-				double nAbsDistanceMarkerToPrevMarker = nPos - nPosLastSample;
-				double nPercentFromPrevSample = ( nAbsDistanceMarkerToPrevMarker / nAbsSampleDistance);
-				nMapMaleDistance = nMapMaleSampleDistance  * nPercentFromPrevSample;
-				nMapFemaleDistance = nMapFemaleSampleDistance * nPercentFromPrevSample;
-				nMapAvgDistance = nMapAvgSampleDistance * nPercentFromPrevSample;
+			if (((SimulationConfigurations *)this->_pParentConfig)->pRecombProbConfig->IsUseUniform()) { //if user specified using uniform rate, then no need to extrapolate.
+				nMapMaleDistance = (nPos / nChrLen ) * nMaleExpBreakpoints;
+				nMapFemaleDistance = (nPos / nChrLen ) * nFemaleExpBreakpoints;
+				nMapAvgDistance = (nPos / nChrLen ) * nAvgExpBreakpoints;
 			}
 			else {
-				if (itClosestFollowingBreakpoint != pvBreakpointSamplePositionsOnChr->begin())
-				{
-					vector<double>::iterator itClosestPrevBreakpoint = itClosestFollowingBreakpoint - 1;
-					size_t nIndexClosestFollowingBreakpoint = distance(pvBreakpointSamplePositionsOnChr->begin(),itClosestFollowingBreakpoint );
-					size_t nIndexClosestPrevBreakpoint = nIndexClosestFollowingBreakpoint - 1;
 
-					nAbsSampleDistance = ( *itClosestFollowingBreakpoint - *itClosestPrevBreakpoint);
-					nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvMaleMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
-					nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvFemaleMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
-					nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvAvgMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
+				vector<double>::iterator itClosestFollowingBreakpoint = upper_bound(pvBreakpointSamplePositionsOnChr->begin(), pvBreakpointSamplePositionsOnChr->end(), nPos);
+				if (itClosestFollowingBreakpoint ==pvBreakpointSamplePositionsOnChr->end() ) {
+					int nIndexLastSample = pvBreakpointSamplePositionsOnChr->size()-1;
+					int nIndexSecondToLastSample = nIndexLastSample - 1;
+					double nPosLastSample = pvBreakpointSamplePositionsOnChr->at(nIndexLastSample);//Last breakpoint sample
+					double nPosSecondToLastSample = pvBreakpointSamplePositionsOnChr->at(nIndexSecondToLastSample);
+					nAbsSampleDistance = (nPosLastSample - nPosSecondToLastSample);
+					nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(nIndexLastSample);// - pvMaleMapDistancesOnChr->at(nIndexSecondToLastSample);
+					nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(nIndexLastSample);// - pvFemaleMapDistancesOnChr->at(nIndexSecondToLastSample);
+					nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(nIndexLastSample);// - pvAvgMapDistancesOnChr->at(nIndexSecondToLastSample);
 
-
+					//extrapolate
+					double nAbsDistanceMarkerToPrevMarker = nPos - nPosLastSample;
+					double nPercentFromPrevSample = ( nAbsDistanceMarkerToPrevMarker / nAbsSampleDistance);
+					nMapMaleDistance = nMapMaleSampleDistance  * nPercentFromPrevSample;
+					nMapFemaleDistance = nMapFemaleSampleDistance * nPercentFromPrevSample;
+					nMapAvgDistance = nMapAvgSampleDistance * nPercentFromPrevSample;
 				}
 				else {
-					nAbsSampleDistance = *itClosestFollowingBreakpoint;
-					nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(0);
-					nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(0);
-					nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(0);
+					if (itClosestFollowingBreakpoint != pvBreakpointSamplePositionsOnChr->begin())
+					{
+						vector<double>::iterator itClosestPrevBreakpoint = itClosestFollowingBreakpoint - 1;
+						size_t nIndexClosestFollowingBreakpoint = distance(pvBreakpointSamplePositionsOnChr->begin(),itClosestFollowingBreakpoint );
+						size_t nIndexClosestPrevBreakpoint = nIndexClosestFollowingBreakpoint - 1;
 
+						nAbsSampleDistance = ( *itClosestFollowingBreakpoint - *itClosestPrevBreakpoint);
+						nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvMaleMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
+						nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvFemaleMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
+						nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(nIndexClosestFollowingBreakpoint);// - pvAvgMapDistancesOnChr->at(nIndexClosestPrevBreakpoint);
+
+
+					}
+					else {
+						nAbsSampleDistance = *itClosestFollowingBreakpoint;
+						nMapMaleSampleDistance = pvMaleMapDistancesOnChr->at(0);
+						nMapFemaleSampleDistance = pvFemaleMapDistancesOnChr->at(0);
+						nMapAvgSampleDistance = pvAvgMapDistancesOnChr->at(0);
+
+					}
+
+
+
+					//extrapolate
+					double nAbsDistanceMarkerToPrevMarker = nPos - nPosLastSample;;
+					double nPercentFromPrevSample = (nAbsDistanceMarkerToPrevMarker  / nAbsSampleDistance);
+
+					nMapMaleDistance = nMapMaleSampleDistance * nPercentFromPrevSample;
+					nMapFemaleDistance = nMapFemaleSampleDistance * nPercentFromPrevSample;
+					nMapAvgDistance = nMapAvgSampleDistance * nPercentFromPrevSample;
 				}
 
-
-
-				//extrapolate
-				double nAbsDistanceMarkerToPrevMarker = nPos - nPosLastSample;;
-				double nPercentFromPrevSample = (nAbsDistanceMarkerToPrevMarker  / nAbsSampleDistance);
-
-				nMapMaleDistance = nMapMaleSampleDistance * nPercentFromPrevSample;
-				nMapFemaleDistance = nMapFemaleSampleDistance * nPercentFromPrevSample;
-				nMapAvgDistance = nMapAvgSampleDistance * nPercentFromPrevSample;
+				nPosLastSample = nPos;
+				/*
+				if (nMapMaleDistance == 0.0) {
+					printf("f");
+				}
+				*/
 			}
-
-			nPosLastSample = nPos;
-			/*
-			if (nMapMaleDistance == 0.0) {
-				printf("f");
-			}
-			*/
-
 			mAbsToMapDistanceOnChrMale.insert(pair<double, double>(nPos, nMapMaleDistance * 100));
 			mAbsToMapDistanceOnChrFemale.insert(pair<double, double>(nPos, nMapFemaleDistance * 100 ));
 			mAbsToMapDistanceOnChrAvg.insert(pair<double, double>(nPos, nMapAvgDistance * 100));
@@ -421,6 +439,15 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	///printf("%f %f %f", this->pvBreakpointSamplePositions[0].at(0), this->pvMaleAccuProb[0].at(0), this->pvFemaleAccuProb[0].at(0));
 
 };
+
+bool RecombProbConfigurations::IsUseUniform() {
+	return this->_bUseUniform;
+}
+
+double RecombProbConfigurations::HowManyBreakpointsOnArm(bool bSex, int nChr, int nArm) {
+
+	return  (true==bSex? (nArm==1? _nExpectedMaleRecPerMeiosisArm1[nChr] : _nExpectedMaleRecPerMeiosisArm2[nChr]) : (nArm==1? _nExpectedFemaleRecPerMeiosisArm1[nChr] : _nExpectedFemaleRecPerMeiosisArm2[nChr]));
+}
 
 void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm,vector<double> &vRet) { // return a vector of break points for a given arm of a given chromosome for a given sex
 	

@@ -61,6 +61,8 @@ class RecombProbConfigurations {
 		void GetBreakPointsByArm(bool bSex, int nChr, int nArm, vector<double> &vRet); // sex: true male, false female, nChr starts from 0 arm is either 1 or 2.
 		vector<double> * GetBreakPointMapDistances(int nMode);
 		vector<double> * GetBreakPointSamplePositions();
+		bool IsUseUniform();
+		double HowManyBreakpointsOnArm(bool bSex, int nChr, int nArm);
 
 	private:
 		void * _pParentConfig;// convert to SimulationConfigurations!

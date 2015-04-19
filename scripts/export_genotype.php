@@ -31,7 +31,7 @@ while(count($argv) > 0) {
 }
  
 /* print them */
-echo("This is php. $sGenotypeFile, $sExportPath, $sMarkerSubsetFile");
+echo("This is php. $sGenotypeFile, $sExportPath, $sMarkerSubsetFile.\n");
 
 //read marker subset file:
 $fMarkerSubsetFile = fopen($sMarkerSubsetFile, "r");
@@ -75,8 +75,7 @@ $sExGenotypesFile = "$sExportPath/genotypes.txt";
  $arrAlleleTemp = array();
  $nChrSide=0;
  
- $nLnCount = -1;
- $bFirstPop3 = true;
+
  
  //print(count($arrMarkersToSample[1]));
  //die();
@@ -85,10 +84,13 @@ $nCurrPop1=0;
 $nCurrPop2=0;
 $nCurrPop3=0;
 
+ $nLnCount = -1;
+ $bFirstPop3 = true;
+
  while(($sLn = fgets( $fGenotypeFile  ))!==false) {
 	 $nLnCount++;
 	$arrColumns = explode("\t", $sLn, 5);
-	//echo($sLn);
+	//echo("lINE:".$nLnCount.PHP_EOL);
 	
 	$nIndId = $arrColumns[0];
 	$nPopId = $arrColumns[1];
@@ -97,6 +99,10 @@ $nCurrPop3=0;
 	
 	//echo($arrColumns[0].PHP_EOL);
 	$nMarkersToSampleCount = 0;
+	
+	if ($nPopId == 3 && $nLnCount ==0) {
+		die("ERROR: no samples are present for the parental populations. This is required for exporting to admixmap. Rerun your simulations with parental populations!");
+	}
 	
 	if ($nPopId  != 3) { // parental populations, used for calculating prior allele freq.
 		if ($nPopId == 1) {
@@ -118,7 +124,7 @@ $nCurrPop3=0;
 		$nCurrChr = 0;
 		$nCurrLocusOnChr = 0;
 		$nTotalLocus = 0;
-		echo("$nPopId, $nIndId\n");
+		//echo("$nPopId, $nIndId\n");
 		
 		$nTotalCol = count($arrColumns);
 		//echo($nTotalCol.PHP_EOL);
@@ -140,6 +146,7 @@ $nCurrPop3=0;
 					//echo($arrMarkersToSample[$nCurrChr-1][$nMarkersToSampleCount]."\t".$nCurrLocusOnChr.PHP_EOL);
 					if ($arrMarkersToSample[$nCurrChr-1][$nMarkersToSampleCount] != ($nCurrLocusOnChr - 1)) { //dont sample this locus
 						$nCurrLocusOnChr++;
+						//echo("exclude\n");
 						continue;
 					}
 					
@@ -152,7 +159,8 @@ $nCurrPop3=0;
 						$arrAlleleCount_littleA_Pop1[$nTotalLocus] = 0;
 						$arrAlleleCount_littleA_Pop2[$nTotalLocus]  = 0;
 						$arrAlleleName[$nTotalLocus] = "chr".$nCurrChr."_".$nCurrLocusOnChr;
-						//print("line 0");
+						//echo("line 0");
+						//die();
 					}
 					
 					
@@ -214,7 +222,7 @@ $nCurrPop3=0;
 		}
 		$arrColumns = array_slice(explode("\t", $sLn) , 5, -1);
 		
-		echo($nTotalLocus.PHP_EOL);
+		//echo($nTotalLocus.PHP_EOL);
 		$nCurrChr = 0;
 		$nCurrLocusOnChr = 0;
 		$nTotalLocus = 0;
@@ -236,7 +244,7 @@ $nCurrPop3=0;
 				$bFirstPop3=false;
 		}
 		
-		echo("$nPopId, $nIndId\n");
+		//echo("$nPopId, $nIndId\n");
 		$nTotalCol = count($arrColumns);
 		if ($nChrSide == 1)
 		{

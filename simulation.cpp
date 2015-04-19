@@ -315,6 +315,7 @@ void UIExportResults() {
 	UILoadConfig();
 		
 	int nGen = 0; // generation to sample:
+	int nRep = 0; //which replicate to sample from?
 	string sExportFolder;
 	int nPop1Size, nPop2Size, nPop3Size , nMarkerNum; // how many individuals to sample
 	double nRandSeed;
@@ -326,6 +327,23 @@ void UIExportResults() {
 			
 			if (nGen < 0 ) {
 				std::cout << "\n Make sure the generation is correct. \n";
+				continue; // 
+			}
+			else {
+				break;
+			}
+			
+			
+			
+		}
+
+	while(true) { //
+		
+			std::cout << "\n Which replicate to sample? Starting from 0 :" ;
+			std::cin >> nRep;
+			
+			if (nRep < 0 ) {
+				std::cout << "\n Make sure the replicate number is correct. \n";
 				continue; // 
 			}
 			else {
@@ -396,10 +414,10 @@ void UIExportResults() {
 		}
 
 
-	PerformExport(nGen, sExportFolder, nPop1Size, nPop2Size, nPop3Size, nMarkerNum, nRandSeed);
+	PerformExport(nGen, nRep, sExportFolder, nPop1Size, nPop2Size, nPop3Size, nMarkerNum, nRandSeed);
 }
 
-void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed) {
+void PerformExport(int nGen, int nRep, string sExportFolder, int nPop1Size, int nPop2Size, int nPop3Size, int nMarkerNum, double nRandSeed) {
 
 	Random::Set(nRandSeed);
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
@@ -418,7 +436,9 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 	/*char szCurrGen[100];
 	_itoa(nGen , szCurrGen, 10);
 	*/
-	string sGenHeader = sOutFolder + "/Gen";
+	string sGenHeader = sOutFolder;
+	sGenHeader = (nRep==0)? sGenHeader : (sGenHeader + "_") + fnIntToString(nRep);
+	sGenHeader = sGenHeader + "/Gen";
 	sGenHeader = sGenHeader + fnIntToString(nGen);//szCurrGen;
 
 	fMarkers.open((sGenHeader + "_markers.txt").c_str() , ios_base::in );
@@ -431,7 +451,7 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 
 	//write loci.txt file
 	printf("Writing locus information...\n");
-	fLoci << "\"LocusName\"\t\"NumberOfAlleles\"\t\"Mb\"\t\"Chr\"" <<endl; // Header
+	fLoci << "\"LocusName\"\t\"NumberOfAlleles\"\t\"cM\"\t\"Chr\"" <<endl; // Header
 	
 	fLoci << fixed << showpoint; 
 	fLoci << setprecision(6);
@@ -454,8 +474,10 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 
 			if (UniformGen.Next() <= nProbToKeep) {
 
+				double nCurrPos = itMarker->second; // itMarker->first  * 10.0e-6;
+
 				fLoci << "chr" << (nChr+1) << "_" << nCurrMarker << "\t2\t";
-				fSampledMarkers << nChr << "\t" << ( nCurrMarker -1 ) << "\t" << itMarker->first << endl;
+				fSampledMarkers << nChr << "\t" << ( nCurrMarker -1 ) << "\t" << nCurrPos << endl;
 			
 				if ((nSampledMarkerCount==1)) {
 				
@@ -463,11 +485,11 @@ void PerformExport(int nGen, string sExportFolder, int nPop1Size, int nPop2Size,
 				}
 				else {
 				
-					fLoci <<  (itMarker->first - nPrevMarkerPos) * 10.0e-6 << "\t";
+					fLoci <<  (nCurrPos - nPrevMarkerPos) << "\t";
 					
 				
 				}
-				nPrevMarkerPos = itMarker->first ;
+				nPrevMarkerPos = nCurrPos ;
 				fLoci << (nChr+1) << endl;
 				nSampledMarkerCount++;
 			}

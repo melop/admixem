@@ -21,6 +21,7 @@ default: admixemp
 admixemp: $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o
 	@echo -n 'Linking admixem... '
 	@$(CC) $(CFLAGS) -o bin/admixemp $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o $(OUT_DIR)/myexcept.cpp.o $(OUT_DIR)/newran.cpp.o  $(OUT_DIR)/config.cpp.o $(OUT_DIR)/filesystem.cpp.o $(OUT_DIR)/Individual.cpp.o $(OUT_DIR)/main.cpp.o $(OUT_DIR)/makemarkerfile.cpp.o $(OUT_DIR)/maths.cpp.o $(OUT_DIR)/Population.cpp.o $(OUT_DIR)/simulation.cpp.o $(OUT_DIR)/testexpression.cpp.o $(LIBS)
+	@cp scripts/*.php bin/
 	@echo Done.
 	
 	
