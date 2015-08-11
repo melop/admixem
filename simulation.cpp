@@ -573,6 +573,9 @@ void fnMakeDir(const char * sPath)
 	#elif __linux__
 	string szCmd("mkdir -m 777 -p ");
 	system((szCmd + "\"" + sPath + "\"").c_str());
+	#else
+	string szCmd("mkdir -m 777 -p ");
+	system((szCmd + "\"" + sPath + "\"").c_str());
 	#endif
 }
 
