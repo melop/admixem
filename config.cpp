@@ -368,11 +368,14 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	char szCmd[100];
 	double nVal, nPos, nMaleAccu, nFemaleAccu, nMaleMapDistance, nFemaleMapDistance, nAvgMapDistance;
 
+	long nLastBpArm1=0; // the index of the last break point at arm 1
+	long nBpIndex = -1;
+	double nPrevProb = 0.0; // previous probability. 
+
 	while(fgets(szBuffer, 12048, pConfigFile) != NULL) 
 	{
 
 		//sscanf(szBuffer, "%d %*f %f %f %f", &nNum, &nAbsPos, &nFreqPop1, &nFreqPop2);
-
 
 
 		if (szBuffer[0] == ':') { // it's metadata line
@@ -386,6 +389,11 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 					throw "Chromosome number in marker probability file incorrect!";
 				}
 
+				vLastBpOnArm1.push_back(nLastBpArm1==0? nBpIndex : nLastBpArm1); // this is the previous record.
+
+				nLastBpArm1=0;
+				nBpIndex = -1;
+				nPrevProb = 0.0; // previous probability. 
 				nCurrChr--;
 				continue; // go to the next line
 			}
@@ -424,6 +432,16 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 			if (sscanf(szBuffer, "%lf %*lf %lf %*lf %lf %*lf %*lf %*lf %lf %*lf %lf %*lf %lf %*lf", &nPos, &nMaleAccu, &nFemaleAccu, &nMaleMapDistance, &nFemaleMapDistance, &nAvgMapDistance)!=6) {
 				continue; // couldn't parse line.	
 			};
+
+			nBpIndex++;
+			if (nMaleAccu < nPrevProb ) { //switch in prob. crossing the centromere?
+				if (nLastBpArm1 != 0) { // this was already set, the sequence is not monotonic.
+					throw("Error: accumulative recombination rate must be monotonic within each arm.\n");
+				}
+
+				nLastBpArm1 = nBpIndex - 1;//the previous bp is the last one in arm 1.
+				
+			}
 			this->pvBreakpointSamplePositions[nCurrChr].push_back(nPos);
 			this->pvMaleAccuProb[nCurrChr].push_back(nMaleAccu);
 			this->pvFemaleAccuProb[nCurrChr].push_back(nFemaleAccu);
@@ -431,9 +449,41 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 			this->pvFemaleMapDistance[nCurrChr].push_back(nFemaleMapDistance);
 			this->pvAvgMapDistance[nCurrChr].push_back(nAvgMapDistance);
 
+			nPrevProb = nMaleAccu;
 		}
 
 
+	}
+
+	vLastBpOnArm1.push_back(nLastBpArm1==0? nBpIndex : nLastBpArm1); // this is the last chromosome.
+
+
+	//calculate splines
+	for(int nCurrChr=0;nCurrChr < this->_nHaploidChrNum; nCurrChr++) {
+		double nChrLen = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetChromosomeLength(nCurrChr);
+		tk::spline oMaleSplineArm1, oFemaleSplineArm1,oMaleSplineArm2, oFemaleSplineArm2;
+		oMaleSplineArm1.set_boundary(tk::spline::bd_type::first_deriv, 0.0, tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
+		oFemaleSplineArm1.set_boundary(tk::spline::bd_type::first_deriv, 0.0, tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
+		oMaleSplineArm2.set_boundary(tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), tk::spline::bd_type::first_deriv, nChrLen, false);
+		oFemaleSplineArm2.set_boundary(tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), tk::spline::bd_type::first_deriv, nChrLen, false);
+		size_t nTotalBps = this->pvBreakpointSamplePositions[nCurrChr].size();
+		vector<double> vPosArm1, vPosArm2, vAccMaleArm1, vAccMaleArm2, vAccFemaleArm1, vAccFemaleArm2;
+		copy(this->pvBreakpointSamplePositions[nCurrChr].begin(), this->pvBreakpointSamplePositions[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1 ,back_inserter(vPosArm1));
+		copy(this->pvBreakpointSamplePositions[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1, this->pvBreakpointSamplePositions[nCurrChr].end() ,back_inserter(vPosArm2));
+		copy(this->pvMaleAccuProb[nCurrChr].begin(), this->pvMaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1 ,back_inserter(vAccMaleArm1));
+		copy(this->pvMaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1, this->pvMaleAccuProb[nCurrChr].end() ,back_inserter(vAccMaleArm2));
+		copy(this->pvFemaleAccuProb[nCurrChr].begin(), this->pvFemaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1 ,back_inserter(vAccFemaleArm1));
+		copy(this->pvFemaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1, this->pvFemaleAccuProb[nCurrChr].end() ,back_inserter(vAccFemaleArm2));
+
+		oMaleSplineArm1.set_points(vAccMaleArm1 , vPosArm1);
+		oMaleSplineArm2.set_points(vAccMaleArm2 , vPosArm2);
+		oFemaleSplineArm1.set_points(vAccFemaleArm1 , vPosArm1);
+		oFemaleSplineArm2.set_points(vAccFemaleArm2 , vPosArm2);
+
+		this->vMaleAccuProbSplineArm1.push_back(oMaleSplineArm1);
+		this->vMaleAccuProbSplineArm2.push_back(oMaleSplineArm2);
+		this->vFemaleAccuProbSplineArm1.push_back(oFemaleSplineArm1);
+		this->vFemaleAccuProbSplineArm2.push_back(oFemaleSplineArm2);
 	}
 
 	///printf("%f %f %f", this->pvBreakpointSamplePositions[0].at(0), this->pvMaleAccuProb[0].at(0), this->pvFemaleAccuProb[0].at(0));
@@ -460,16 +510,22 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 	double nStart = (nArm==1)? 0.0 : nCentromerePos;
 	double nEnd   = (nArm==1)? nCentromerePos : nChrLen;
 
-	vector<double> * pvAccuProb;
+	//vector<double> * pvAccuProb;
+	tk::spline * pvAccuProbSpline;
 	size_t nCentromereIndex, nLastIndex, nStartIndex, nEndIndex;
 
 	if (!this->_bUseUniform) {
-		pvAccuProb = true==bSex? pvMaleAccuProb : pvFemaleAccuProb;
-	
-		nCentromereIndex = std::distance( pvBreakpointSamplePositions[nChr].begin(), lower_bound(pvBreakpointSamplePositions[nChr].begin(),pvBreakpointSamplePositions[nChr].end(), nCentromerePos));
-		nLastIndex = std::distance(pvBreakpointSamplePositions[nChr].begin() , pvBreakpointSamplePositions[nChr].end());
-		nStartIndex = (nArm==1)? 0 : nCentromereIndex + 1;
-		nEndIndex = (nArm==1)? nCentromereIndex : nLastIndex;
+		//pvAccuProb = true==bSex? pvMaleAccuProb : pvFemaleAccuProb;
+		if (bSex) {
+			pvAccuProbSpline = nArm==1? &vMaleAccuProbSplineArm1[nChr] : &vMaleAccuProbSplineArm2[nChr];
+		}
+		else {
+			pvAccuProbSpline = nArm==1? &vFemaleAccuProbSplineArm1[nChr] : &vFemaleAccuProbSplineArm2[nChr];
+		}
+		//nCentromereIndex = std::distance( pvBreakpointSamplePositions[nChr].begin(), lower_bound(pvBreakpointSamplePositions[nChr].begin(),pvBreakpointSamplePositions[nChr].end(), nCentromerePos));
+		//nLastIndex = std::distance(pvBreakpointSamplePositions[nChr].begin() , pvBreakpointSamplePositions[nChr].end());
+		//nStartIndex = (nArm==1)? 0 : nCentromereIndex + 1;
+		//nEndIndex = (nArm==1)? nCentromereIndex : nLastIndex;
 	}
 	
 	//printf("Breakpointstoput for sex %d Chr %d Arm %d: %d\n", bSex, nChr, nArm, nBreakPointsToPut);
@@ -479,6 +535,7 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 
 		double nRand = UniformGen.Next();
 		if (!this->_bUseUniform) {
+			/*
 			std::vector<double>::iterator oLowerBound;
 			oLowerBound = lower_bound( pvAccuProb[nChr].begin() + nStartIndex, pvAccuProb[nChr].begin() + nEndIndex, nRand);
 			size_t nLowerBoundIndex = std::distance(pvAccuProb[nChr].begin(), oLowerBound);
@@ -492,6 +549,9 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 			double nPos2 = pvBreakpointSamplePositions[nChr].at(nLowerBoundIndex);
 			//interpolate
 			vRet.push_back( (nPos1 + nPos2) / 2 );
+			*/
+			//new code that uses spline interpolation
+			vRet.push_back((*pvAccuProbSpline)(nRand));
 		} else {
 			double nArmLen = nEnd - nStart;
 			double nBpPos = (nArm==1)? (nArmLen * nRand) : (nCentromerePos + nArmLen * nRand);

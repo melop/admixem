@@ -12,6 +12,8 @@
 #include "parser/parser.h"
 #include "newran02/newran.h"
 #include "maths.h"
+#include "spline.h"
+
 
 #define MAXTEXT 1000000
 
@@ -77,6 +79,11 @@ class RecombProbConfigurations {
 		vector<double> * pvBreakpointSamplePositions; // array of vectors containing absolute positions of the sample break points
 		vector<double> * pvMaleAccuProb; //array of vectors containing male accumulative rec. prob. restart at centromere
 		vector<double> * pvFemaleAccuProb;
+		vector<tk::spline> vMaleAccuProbSplineArm1;
+		vector<tk::spline> vFemaleAccuProbSplineArm1;
+		vector<tk::spline> vMaleAccuProbSplineArm2;
+		vector<tk::spline> vFemaleAccuProbSplineArm2;
+		vector<double> vLastBpOnArm1;
 		vector<double> * pvMaleMapDistance; // array of map distance of current sample point to previous one. in the unit of Morgan, not centiMorgan.
 		vector<double> * pvFemaleMapDistance;
 		vector<double> * pvAvgMapDistance;
