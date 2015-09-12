@@ -35,7 +35,7 @@ admixemp: $(OUT_DIR)/parser.cpp.o $(OUT_DIR)/extreal.cpp.o $(OUT_DIR)/hist.cpp.o
 	
 	
 
-$(OUT_DIR)/config.cpp.o: config.cpp config.h parser/parser.h \
+$(OUT_DIR)/config.cpp.o: config.cpp config.h spline.h parser/parser.h \
  newran02/newran.h newran02/include.h newran02/boolean.h \
  newran02/myexcept.h newran02/extreal.h maths.h makemarkerfile.h
 	@echo -n 'Compiling config.cpp... '
