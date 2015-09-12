@@ -1,4 +1,5 @@
 #include "config.h"
+#include "spline.h"
 #include <cstring>
 #ifdef _OPENMP
  #include <omp.h>
