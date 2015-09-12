@@ -124,6 +124,11 @@ $(OUT_DIR)/parser.cpp.o: $(PARSER_DIR)/parser.cpp $(PARSER_DIR)/parser.h
 	@echo -n 'Compiling parser.cpp... '
 	@$(CC) $(CFLAGS) -o $(OUT_DIR)/parser.cpp.o -c $(PARSER_DIR)/parser.cpp
 	@echo Done.
+	
+$(OUT_DIR)/spline.o: $(PARSER_DIR)/spline.h 
+	@echo -n 'Compiling spline.h... '
+	@$(CC) $(CFLAGS) -o $(OUT_DIR)/spline.o -c $(PARSER_DIR)/spline.h 
+	@echo Done.
 
 run:
 	./admixemp 
