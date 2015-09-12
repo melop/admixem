@@ -322,6 +322,31 @@ RecombProbConfigurations::RecombProbConfigurations(void * pParentConfig) {
 	this->_pParentConfig = pParentConfig;
 }
 
+void RecombProbConfigurations::fnEraseNonMonotonic(vector<double> * vMale, vector<double> * vFemale, vector<double> * vPos) {
+	
+	double nCurrMale , nCurrFemale , nCurrPos;
+	nCurrMale = nCurrFemale = nCurrPos = -1;
+	vector< size_t > vToDelete;
+	for(size_t i=0;i<vPos->size();i++) {
+
+		if (nCurrMale >= vMale->at(i) || nCurrFemale >= vFemale->at(i) || nCurrPos >= vPos->at(i)) {
+			vToDelete.push_back(i);
+		}
+		nCurrMale = vMale->at(i);
+		nCurrFemale = vFemale->at(i);
+		nCurrPos = vPos->at(i);
+	}
+
+	//start deleting from the back;
+
+	for(vector< size_t >::reverse_iterator it=vToDelete.rbegin(); it!=vToDelete.rend();++it) { //iterate from the end
+		vMale->erase(vMale->begin() + *it);
+		vFemale->erase(vFemale->begin() + *it);
+		vPos->erase(vPos->begin() + *it);
+
+	}
+
+}
 void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 
 	FILE *pConfigFile;
@@ -389,8 +414,9 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 					throw "Chromosome number in marker probability file incorrect!";
 				}
 
-				vLastBpOnArm1.push_back(nLastBpArm1==0? nBpIndex : nLastBpArm1); // this is the previous record.
-
+				if (nBpIndex > 0) {
+					vLastBpOnArm1.push_back(nLastBpArm1==0? nBpIndex : nLastBpArm1); // this is the previous record.
+				}
 				nLastBpArm1=0;
 				nBpIndex = -1;
 				nPrevProb = 0.0; // previous probability. 
@@ -475,10 +501,21 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 		copy(this->pvFemaleAccuProb[nCurrChr].begin(), this->pvFemaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1 ,back_inserter(vAccFemaleArm1));
 		copy(this->pvFemaleAccuProb[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1, this->pvFemaleAccuProb[nCurrChr].end() ,back_inserter(vAccFemaleArm2));
 
-		oMaleSplineArm1.set_points(vAccMaleArm1 , vPosArm1);
-		oMaleSplineArm2.set_points(vAccMaleArm2 , vPosArm2);
-		oFemaleSplineArm1.set_points(vAccFemaleArm1 , vPosArm1);
-		oFemaleSplineArm2.set_points(vAccFemaleArm2 , vPosArm2);
+		// erase elements in case not monotonic:
+
+		if (vPosArm1.size() > 2) { // must have more than 2 pairs of dots to predict a spline.
+			this->fnEraseNonMonotonic(&vAccMaleArm1 , &vAccFemaleArm1, &vPosArm1);
+			oMaleSplineArm1.set_points(vAccMaleArm1 , vPosArm1);
+			oFemaleSplineArm1.set_points(vAccFemaleArm1 , vPosArm1);
+		}
+
+		if (vPosArm2.size() > 2) {
+			this->fnEraseNonMonotonic(&vAccMaleArm2 , &vAccFemaleArm2, &vPosArm2);
+
+			oMaleSplineArm2.set_points(vAccMaleArm2 , vPosArm2);
+			oFemaleSplineArm2.set_points(vAccFemaleArm2 , vPosArm2);
+		}
+
 
 		this->vMaleAccuProbSplineArm1.push_back(oMaleSplineArm1);
 		this->vMaleAccuProbSplineArm2.push_back(oMaleSplineArm2);

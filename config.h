@@ -67,6 +67,7 @@ class RecombProbConfigurations {
 		double HowManyBreakpointsOnArm(bool bSex, int nChr, int nArm);
 
 	private:
+		void fnEraseNonMonotonic(vector<double> * vMale, vector<double> * vFemale, vector<double> * vPos);
 		void * _pParentConfig;// convert to SimulationConfigurations!
 		int	_nHaploidChrNum;
 		string _szConfigFilename;
@@ -83,7 +84,7 @@ class RecombProbConfigurations {
 		vector<tk::spline> vFemaleAccuProbSplineArm1;
 		vector<tk::spline> vMaleAccuProbSplineArm2;
 		vector<tk::spline> vFemaleAccuProbSplineArm2;
-		vector<double> vLastBpOnArm1;
+		vector<long> vLastBpOnArm1;
 		vector<double> * pvMaleMapDistance; // array of map distance of current sample point to previous one. in the unit of Morgan, not centiMorgan.
 		vector<double> * pvFemaleMapDistance;
 		vector<double> * pvAvgMapDistance;
