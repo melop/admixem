@@ -1,4 +1,4 @@
-﻿Build started 9/12/2015 12:09:53 PM.
+﻿Build started 9/12/2015 12:31:39 PM.
      1>Project "C:\data\Ray\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(344,5): warning MSB8003: Could not find WindowsSDKDir variable from the registry.  TargetFrameworkVersion or PlatformToolset may be set to an invalid version number.
      1>ClCompile:
@@ -53,56 +53,56 @@
      1>c:\data\ray\apps\github\admixsimul\spline.h(62): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>c:\data\ray\apps\github\admixsimul\spline.h(147): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>c:\data\ray\apps\github\admixsimul\spline.h(291): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>config.cpp(29): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(31): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(45): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(47): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(90): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(92): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(117): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(119): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(230): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>config.cpp(383): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(232): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>config.cpp(385): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(411): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(413): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(428): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(430): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(458): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(460): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(552): warning C4101: 'nLastIndex' : unreferenced local variable
-     1>config.cpp(552): warning C4101: 'nCentromereIndex' : unreferenced local variable
-     1>config.cpp(552): warning C4101: 'nEndIndex' : unreferenced local variable
-     1>config.cpp(552): warning C4101: 'nStartIndex' : unreferenced local variable
-     1>config.cpp(658): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(554): warning C4101: 'nLastIndex' : unreferenced local variable
+     1>config.cpp(554): warning C4101: 'nCentromereIndex' : unreferenced local variable
+     1>config.cpp(554): warning C4101: 'nEndIndex' : unreferenced local variable
+     1>config.cpp(554): warning C4101: 'nStartIndex' : unreferenced local variable
+     1>config.cpp(660): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(673): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(675): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(747): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(749): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(776): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>config.cpp(876): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(778): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>config.cpp(878): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1153): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1155): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1482): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1484): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1498): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1500): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1540): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1542): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1554): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1556): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1557): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1559): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1674): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1676): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1689): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1691): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
-     1>config.cpp(1738): warning C4244: '=' : conversion from 'const double' to 'int', possible loss of data
-     1>config.cpp(1757): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1740): warning C4244: '=' : conversion from 'const double' to 'int', possible loss of data
+     1>config.cpp(1759): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
-     1>config.cpp(1772): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>config.cpp(1774): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(311) : see declaration of 'sscanf'
          main.cpp
      1>c:\data\ray\apps\github\admixsimul\spline.h(58): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
@@ -143,4 +143,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:17.42
+Time Elapsed 00:00:19.51

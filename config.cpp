@@ -7,6 +7,7 @@
 SimulationConfigurations SimulConfig; //Global configuration object
 extern Normal NormalGen; 
 extern Uniform UniformGen;
+using namespace tk;
 
 /*
 int omp_thread_count() {
@@ -489,10 +490,10 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	for(int nCurrChr=0;nCurrChr < this->_nHaploidChrNum; nCurrChr++) {
 		double nChrLen = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetChromosomeLength(nCurrChr);
 		tk::spline oMaleSplineArm1, oFemaleSplineArm1,oMaleSplineArm2, oFemaleSplineArm2;
-		oMaleSplineArm1.set_boundary(tk::spline::bd_type::first_deriv, 0.0, tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
-		oFemaleSplineArm1.set_boundary(tk::spline::bd_type::first_deriv, 0.0, tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
-		oMaleSplineArm2.set_boundary(tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), tk::spline::bd_type::first_deriv, nChrLen, false);
-		oFemaleSplineArm2.set_boundary(tk::spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), tk::spline::bd_type::first_deriv, nChrLen, false);
+		oMaleSplineArm1.set_boundary(spline::bd_type::first_deriv, 0.0, spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
+		oFemaleSplineArm1.set_boundary(spline::bd_type::first_deriv, 0.0, spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), false);
+		oMaleSplineArm2.set_boundary(spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), spline::bd_type::first_deriv, nChrLen, false);
+		oFemaleSplineArm2.set_boundary(spline::bd_type::first_deriv, this->pvBreakpointSamplePositions[nCurrChr].at(this->vLastBpOnArm1[nCurrChr]), spline::bd_type::first_deriv, nChrLen, false);
 		size_t nTotalBps = this->pvBreakpointSamplePositions[nCurrChr].size();
 		vector<double> vPosArm1, vPosArm2, vAccMaleArm1, vAccMaleArm2, vAccFemaleArm1, vAccFemaleArm2;
 		copy(this->pvBreakpointSamplePositions[nCurrChr].begin(), this->pvBreakpointSamplePositions[nCurrChr].begin() + this->vLastBpOnArm1[nCurrChr] + 1 ,back_inserter(vPosArm1));
