@@ -7,6 +7,7 @@
 SimulationConfigurations SimulConfig; //Global configuration object
 extern Normal NormalGen; 
 extern Uniform UniformGen;
+
 using namespace tk;
 
 /*
@@ -433,16 +434,24 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 
 				if (strcmp(szCmd, ":ExpectedMaleRecPerMeiosisArm1")==0) {
 					this->_nExpectedMaleRecPerMeiosisArm1[nCurrChr] = nVal;
+					Poisson * pPosGen = new Poisson(nVal);
+					this->_vMaleRecArm1Gen.push_back(pPosGen);
 				}
 				if (strcmp(szCmd,":ExpectedMaleRecPerMeiosisArm2")==0) {
 					this->_nExpectedMaleRecPerMeiosisArm2[nCurrChr] = nVal;
+					Poisson * pPosGen = new Poisson(nVal);
+					this->_vMaleRecArm2Gen.push_back(pPosGen);
 				}
 
 				if (strcmp(szCmd,":ExpectedFemaleRecPerMeiosisArm1")==0) {
 					this->_nExpectedFemaleRecPerMeiosisArm1[nCurrChr] = nVal;
+					Poisson * pPosGen = new Poisson(nVal);
+					this->_vFemaleRecArm1Gen.push_back(pPosGen);
 				}
 				if (strcmp(szCmd,":ExpectedFemaleRecPerMeiosisArm2")==0) {
 					this->_nExpectedFemaleRecPerMeiosisArm2[nCurrChr] = nVal;
+					Poisson * pPosGen = new Poisson(nVal);
+					this->_vFemaleRecArm2Gen.push_back(pPosGen);
 				}
 
 			}
@@ -481,6 +490,11 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 		}
 
 
+	}
+
+	//check that recombination break points on arms are complete:
+	if ( _vMaleRecArm1Gen.size() != _vMaleRecArm2Gen.size() || _vMaleRecArm2Gen.size() != _vFemaleRecArm1Gen.size() || _vFemaleRecArm1Gen.size() != _vFemaleRecArm2Gen.size()) {
+		throw(new Exception("The number of Recombination break point defined are not equal.\n"));
 	}
 
 	vLastBpOnArm1.push_back(nLastBpArm1==0? nBpIndex : nLastBpArm1); // this is the last chromosome.
@@ -540,9 +554,12 @@ double RecombProbConfigurations::HowManyBreakpointsOnArm(bool bSex, int nChr, in
 
 void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm,vector<double> &vRet) { // return a vector of break points for a given arm of a given chromosome for a given sex
 	
-	double nExpectedPoints = (true==bSex? (nArm==1? _nExpectedMaleRecPerMeiosisArm1[nChr] : _nExpectedMaleRecPerMeiosisArm2[nChr]) : (nArm==1? _nExpectedFemaleRecPerMeiosisArm1[nChr] : _nExpectedFemaleRecPerMeiosisArm2[nChr]));
-	int nBreakPointsToPut = (int)nExpectedPoints; // get integral part
-	nBreakPointsToPut += (UniformGen.Next() <= (nExpectedPoints - (double)nBreakPointsToPut)) ? 1:0;
+	//double nExpectedPoints = (true==bSex? (nArm==1? _nExpectedMaleRecPerMeiosisArm1[nChr] : _nExpectedMaleRecPerMeiosisArm2[nChr]) : (nArm==1? _nExpectedFemaleRecPerMeiosisArm1[nChr] : _nExpectedFemaleRecPerMeiosisArm2[nChr]));
+	//int nBreakPointsToPut = (int)nExpectedPoints; // get integral part
+	//nBreakPointsToPut += (UniformGen.Next() <= (nExpectedPoints - (double)nBreakPointsToPut)) ? 1:0;
+	Poisson * pPoissonGen = (true==bSex? (nArm==1?  _vMaleRecArm1Gen[nChr] : _vMaleRecArm2Gen[nChr]) : (nArm==1? _vFemaleRecArm1Gen[nChr] : _vFemaleRecArm2Gen[nChr]));; 
+	int nBreakPointsToPut = pPoissonGen->Next();
+	
 	double nCentromerePos = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetCentromerePosition(nChr);
 	double nChrLen = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetChromosomeLength(nChr);
 

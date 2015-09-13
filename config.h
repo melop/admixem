@@ -75,6 +75,10 @@ class RecombProbConfigurations {
 		double * _nExpectedMaleRecPerMeiosisArm2;
 		double * _nExpectedFemaleRecPerMeiosisArm1;
 		double * _nExpectedFemaleRecPerMeiosisArm2;
+		vector< Poisson * > _vMaleRecArm1Gen; //array storing the poisson generator of break points
+		vector< Poisson * > _vMaleRecArm2Gen;
+		vector< Poisson * > _vFemaleRecArm1Gen;
+		vector< Poisson * > _vFemaleRecArm2Gen;
 		bool _bUseUniform;
 
 		vector<double> * pvBreakpointSamplePositions; // array of vectors containing absolute positions of the sample break points
