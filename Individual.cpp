@@ -370,6 +370,7 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 	
 		#ifdef _OPENMP
 		int nCPU = omp_get_thread_num();
+		//int nTotalCPUs = omp_get_max_threads();
 			#ifdef DEBUG
 			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
 			#endif

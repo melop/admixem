@@ -3,7 +3,7 @@
 #endif
 
 #include "Population.h"
-
+extern int nTotalCPUCore;
 extern Normal NormalGen; 
 extern Uniform UniformGen;
 extern SimulationConfigurations SimulConfig;
@@ -170,21 +170,6 @@ bool Population::Breed() {
 	list< vector<string> > * pqvPopSymbols = SimulConfig.pSexualSelConfig->GetFormulaSymbolStringsPop( this->_sPopName);
 
 
-
-	#ifdef _OPENMP
-	int nTotalCPUCore = 1;
-		#pragma omp parallel
-        #pragma omp master
-        {
-            nTotalCPUCore =  omp_get_max_threads();
-			#ifdef DEBUG
-			printf("TotalCPUCore: %d\n", nTotalCPUCore);
-			#endif
-        }
-
-	#else
-		int nTotalCPUCore = 1;
-	#endif
 
 	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
@@ -607,12 +592,6 @@ void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstr
 }
 
 void Population::FreqDependentNaturalSelection() {
-
-	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_num_threads();//omp_get_num_threads();
-	#else
-		int nTotalCPUCore = 1;
-	#endif
 
 	int nCurrGen = SimulConfig.GetCurrGen();
 	bool bIgnoreGlobalRules = SimulConfig.pNaturalSelConfig->IgnoreGlobalRules(nCurrGen);

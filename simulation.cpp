@@ -6,14 +6,8 @@
  #include <omp.h>
 #endif
 
+int nTotalCPUCore = 1;
 
-	#ifdef _OPENMP
-		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
-		//printf("OpenMP enabled\n");
-	#else
-		int nTotalCPUCore = 1;
-		//printf("OpenMP disabled \n");
-	#endif
 
 extern Normal NormalGen; 
 extern Uniform UniformGen;
@@ -112,6 +106,18 @@ void PerformSimulation() {
 		printf("System chosen random seed is %f \n" , nRandSeed);
 		SimulConfig.SetNumericConfig("RandomSeed" , nRandSeed);
 	}
+
+	#ifdef _OPENMP
+		nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
+
+	fnInitBinom(vBinomGen);
+	fnInitNom(vNomGen);
+	fnInitUniform(vUniformGen);
 
 	string sOutFolder = SimulConfig.GetConfig("OutputFolder");
 	
