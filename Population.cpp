@@ -301,7 +301,8 @@ bool Population::Breed() {
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
 		bool bGetRandSuccess = true;
-		
+		#pragma omp critical
+				{
 			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd) == stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 				if (stExhaustedFemales.size() >= this->_mpFemales.size()) {
@@ -310,11 +311,10 @@ bool Population::Breed() {
 				}
 			}
 			if (bGetRandSuccess) {
-				#pragma omp critical
-				{
+				
 				stSampledFemales.insert(nRandFemaleInd);
-				}
 			}
+		}
 		#ifdef DEBUG
 		printf("CPU %d: Female Id: %d\n", nCPU, nRandFemaleInd);
 		#endif
@@ -419,6 +419,8 @@ bool Population::Breed() {
 		#ifdef DEBUG
 		printf("CPU %d: Start insert offspring\n", nCPU);
 		#endif
+		#pragma omp critical
+		{
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
 		{
 
@@ -426,21 +428,20 @@ bool Population::Breed() {
 			{
 				if ( (*itOffSpring)->GetSex() == Individual::Male) {
 
-					#pragma omp critical
-					{
+					//#pragma omp critical
 						this->_mpNewGenMales.push_back(*itOffSpring);
-					}
+					//}
 				}
 				else {
-					#pragma omp critical
-					{
+					//#pragma omp critical
+					//{
 						this->_mpNewGenFemales.push_back(*itOffSpring);
-					}
+					//}
 				}
-				#pragma omp critical
-				{
+				//#pragma omp critical
+				//{
 					nNewOffSpringCount++;
-				}
+				//}
 			}
 			else {
 
@@ -448,6 +449,8 @@ bool Population::Breed() {
 				break; // no need to do anything more, already exceeded limit;
 			}
 		}
+
+		} // end omp
 		#ifdef DEBUG
 		printf("CPU %d: end insert offspring\n", nCPU);
 		#endif
