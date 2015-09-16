@@ -14,6 +14,7 @@ Population::Population(void)
 	this->_nCurrFemales = 0;
 	this->_bBred = false;
 	this->_bRecordNatSelProb = (SimulConfig.GetConfig("DumpNatSelProb") == "On");
+
 }
 
 
@@ -32,6 +33,9 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 
 	int nMalesToCreate = (int)((double)nPopInitSize * nMaleRatio);
 	int nFemalesToCreate = nPopInitSize - nMalesToCreate;
+
+	this->_mpvNewGenMales = new vector< Individual *>[nTotalCPUCore];
+	this->_mpvNewGenFemales = new vector< Individual *>[nTotalCPUCore];
 
 	printf("To create... Male: %d  Female %d\n", nMalesToCreate, nFemalesToCreate );
 
@@ -276,10 +280,6 @@ bool Population::Breed() {
 
 	printf("AvgKidPerFemale: %f\n", nAvgKidPerFemale);
 
-
-	this->_mpvNewGenMales = new vector< Individual *>[nTotalCPUCore];
-	this->_mpvNewGenFemales = new vector< Individual *>[nTotalCPUCore];
-
 	#pragma omp parallel shared(bCourterHandeled, stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
@@ -439,7 +439,7 @@ bool Population::Breed() {
 				else {
 					//#pragma omp critical
 					//{
-						this->_mpvNewGenMales[nCPU].push_back(*itOffSpring);
+						this->_mpvNewGenFemales[nCPU].push_back(*itOffSpring);
 					//}
 				}
 				//#pragma omp critical
