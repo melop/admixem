@@ -276,12 +276,7 @@ bool Population::Breed() {
 
 	printf("AvgKidPerFemale: %f\n", nAvgKidPerFemale);
 
-	if(this->_mpvNewGenMales) {
-		delete[] this->_mpvNewGenMales;
-	}
-	if(this->_mpvNewGenFemales) {
-		delete[] this->_mpvNewGenFemales;
-	}
+
 	this->_mpvNewGenMales = new vector< Individual *>[nTotalCPUCore];
 	this->_mpvNewGenFemales = new vector< Individual *>[nTotalCPUCore];
 
