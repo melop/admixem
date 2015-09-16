@@ -8,6 +8,8 @@ Normal NormalGen;
 Uniform UniformGen;
 double nRandSeed;
 
+
+
 double NormalExt(double nMean, double nStdDev, double nLowBound, double nHighBound) {
 	
 	double nRet = nStdDev * NormalGen.Next() + nMean;

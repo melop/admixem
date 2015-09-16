@@ -14,6 +14,7 @@
 using namespace std;
 extern SimulationConfigurations SimulConfig; // defined in config.cpp
 
+
 int main (int argc, char * const argv[]) {
 
 	if (argc == 2) {

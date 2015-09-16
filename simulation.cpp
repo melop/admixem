@@ -6,18 +6,55 @@
  #include <omp.h>
 #endif
 
+
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		int nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
+
 extern Normal NormalGen; 
 extern Uniform UniformGen;
 extern double nRandSeed;
 
 extern SimulationConfigurations SimulConfig; // defined in config.cpp
 
+//random generators that are parallelized.
+vector< Binomial * > vBinomGen;
+vector< Normal * > vNomGen;
+vector< Uniform * > vUniformGen;
+
+void fnInitBinom(vector< Binomial * > &vBinom) {
+	for(int nCpu=0; nCpu < nTotalCPUCore; nCpu++) {
+		Binomial * pBinom = new Binomial(1,0.5);
+		vBinom.push_back(pBinom );
+	}
+}
+
+void fnInitNom(vector< Normal * > &vNom) {
+	for(int nCpu=0; nCpu < nTotalCPUCore; nCpu++) {
+		Normal * pNom = new Normal();
+		vNom.push_back(pNom );
+	}
+}
+
+void fnInitUniform(vector< Uniform * > &vNom) {
+	for(int nCpu=0; nCpu < nTotalCPUCore; nCpu++) {
+		Uniform * pNom = new Uniform();
+		vNom.push_back(pNom );
+	}
+}
+
+
+
 void UISimulation() {
 
 
 		UILoadConfig();
 
-		
+
 		clock_t t;
 		t = clock();
 		PerformSimulation();

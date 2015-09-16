@@ -7,6 +7,9 @@
 SimulationConfigurations SimulConfig; //Global configuration object
 extern Normal NormalGen; 
 extern Uniform UniformGen;
+extern vector< Binomial * > vBinomGen;
+extern vector< Normal * > vNomGen;
+extern vector< Uniform * > vUniformGen;
 
 using namespace tk;
 
@@ -351,6 +354,13 @@ void RecombProbConfigurations::fnEraseNonMonotonic(vector<double> * vMale, vecto
 
 }
 void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
+	#ifdef _OPENMP
+		int nTotalCPUCore =  omp_get_max_threads();//omp_get_num_threads();
+		//printf("OpenMP enabled\n");
+	#else
+		int nTotalCPUCore = 1;
+		//printf("OpenMP disabled \n");
+	#endif
 
 	FILE *pConfigFile;
 	char szBuffer[12048];
@@ -368,6 +378,10 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	this->pvMaleMapDistance = new vector<double>[_nHaploidChrNum];
 	this->pvFemaleMapDistance = new vector<double>[_nHaploidChrNum];
 	this->pvAvgMapDistance = new vector<double>[_nHaploidChrNum];
+	this->pvMaleRecArm1Gen = new vector< Poisson * >[nTotalCPUCore];
+	this->pvMaleRecArm2Gen = new vector< Poisson * >[nTotalCPUCore];
+	this->pvFemaleRecArm1Gen = new vector< Poisson * >[nTotalCPUCore];
+	this->pvFemaleRecArm2Gen = new vector< Poisson * >[nTotalCPUCore];
 	
 	
 	printf("Start loading marker probability file %s ...\n", szConfigFile.c_str());
@@ -434,24 +448,32 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 
 				if (strcmp(szCmd, ":ExpectedMaleRecPerMeiosisArm1")==0) {
 					this->_nExpectedMaleRecPerMeiosisArm1[nCurrChr] = nVal;
-					Poisson * pPosGen = new Poisson(nVal);
-					this->_vMaleRecArm1Gen.push_back(pPosGen);
+					for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+						Poisson * pPosGen = new Poisson(nVal);
+						this->pvMaleRecArm1Gen[nCPU].push_back(pPosGen);
+					}
 				}
 				if (strcmp(szCmd,":ExpectedMaleRecPerMeiosisArm2")==0) {
 					this->_nExpectedMaleRecPerMeiosisArm2[nCurrChr] = nVal;
-					Poisson * pPosGen = new Poisson(nVal);
-					this->_vMaleRecArm2Gen.push_back(pPosGen);
+					for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+						Poisson * pPosGen = new Poisson(nVal);
+						this->pvMaleRecArm2Gen[nCPU].push_back(pPosGen);
+					}
 				}
 
 				if (strcmp(szCmd,":ExpectedFemaleRecPerMeiosisArm1")==0) {
 					this->_nExpectedFemaleRecPerMeiosisArm1[nCurrChr] = nVal;
-					Poisson * pPosGen = new Poisson(nVal);
-					this->_vFemaleRecArm1Gen.push_back(pPosGen);
+					for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+						Poisson * pPosGen = new Poisson(nVal);
+						this->pvFemaleRecArm1Gen[nCPU].push_back(pPosGen);
+					}
 				}
 				if (strcmp(szCmd,":ExpectedFemaleRecPerMeiosisArm2")==0) {
 					this->_nExpectedFemaleRecPerMeiosisArm2[nCurrChr] = nVal;
-					Poisson * pPosGen = new Poisson(nVal);
-					this->_vFemaleRecArm2Gen.push_back(pPosGen);
+					for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+						Poisson * pPosGen = new Poisson(nVal);
+						this->pvFemaleRecArm2Gen[nCPU].push_back(pPosGen);
+					}
 				}
 
 			}
@@ -493,7 +515,7 @@ void RecombProbConfigurations::LoadFromFile(string szConfigFile) {
 	}
 
 	//check that recombination break points on arms are complete:
-	if ( _vMaleRecArm1Gen.size() != _vMaleRecArm2Gen.size() || _vMaleRecArm2Gen.size() != _vFemaleRecArm1Gen.size() || _vFemaleRecArm1Gen.size() != _vFemaleRecArm2Gen.size()) {
+	if ( pvMaleRecArm1Gen[0].size() != pvMaleRecArm2Gen[0].size() || pvMaleRecArm2Gen[0].size() != pvFemaleRecArm1Gen[0].size() || pvFemaleRecArm1Gen[0].size() != pvFemaleRecArm2Gen[0].size()) {
 		throw(new Exception("The number of Recombination break point defined are not equal.\n"));
 	}
 
@@ -554,10 +576,18 @@ double RecombProbConfigurations::HowManyBreakpointsOnArm(bool bSex, int nChr, in
 
 void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm,vector<double> &vRet) { // return a vector of break points for a given arm of a given chromosome for a given sex
 	
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
 	//double nExpectedPoints = (true==bSex? (nArm==1? _nExpectedMaleRecPerMeiosisArm1[nChr] : _nExpectedMaleRecPerMeiosisArm2[nChr]) : (nArm==1? _nExpectedFemaleRecPerMeiosisArm1[nChr] : _nExpectedFemaleRecPerMeiosisArm2[nChr]));
 	//int nBreakPointsToPut = (int)nExpectedPoints; // get integral part
 	//nBreakPointsToPut += (UniformGen.Next() <= (nExpectedPoints - (double)nBreakPointsToPut)) ? 1:0;
-	Poisson * pPoissonGen = (true==bSex? (nArm==1?  _vMaleRecArm1Gen[nChr] : _vMaleRecArm2Gen[nChr]) : (nArm==1? _vFemaleRecArm1Gen[nChr] : _vFemaleRecArm2Gen[nChr]));; 
+	Poisson * pPoissonGen = (true==bSex? (nArm==1?  pvMaleRecArm1Gen[nCPU][nChr] : pvMaleRecArm2Gen[nCPU][nChr]) : (nArm==1? pvFemaleRecArm1Gen[nCPU][nChr] : pvFemaleRecArm2Gen[nCPU][nChr]));; 
 	int nBreakPointsToPut = pPoissonGen->Next();
 	
 	double nCentromerePos = ((SimulationConfigurations*)this->_pParentConfig)->pMarkerConfig->GetCentromerePosition(nChr);
@@ -589,7 +619,7 @@ void RecombProbConfigurations::GetBreakPointsByArm(bool bSex, int nChr, int nArm
 
 	for (int i=0;i<nBreakPointsToPut;i++) {
 
-		double nRand = UniformGen.Next();
+		double nRand = vUniformGen[nCPU]->Next();
 		if (!this->_bUseUniform) {
 			/*
 			std::vector<double>::iterator oLowerBound;

@@ -9,11 +9,19 @@
 
 #include "Individual.h"
 #include "Population.h"
+#ifdef _OPENMP
+ #include <omp.h>
+#endif
+
+extern vector< Binomial * > vBinomGen;
+extern vector< Normal * > vNomGen;
+extern vector< Uniform * > vUniformGen;
 
 extern SimulationConfigurations SimulConfig;
 extern Normal NormalGen; 
 extern Uniform UniformGen;
 extern Binomial BinomGen(1, 0.5);
+
 
 long long int nCurrIndividualId = 1; //Global counter
 /*
@@ -35,6 +43,16 @@ Individual::~Individual(void) {
 }
 
 Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a founder
+
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
+
 	this->_bDead = false;
 	int nPopId = ((Population *)pPop)->GetPopId();
 	this->_pPrevPop = NULL;
@@ -93,7 +111,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 				oMarker.Allele = 'a';
 			}
 			*/
-			oMarker.Allele = (UniformGen.Next() <= nFrequency)? 'A':'a';
+			oMarker.Allele = (vUniformGen[nCPU]->Next() <= nFrequency)? 'A':'a';
 			/*
 			char nAbundantAllele = (nPopId==1)? 'A':'a';
 			char nRareAllele = (nPopId==1)? 'a':'A'; // make sure these are ancestry informative.
@@ -143,7 +161,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 			}
 			*/
 			else {
-				oGene.Allele = (UniformGen.Next()<= nFrequency)?  it2->second.DominantLabel:it2->second.RecessiveLabel;
+				oGene.Allele = (vUniformGen[nCPU]->Next()<= nFrequency)?  it2->second.DominantLabel:it2->second.RecessiveLabel;
 				oGene.Value = (oGene.Allele == it2->second.DominantLabel)?  it2->second.DominantValue:it2->second.RecessiveValue;
 				/*if ( nCurrChrNum == 9 ) {
 					printf("something wrong.\n");
@@ -179,6 +197,15 @@ void Individual::fnDetermineSex()
 }
 
 void Individual::fnDetermineNumGametes() {
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
+
 	if (this->_bSex == Male) {
 		this->_nAvailableGametes = INT_MAX;
 		return;
@@ -187,7 +214,7 @@ void Individual::fnDetermineNumGametes() {
 	//Deal with females
 	int nExpected = SimulConfig.GetNumericConfig("avg_female_gamete");
 	int nStdDev	= SimulConfig.GetNumericConfig("std_female_gamete");
-	this->_nAvailableGametes = (double)nStdDev * NormalGen.Next() + (double)nExpected;
+	this->_nAvailableGametes = (double)nStdDev * vNomGen[nCPU]->Next() + (double)nExpected;
 }
 
 void Individual::fnDeterminePhenotypes() { // Calculate the phenotypic values from genotypes
@@ -349,6 +376,16 @@ bool Individual::Court(Individual * pChooser) {
 
 int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 
+	
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
+
 	int nCurrGen = SimulConfig.GetCurrGen();
 
 	if (pCourter->IsDead()) {
@@ -470,7 +507,7 @@ int Individual::HandleCourter(Individual * pCourter , bool bIgnoreGlobalRules) {
 				if (bSkipRule) continue;
 				
 
-				bAccept = (UniformGen.Next() <= pParser->Evaluate())? true : false;
+				bAccept = (vUniformGen[nCPU]->Next() <= pParser->Evaluate())? true : false;
 
 				if (!bAccept) {
 					return 0; //reject mate
@@ -556,6 +593,15 @@ int Individual::GetGameteNum() {
 }
 
 void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIgnoreGlobalRules) {
+	
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
 
 	if (this->_nAvailableGametes <= 0) {
 		//printf("Not enough gametes left.\n");
@@ -593,11 +639,11 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		Individual * pDad = NULL;
 
 		do {
-			#pragma omp critical 
-			{
+			//#pragma omp critical 
+			//{
 				int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
 				pDad = this->_arrOtherParentsForOffsprings.at(nRandDad);
-			}
+			//}
 		}
 		while(pDad==NULL);
 
@@ -642,7 +688,7 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 				}
 
 				double nSurvivalProb = pParser->Evaluate();
-				bLive = (UniformGen.Next() <= nSurvivalProb)? true : false;
+				bLive = (vUniformGen[nCPU]->Next() <= nSurvivalProb)? true : false;
 
 				((Population*)this->_pPop)->fnAddNatSelProb(nParserCount, pOffSpring->GetID(), pDad->GetID(), ((Population*)pDad->GetPrevPop())->GetPopId(),
 															this->GetID(), ((Population*)this->GetPrevPop())->GetPopId(),
@@ -725,7 +771,15 @@ unsigned long long int Individual::GetMotherId() {
 }
 
 void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Gene> > &vGenes ) {
-
+	
+		#ifdef _OPENMP
+		int nCPU = omp_get_thread_num();
+			#ifdef DEBUG
+			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
+			#endif
+		#else
+			int nCPU = 0;
+		#endif
 	//do recombination. 
 
 	bool bSex = (this->_bSex == Male);
@@ -738,7 +792,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 		//int nWhichToPick = (UniformGen.Next() <=0.5)? 0:1;
 		double nPaternalTransBias = SimulConfig.pMarkerConfig->GetPaternalTransBias(nChr);
 		// 0 is paternal chr, 1 is maternal chr.
-		int nWhichToPick = nPaternalTransBias==0.5? (int)BinomGen.Next() : ( UniformGen.Next()<=nPaternalTransBias? 0:1 );
+		int nWhichToPick = nPaternalTransBias==0.5? (int)vBinomGen[nCPU]->Next() : ( vUniformGen[nCPU]->Next()<=nPaternalTransBias? 0:1 );
 		nMainChr = nChr*2 + nWhichToPick;
 		nOtherChr = nWhichToPick==0? nMainChr+1:nMainChr-1;
 		map<double, int> * pMarkerIndexOnChr = & (pMarkerIndex->at(nChr));
@@ -933,7 +987,7 @@ void Individual::GetGamete(vector< vector<Marker> > &vMarkers, vector< vector<Ge
 				if (nMuteProb==0) {//no mutation needed for this locus
 
 				}
-				else if( UniformGen.Next() <= nMuteProb){ // if need to mutate this locus
+				else if( vUniformGen[nCPU]->Next() <= nMuteProb){ // if need to mutate this locus
 					//#pragma omp critical
 					//{
 						double nCurrVal = pChrmToMutate->at(nInx).Value;
