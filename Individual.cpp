@@ -44,15 +44,6 @@ Individual::~Individual(void) {
 
 Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a founder
 
-		#ifdef _OPENMP
-		int nCPU = omp_get_thread_num();
-			#ifdef DEBUG
-			printf("CPU %d: %s : %d\n", nCPU, "SexSelFormulae # ", nCPU);
-			#endif
-		#else
-			int nCPU = 0;
-		#endif
-
 	this->_bDead = false;
 	int nPopId = ((Population *)pPop)->GetPopId();
 	this->_pPrevPop = NULL;
@@ -111,7 +102,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 				oMarker.Allele = 'a';
 			}
 			*/
-			oMarker.Allele = (vUniformGen[nCPU]->Next() <= nFrequency)? 'A':'a';
+			oMarker.Allele = (UniformGen.Next() <= nFrequency)? 'A':'a';
 			/*
 			char nAbundantAllele = (nPopId==1)? 'A':'a';
 			char nRareAllele = (nPopId==1)? 'a':'A'; // make sure these are ancestry informative.
@@ -161,7 +152,7 @@ Individual::Individual(void * pPop, char nAncestryLabel) { //Initializing a foun
 			}
 			*/
 			else {
-				oGene.Allele = (vUniformGen[nCPU]->Next()<= nFrequency)?  it2->second.DominantLabel:it2->second.RecessiveLabel;
+				oGene.Allele = (UniformGen.Next()<= nFrequency)?  it2->second.DominantLabel:it2->second.RecessiveLabel;
 				oGene.Value = (oGene.Allele == it2->second.DominantLabel)?  it2->second.DominantValue:it2->second.RecessiveValue;
 				/*if ( nCurrChrNum == 9 ) {
 					printf("something wrong.\n");
