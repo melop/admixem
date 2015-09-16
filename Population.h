@@ -50,8 +50,8 @@ private:
 	bool _bRecordNatSelProb;
 	vector< Individual *> _mpMales;  // array storing males
 	vector< Individual *> _mpFemales; //array storing females
-	vector< Individual *> _mpNewGenMales;  // array storing males
-	vector< Individual *> _mpNewGenFemales; //array storing females
+	vector< Individual *> * _mpvNewGenMales;  // array storing males
+	vector< Individual *> * _mpvNewGenFemales; //array storing females
 	map< string , pair< double, double> > _mpSumPhenotype; // population statistics
 	map< string , pair< double, double> > _mpSumPhenotypeMale; // population statistics for males
 	map< string , pair< double, double> > _mpSumPhenotypeFemale; // population statistics for females

@@ -276,6 +276,11 @@ bool Population::Breed() {
 
 	printf("AvgKidPerFemale: %f\n", nAvgKidPerFemale);
 
+	delete[] this->_mpvNewGenMales;
+	delete[] this->_mpvNewGenFemales;
+	this->_mpvNewGenMales = new vector< Individual *>[nTotalCPUCore];
+	this->_mpvNewGenFemales = new vector< Individual *>[nTotalCPUCore];
+
 	#pragma omp parallel shared(bCourterHandeled, stExhaustedFemales, stSampledFemales, nNumFemales, nSampleMate, bIgnoreGlobalRules, nAvgKidPerFemale, bIgnoreGlobalRulesNa, nNewOffSpringCount) 
 	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
 	{
@@ -429,13 +434,13 @@ bool Population::Breed() {
 				if ( (*itOffSpring)->GetSex() == Individual::Male) {
 
 					//#pragma omp critical
-						this->_mpNewGenMales.push_back(*itOffSpring);
+						this->_mpvNewGenMales[nCPU].push_back(*itOffSpring);
 					//}
 				}
 				else {
 					//#pragma omp critical
 					//{
-						this->_mpNewGenFemales.push_back(*itOffSpring);
+						this->_mpvNewGenMales[nCPU].push_back(*itOffSpring);
 					//}
 				}
 				//#pragma omp critical
@@ -507,13 +512,15 @@ void Population::KillOldGen() { //
 
 	//printf("_mpNewGenMales.size() %d\n", _mpNewGenMales.size());
 	//printf("_mpNewGenFemales.size() %d\n", _mpNewGenFemales.size());
-	copy(_mpNewGenMales.begin(), _mpNewGenMales.end(), back_inserter(_mpMales));
-	copy(_mpNewGenFemales.begin(), _mpNewGenFemales.end(), back_inserter(_mpFemales));
+	for(int nCpu=0; nCpu<nTotalCPUCore;nCpu++) {
+		copy(_mpvNewGenMales[nCpu].begin(), _mpvNewGenMales[nCpu].end(), back_inserter(_mpMales));
+		copy(_mpvNewGenFemales[nCpu].begin(), _mpvNewGenFemales[nCpu].end(), back_inserter(_mpFemales));
+
+		_mpvNewGenMales[nCpu].clear();
+		_mpvNewGenFemales[nCpu].clear();
+	}
 	//printf("_mpMales.size() %d\n", _mpMales.size());
 	//printf("_mpFemales.size() %d\n", _mpFemales.size());
-
-	_mpNewGenMales.clear();
-	_mpNewGenFemales.clear();
 	
 	this->_bBred = false;
 }
@@ -575,10 +582,10 @@ int Population::GetPopSize(int nMode) {
 	switch(nMode) {
 		case 0: return _mpFemales.size();
 		case 1: return _mpMales.size();
-		case 2: return _mpNewGenFemales.size();
-		case 3: return _mpNewGenMales.size();
+		case 2: {int nCount=0; for( int nCpu=0;nCpu<nTotalCPUCore;nCpu++) {nCount+= _mpvNewGenMales[nCpu].size();} return nCount;};
+		case 3: {int nCount=0; for( int nCpu=0;nCpu<nTotalCPUCore;nCpu++) {nCount+= _mpvNewGenFemales[nCpu].size();} return nCount;};
 		case 4: return _mpFemales.size()+_mpMales.size();
-		case 5: return _mpNewGenFemales.size()+_mpNewGenMales.size();
+		case 5: {int nCount=0; for( int nCpu=0;nCpu<nTotalCPUCore;nCpu++) {nCount+=_mpvNewGenMales[nCpu].size()+ _mpvNewGenFemales[nCpu].size();} return nCount;};
 	}
 }
 
