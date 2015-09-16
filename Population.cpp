@@ -419,8 +419,8 @@ bool Population::Breed() {
 		#ifdef DEBUG
 		printf("CPU %d: Start insert offspring\n", nCPU);
 		#endif
-		#pragma omp critical
-		{
+		//#pragma omp critical
+		//{
 		for (vector<Individual *>::iterator itOffSpring = vOffSprings.begin(); itOffSpring!=vOffSprings.end(); ++itOffSpring) 
 		{
 
@@ -450,7 +450,7 @@ bool Population::Breed() {
 			}
 		}
 
-		} // end omp
+		//} // end omp
 		#ifdef DEBUG
 		printf("CPU %d: end insert offspring\n", nCPU);
 		#endif
