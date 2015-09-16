@@ -301,8 +301,7 @@ bool Population::Breed() {
 		//Go over each female so that they can mate.
 		int nRandFemaleInd=fnGetRandIndex(nNumFemales);
 		bool bGetRandSuccess = true;
-		#pragma omp critical
-		{
+		
 			while((stSampledFemales.find(nRandFemaleInd)!= stSampledFemales.end()) && (stExhaustedFemales.find(nRandFemaleInd) == stExhaustedFemales.end())) {
 				nRandFemaleInd=fnGetRandIndex(nNumFemales);
 				if (stExhaustedFemales.size() >= this->_mpFemales.size()) {
@@ -311,9 +310,11 @@ bool Population::Breed() {
 				}
 			}
 			if (bGetRandSuccess) {
+				#pragma omp critical
+				{
 				stSampledFemales.insert(nRandFemaleInd);
+				}
 			}
-		}
 		#ifdef DEBUG
 		printf("CPU %d: Female Id: %d\n", nCPU, nRandFemaleInd);
 		#endif
