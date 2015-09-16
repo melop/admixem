@@ -1,4 +1,4 @@
-﻿Build started 9/17/2015 12:11:15 AM.
+﻿Build started 9/17/2015 12:20:33 AM.
      1>Project "C:\data\Ray\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(344,5): warning MSB8003: Could not find WindowsSDKDir variable from the registry.  TargetFrameworkVersion or PlatformToolset may be set to an invalid version number.
      1>ClCompile:
@@ -47,4 +47,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:12.05
+Time Elapsed 00:00:11.87

@@ -712,18 +712,18 @@ void Population::FreqDependentNaturalSelection() {
 
 				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
 				{
-					#pragma omp critical
-					{
+					//#pragma omp critical
+					//{
 						pParser->symbols_[string("My_"+(*itSymbol))] = pInd->GetPhenotype(*itSymbol);
 						pParser->symbols_[*itSymbol] = pInd->GetPhenotype(*itSymbol); //set both variables
-					}
+					//}
 				}
 
 				bool bLive = true;
-				#pragma omp critical 
-				{
+				//#pragma omp critical 
+				//{
 					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
-				}
+				//}
 
 				if (!bLive) {
 
@@ -766,18 +766,18 @@ void Population::FreqDependentNaturalSelection() {
 
 				for(vector<string>::iterator itSymbol=vSymbolsSelf.begin();itSymbol!=vSymbolsSelf.end();++itSymbol)
 				{
-					#pragma omp critical 
-					{
+					//#pragma omp critical 
+					//{
 						pParser->symbols_[string("My_"+(*itSymbol))] = pInd->GetPhenotype(*itSymbol);
 						pParser->symbols_[*itSymbol] = pInd->GetPhenotype(*itSymbol); //set both variables
-					}
+					//}
 				}
 
 				bool bLive = true;
-				#pragma omp critical 
-				{
+				//#pragma omp critical 
+				//{
 					bLive = (UniformGen.Next() <= pParser->Evaluate())? true : false;
-				}
+				//}
 
 				if (!bLive) {
 					#pragma omp critical 
