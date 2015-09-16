@@ -593,11 +593,11 @@ void Individual::GiveBirth(vector<Individual *> &vOffSprings, int nNum, bool bIg
 		Individual * pDad = NULL;
 
 		do {
-			#pragma omp critical 
-			{
+			//#pragma omp critical 
+			//{
 				int nRandDad = fnGetRandIndex(this->_arrOtherParentsForOffsprings.size() );
 				pDad = this->_arrOtherParentsForOffsprings.at(nRandDad);
-			}
+			//}
 		}
 		while(pDad==NULL);
 
