@@ -597,8 +597,8 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		nProbToAdd = nTotalCached > nRoomLeft? (double)nTotalCached/(double)nRoomLeft:1;
 	}
 		//printf("MaxPopSize: %d \n", _nPopMaxSize );
-	printf("Candidate immigrating males %n\n", nCacheMaleSize);
-	printf("Candidate immigrating females %n\n", nCacheFemaleSize);
+	printf("Candidate immigrating males %d\n", nCacheMaleSize);
+	printf("Candidate immigrating females %d\n", nCacheFemaleSize);
 
 	int nAddedMales=0;
 	int nAddedFemales=0;
@@ -618,8 +618,8 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		}
 	}
 
-	printf("Added immigrating males %n\n", nAddedMales);
-	printf("Added immigrating females %n\n", nAddedMales);
+	printf("Added immigrating males %d\n", nAddedMales);
+	printf("Added immigrating females %d\n", nAddedMales);
 	//do final check on pop size:
 	nCurrPopSize = this->GetPopSize(4);
 	if (nCurrPopSize > _nPopMaxSize) {
