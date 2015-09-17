@@ -162,7 +162,7 @@ bool Population::Breed() {
 
 	for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
 		int nGen = itParser->second;
-		if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
+		if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRulesNa && nGen == nCurrGen) ) {
 			if (itParser->first->IsZero) {
 				return true; //no need to continue since surviving prob is zero.
 			}
