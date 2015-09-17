@@ -511,6 +511,8 @@ void Population::KillOldGen() { //
 
 	//printf("_mpNewGenMales.size() %d\n", _mpNewGenMales.size());
 	//printf("_mpNewGenFemales.size() %d\n", _mpNewGenFemales.size());
+	_mpMales.reserve(this->GetPopSize(2));
+	_mpFemales.reserve(this->GetPopSize(3));
 	for(int nCpu=0; nCpu<nTotalCPUCore;nCpu++) {
 		copy(_mpvNewGenMales[nCpu].begin(), _mpvNewGenMales[nCpu].end(), back_inserter(_mpMales));
 		copy(_mpvNewGenFemales[nCpu].begin(), _mpvNewGenFemales[nCpu].end(), back_inserter(_mpFemales));
