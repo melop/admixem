@@ -520,6 +520,8 @@ void Population::KillOldGen() { //
 
 	_mpMales.clear();
 	_mpFemales.clear();
+	_mpImCacheMales.clear();
+	_mpImCacheFemales.clear();
 
 	//printf("_mpNewGenMales.size() %d\n", _mpNewGenMales.size());
 	//printf("_mpNewGenFemales.size() %d\n", _mpNewGenFemales.size());
@@ -558,7 +560,7 @@ Individual * Population::Emigrate() {
 	return pEmigrant;
 }
 
-bool Population::Immigrate(Individual * pImmigrant, bool bForceExistingDie) { // Force current members to die or not if exceeding population limits
+bool Population::Immigrate(Individual * pImmigrant) { // Force current members to die or not if exceeding population limits
 	
 	if (!pImmigrant) {
 		printf("Immigrant cannot be NULL\n");
@@ -568,27 +570,65 @@ bool Population::Immigrate(Individual * pImmigrant, bool bForceExistingDie) { //
 	pImmigrant->ChangePopulation(this);
 	Individual::Sex bWhichSex = pImmigrant->GetSex();
 	//printf("2\n");
-	vector< Individual *> * pIndividuals = (bWhichSex==Individual::Male)? &_mpMales:&_mpFemales;
+	vector< Individual *> * pIndividuals = (bWhichSex==Individual::Male)?  &_mpImCacheMales : &_mpImCacheFemales; //&_mpMales:&_mpFemales;
 	//printf("3\n");
-	if (pIndividuals->size() < _nPopMaxSize) { // Still within limit of max size
-		//printf("4\n");
+
 		pIndividuals->push_back(pImmigrant); //add this individual to the population.
-		//printf("5\n");
-		return true;
+
+
+	return true; // already full, cannot accept any more.
+
+}
+
+bool Population::ImmigrateConfirm(bool bForceExistingDie) {
+	int nCacheMaleSize = _mpImCacheMales.size();
+	int nCacheFemaleSize = _mpImCacheFemales.size();
+	int nTotalCached = nCacheMaleSize + nCacheFemaleSize;
+	int nCurrPopSize = this->GetPopSize(4);
+	int nRoomLeft = _nPopMaxSize-nCurrPopSize >=0? _nPopMaxSize-nCurrPopSize : 0;
+	double nProbToAdd;
+
+	if (bForceExistingDie) {
+		nProbToAdd = nTotalCached > _nPopMaxSize? (double)nTotalCached/(double)_nPopMaxSize:1;
+	} else {
+		if (nRoomLeft == 0) {
+			return false; //no room to add any immigrants
+		}
+		nProbToAdd = nTotalCached > nRoomLeft? (double)nTotalCached/(double)nRoomLeft:1;
 	}
-	//printf("MaxPopSize: %d \n", _nPopMaxSize );
-	if ( (pIndividuals->size() >= _nPopMaxSize) && bForceExistingDie) {
-		// Randomly delete one individual from the current pop.
-		//printf("Immigrate::6\n");
-		pIndividuals->erase(pIndividuals->begin() + fnGetRandIndex( pIndividuals->size() ));
-		//printf("Immigrate::7\n");
-		pIndividuals->push_back(pImmigrant);
-		//printf("Immigrate::8\n");
-		return true;
+		//printf("MaxPopSize: %d \n", _nPopMaxSize );
+	printf("Candidate immigrating males %n\n", nCacheMaleSize);
+	printf("Candidate immigrating females %n\n", nCacheFemaleSize);
+
+	int nAddedMales=0;
+	int nAddedFemales=0;
+	for(vector< Individual * >::iterator it=this->_mpImCacheMales.begin(); it!=this->_mpImCacheMales.end();++it) {
+		if (UniformGen.Next() < nProbToAdd) {
+			//add
+			_mpMales.push_back( *it );
+			nAddedMales++;
+		}
 	}
 
-	return false; // already full, cannot accept any more.
+	for(vector< Individual * >::iterator it=this->_mpImCacheFemales.begin(); it!=this->_mpImCacheFemales.end();++it) {
+		if (UniformGen.Next() < nProbToAdd) {
+			//add
+			_mpFemales.push_back( *it );
+			nAddedFemales++;
+		}
+	}
 
+	printf("Added immigrating males %n\n", nAddedMales);
+	printf("Added immigrating females %n\n", nAddedMales);
+	//do final check on pop size:
+	nCurrPopSize = this->GetPopSize(4);
+	if (nCurrPopSize > _nPopMaxSize) {
+		//randomly remove some individuals
+		while(this->GetPopSize(4) > _nPopMaxSize) {
+			Individual * pVictim = this->Emigrate();
+			delete pVictim;
+		}
+	}
 }
 
 int Population::GetPopSize(int nMode) {

@@ -302,11 +302,18 @@ void PerformSimulation() {
 								printf("Population size of %s is now 0, only migrated %d individuals.\n", (*itpPop1)->GetPopName().c_str(), i);
 								break;							
 							}
-							(*itpPop2)->Immigrate( (*itpPop1)->Emigrate(), true );
+							(*itpPop2)->Immigrate( (*itpPop1)->Emigrate() );
 						}
+
 					}
 				}
 				
+			}
+
+			//confirm immigrants for every pop
+			for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
+			{
+				(*itpPop)->ImmigrateConfirm(true);
 			}
 		}
 

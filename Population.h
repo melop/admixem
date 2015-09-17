@@ -24,7 +24,8 @@ public:
 	Population(void);
 	~Population(void);
 	void Init(string sPopName, int nPopId, char nAncestryLabel, int nPopInitSize, int nPopMaxSize, double nMaleRatio);
-	bool Immigrate(Individual * pImmigrant, bool bForceExistingDie);
+	bool Immigrate(Individual * pImmigrant);
+	bool ImmigrateConfirm(bool bForceExistingDie); //put imm into population.
 	Individual * Emigrate(); // delete individual from the population and return it 
 	bool Breed();
 	void KillOldGen();
@@ -50,6 +51,8 @@ private:
 	bool _bRecordNatSelProb;
 	vector< Individual *> _mpMales;  // array storing males
 	vector< Individual *> _mpFemales; //array storing females
+	vector< Individual *> _mpImCacheMales;  // array storing incoming immigrants males
+	vector< Individual *> _mpImCacheFemales; //array storing incoming immigrants males
 	vector< Individual *> * _mpvNewGenMales;  // array storing males
 	vector< Individual *> * _mpvNewGenFemales; //array storing females
 	map< string , pair< double, double> > _mpSumPhenotype; // population statistics
