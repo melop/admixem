@@ -164,6 +164,7 @@ bool Population::Breed() {
 		int nGen = itParser->second;
 		if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRulesNa && nGen == nCurrGen) ) {
 			if (itParser->first->IsZero) {
+				this->_bBred = true;
 				return true; //no need to continue since surviving prob is zero.
 			}
 		}

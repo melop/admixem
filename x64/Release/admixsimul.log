@@ -1,4 +1,4 @@
-﻿Build started 9/17/2015 11:58:02 PM.
+﻿Build started 9/18/2015 12:04:53 AM.
      1>Project "C:\data\Ray\apps\github\admixsimul\admixsimul.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(344,5): warning MSB8003: Could not find WindowsSDKDir variable from the registry.  TargetFrameworkVersion or PlatformToolset may be set to an invalid version number.
      1>ClCompile:
@@ -8,22 +8,22 @@
      1>c:\data\ray\apps\github\admixsimul\spline.h(62): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>c:\data\ray\apps\github\admixsimul\spline.h(147): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>c:\data\ray\apps\github\admixsimul\spline.h(291): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(174): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(265): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
-     1>Population.cpp(366): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(386): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>Population.cpp(392): warning C4244: '=' : conversion from 'Real' to 'int', possible loss of data
-     1>Population.cpp(544): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(175): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(266): warning C4244: 'initializing' : conversion from 'const double' to 'int', possible loss of data
+     1>Population.cpp(367): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(387): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>Population.cpp(393): warning C4244: '=' : conversion from 'Real' to 'int', possible loss of data
      1>Population.cpp(545): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(554): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(584): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(546): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(555): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
      1>Population.cpp(585): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(657): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(586): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
      1>Population.cpp(658): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(659): warning C4267: '+=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(659): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>Population.cpp(660): warning C4267: '+=' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(661): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>Population.cpp(662): warning C4267: '+=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(661): warning C4267: '+=' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(662): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
+     1>Population.cpp(663): warning C4267: '+=' : conversion from 'size_t' to 'int', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\data\Ray\apps\github\admixsimul\x64\Release\admixsimul.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\data\Ray\apps\github\admixsimul\x64\Release\admixsimul.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\data\Ray\apps\github\admixsimul\x64\Release\admixsimul.lib" /MACHINE:X64 x64\Release\config.obj
          x64\Release\filesystem.obj
@@ -41,12 +41,12 @@
          x64\Release\testexpression.obj
      1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
          Generating code
-     1>c:\data\ray\apps\github\admixsimul\population.cpp(664): warning C4715: 'Population::GetPopSize' : not all control paths return a value
-     1>c:\data\ray\apps\github\admixsimul\population.cpp(653): warning C4715: 'Population::ImmigrateConfirm' : not all control paths return a value
+     1>c:\data\ray\apps\github\admixsimul\population.cpp(665): warning C4715: 'Population::GetPopSize' : not all control paths return a value
+     1>c:\data\ray\apps\github\admixsimul\population.cpp(654): warning C4715: 'Population::ImmigrateConfirm' : not all control paths return a value
          Finished generating code
          admixsimul.vcxproj -> C:\data\Ray\apps\github\admixsimul\x64\Release\admixsimul.exe
      1>Done Building Project "C:\data\Ray\apps\github\admixsimul\admixsimul.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:12.33
+Time Elapsed 00:00:13.63
