@@ -69,14 +69,17 @@ class Parser
   double value_;
      
   public:
- 
+  bool IsOne;
+  bool IsZero;
   // ctor
   Parser (const std::string & program) 
     : program_ (program)
       {  
       // insert pre-defined names:
       symbols_ ["pi"] = 3.1415926535897932385;
-      symbols_ ["e"]  = 2.7182818284590452354;      
+      symbols_ ["e"]  = 2.7182818284590452354;  
+	  this->IsOne = (program=="1");
+	  this->IsZero =  (program=="0");
       }
   
   const double Evaluate ();  // get result

@@ -157,6 +157,18 @@ bool Population::Breed() {
 		return false;
 	}
 
+	//Check if natural selection prob or sexual selection prob is zero, if so, no need to continue.
+	list< pair< Parser *, int> > * pqParsers = SimulConfig.pNaturalSelConfig->GetFormulae(this->GetPopName());
+
+	for (list< pair< Parser *, int> >::iterator itParser= pqParsers->begin(); itParser != pqParsers->end() ; ++itParser) {
+		int nGen = itParser->second;
+		if ((nGen ==-1 && !bIgnoreGlobalRules) || (bIgnoreGlobalRules && nGen == nCurrGen) ) {
+			if (itParser->first->IsZero) {
+				return true; //no need to continue since surviving prob is zero.
+			}
+		}
+	}
+
 	printf("Pop %s breeding...\n", _sPopName.c_str());
 	int nNewOffSpringCount = 0;
 	int nNumFemales = _mpFemales.size();

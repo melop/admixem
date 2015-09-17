@@ -663,6 +663,8 @@ const double Parser::Evaluate ()  // get result
 const double Parser::Evaluate (const std::string & program)  // get result
   {
   program_  = program;
+  this->IsOne = (program=="1");
+  this->IsZero =  (program=="0");
   return Evaluate ();
   }
 
