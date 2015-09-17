@@ -1,6 +1,7 @@
 #include "simulation.h"
 #include "maths.h"
 #include <time.h>
+#include <random>
 
 #ifdef _OPENMP
  #include <omp.h>
@@ -12,6 +13,7 @@ int nTotalCPUCore = 1;
 extern Normal NormalGen; 
 extern Uniform UniformGen;
 extern double nRandSeed;
+std::default_random_engine RandEngine;
 
 extern SimulationConfigurations SimulConfig; // defined in config.cpp
 
@@ -291,9 +293,10 @@ void PerformSimulation() {
 								Throw(Out_of_range("ERROR: When UseBinomMigrateRate is turned on, migrational rates must be 0-1."));
 								
 							}
-							Binomial oBinom((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
+							//Binomial oBinom((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
+							std::binomial_distribution<int> oBinomDist((*itpPop1)->GetPopSize(4) ,  nNumberMigrants);
 							printf("Migrant number drawn from Binom(n=%d , p=%f)\n", (*itpPop1)->GetPopSize(4) , nNumberMigrants);
-							nNumberMigrants = round( oBinom.Next());
+							nNumberMigrants = round( oBinomDist(RandEngine) );
 							
 						}
 						printf("Migration %s : %d migrants...\n", sMigrationParamLabel.c_str(), (int)nNumberMigrants);
