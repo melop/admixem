@@ -619,7 +619,7 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 	}
 
 	printf("Added immigrating males %d\n", nAddedMales);
-	printf("Added immigrating females %d\n", nAddedMales);
+	printf("Added immigrating females %d\n", nAddedFemales);
 	//do final check on pop size:
 	nCurrPopSize = this->GetPopSize(4);
 	if (nCurrPopSize > _nPopMaxSize) {
