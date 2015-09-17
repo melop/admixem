@@ -1787,7 +1787,13 @@ void SimulationConfigurations::LoadFromFile(string szConfigFile) {
 		this->_nVerboseLogLevel = this->GetNumericConfig("LogVerbose");
 	}
 
+	this->bOutputFirst3Gens = (this->GetConfig("DisableOutputForFirst3Gens")!="yes");
+
 };
+
+bool SimulationConfigurations::IsOutputFirst3Gens() {
+	return this->bOutputFirst3Gens;
+}
 
 const string SimulationConfigurations::GetConfigFileName() {
 	return _szConfigFilename;

@@ -212,7 +212,7 @@ void PerformSimulation() {
 			printf("Warning: AllOutput is set to Off, no output will be written. \n");
 		}
 
-		if ( (!bAllOutputOff) && ((nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || ( SimulConfig.GetConfig("DisableOutputForFirst3Gens")!="yes" && (nCurrGen==0 || nCurrGen==1 || nCurrGen==2 ) ) || SimulConfig.IsInUserSpecifiedSamplingRange(nCurrGen))) {
+		if ( (!bAllOutputOff) && ((nSampleFreq > 0  && (nCurrGen % nSampleFreq == 0)) || ( SimulConfig.IsOutputFirst3Gens() && (nCurrGen==0 || nCurrGen==1 || nCurrGen==2 ) ) || SimulConfig.IsInUserSpecifiedSamplingRange(nCurrGen))) {
 
 		
 			printf("Writing to disk...\n");

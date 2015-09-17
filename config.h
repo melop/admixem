@@ -271,6 +271,7 @@ class SimulationConfigurations {
 		void SetCurrGen( int nGen);
 		bool IsInUserSpecifiedSamplingRange(int nGen);
 		int GetLogVerboseLevel();
+		bool IsOutputFirst3Gens();
 
 	private:
 		int _nVerboseLogLevel;
@@ -279,7 +280,7 @@ class SimulationConfigurations {
 		std::map<string, double> _mpNumericConfigs;
 		std::vector< std::pair< int, int > > _mvSampleGens;
 		int nCurrGen;
-
+		bool bOutputFirst3Gens;
 		void fnParseNumericConfigs();
 		void fnParseSampleGenDef() ;
 
