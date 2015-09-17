@@ -584,17 +584,19 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 	int nCacheMaleSize = _mpImCacheMales.size();
 	int nCacheFemaleSize = _mpImCacheFemales.size();
 	int nTotalCached = nCacheMaleSize + nCacheFemaleSize;
+	int nTotalToAdd;
 	int nCurrPopSize = this->GetPopSize(4);
 	int nRoomLeft = _nPopMaxSize-nCurrPopSize >=0? _nPopMaxSize-nCurrPopSize : 0;
 	double nProbToAdd;
 
 	if (bForceExistingDie) {
-		nProbToAdd = nTotalCached > _nPopMaxSize? (double)nTotalCached/(double)_nPopMaxSize:1;
+		nTotalToAdd = nTotalCached < _nPopMaxSize? nTotalCached : _nPopMaxSize;
+		nProbToAdd = (double)nTotalToAdd / (double)nTotalCached;
 	} else {
 		if (nRoomLeft == 0) {
 			return false; //no room to add any immigrants
 		}
-		nProbToAdd = nTotalCached > nRoomLeft? (double)nTotalCached/(double)nRoomLeft:1;
+		nProbToAdd = nTotalCached > nRoomLeft? (double)nRoomLeft/(double)nTotalCached:1;
 	}
 		//printf("MaxPopSize: %d \n", _nPopMaxSize );
 	printf("Candidate immigrating males %d\n", nCacheMaleSize);
@@ -602,9 +604,21 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 
 	int nAddedMales=0;
 	int nAddedFemales=0;
+
+	if (bForceExistingDie && nRoomLeft < nTotalToAdd) {
+		int nMakeMoreRoom = nTotalToAdd - nRoomLeft;
+		for(int i=0;i< nMakeMoreRoom;i++) {
+			Individual * pVictim = this->Emigrate();
+			if (pVictim) {
+				delete pVictim;
+			}
+		}
+	}
+
 	for(vector< Individual * >::iterator it=this->_mpImCacheMales.begin(); it!=this->_mpImCacheMales.end();++it) {
 		if (UniformGen.Next() < nProbToAdd) {
 			//add
+
 			_mpMales.push_back( *it );
 			nAddedMales++;
 		}
@@ -626,7 +640,9 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		//randomly remove some individuals
 		while(this->GetPopSize(4) > _nPopMaxSize) {
 			Individual * pVictim = this->Emigrate();
-			delete pVictim;
+			if (pVictim) {
+				delete pVictim;
+			}
 		}
 	}
 }
