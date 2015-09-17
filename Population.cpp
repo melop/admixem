@@ -596,7 +596,8 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		if (nRoomLeft == 0) {
 			return false; //no room to add any immigrants
 		}
-		nProbToAdd = nTotalCached > nRoomLeft? (double)nRoomLeft/(double)nTotalCached:1;
+		nTotalToAdd = nTotalCached < nRoomLeft? nTotalCached : nRoomLeft;
+		nProbToAdd = (double)nTotalToAdd / (double)nTotalCached;
 	}
 		//printf("MaxPopSize: %d \n", _nPopMaxSize );
 	printf("Candidate immigrating males %d\n", nCacheMaleSize);
@@ -609,7 +610,9 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		int nMakeMoreRoom = nTotalToAdd - nRoomLeft;
 		for(int i=0;i< nMakeMoreRoom;i++) {
 			Individual * pVictim = this->Emigrate();
-			if (pVictim) {
+			if (!pVictim) {
+				
+			} else {
 				delete pVictim;
 			}
 		}
@@ -640,7 +643,9 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 		//randomly remove some individuals
 		while(this->GetPopSize(4) > _nPopMaxSize) {
 			Individual * pVictim = this->Emigrate();
-			if (pVictim) {
+			if (!pVictim) {
+				
+			} else {
 				delete pVictim;
 			}
 		}
