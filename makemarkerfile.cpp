@@ -93,6 +93,7 @@ double nChromosomeSize, nCentromerePos, nPop1AvgAlleleFreq, nPop1AvgAlleleFreqSt
 
 			if (nChromosomeSize == 0) { //set it to the same as the previous one
 				pChromosomeSizes[nCurrChromosome-1]  = pChromosomeSizes[nCurrChromosome-2];
+				nChromosomeSize = pChromosomeSizes[nCurrChromosome-1];
 			}
 			
 			if (nChromosomeSize < 0 ) {
