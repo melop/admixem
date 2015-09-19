@@ -9,7 +9,7 @@
 
 # build target specs
 CC = g++
-CFLAGS = -fopenmp -O3
+CFLAGS = -fopenmp -O3 -static-libstdc++
 OUT_DIR = release_build
 NEW_RAN_DIR = ./newran02
 PARSER_DIR = ./parser
