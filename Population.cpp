@@ -23,7 +23,7 @@ Population::~Population(void)
 }
 
 void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPopInitSize, int nPopMaxSize, double nMaleRatio) {
-
+	
 	this->_nPopId = nPopId;
 	this->_sPopName = sPopName;
 	this->_nAncestryLabel = nAncestryLabel;
@@ -37,43 +37,61 @@ void Population::Init(string sPopName,int nPopId,  char nAncestryLabel, int nPop
 	this->_mpvNewGenMales = new vector< Individual *>[nTotalCPUCore];
 	this->_mpvNewGenFemales = new vector< Individual *>[nTotalCPUCore];
 
+
 	printf("To create... Male: %d  Female %d\n", nMalesToCreate, nFemalesToCreate );
+	this->_mpMales.reserve(nMalesToCreate);
+	this->_mpFemales.reserve(nFemalesToCreate);
+	#pragma omp parallel shared(nMalesToCreate, nFemalesToCreate) 
+	//private(pFemale, nCourters, pCourter, vOffSprings, itOffSpring)
+	{
+	
 
-	while(true)
 
+	#pragma omp for 
+	for (int nCPU=0; nCPU<nTotalCPUCore;nCPU++)
 	{
 		
-		printf("Created Male: %d  Female %d\n", this->_nCurrMales, this->_nCurrFemales );
-		if (nMalesToCreate <= this->_nCurrMales && nFemalesToCreate <= this->_nCurrFemales) {
-			break;
-		}
-
-		Individual * pNewInd = new Individual(this, nAncestryLabel);
-
-		if (pNewInd->GetSex() == Individual::Male) { // If the created individual is male
-
-			if (nMalesToCreate > this->_nCurrMales) { // if still have room for new males
-				this->_mpMales.insert(this->_mpMales.begin(), pNewInd); // put the new male in the population;
-				this->_nCurrMales++;
+		//printf("Created Male: %d  Female %d\n", this->_nCurrMales, this->_nCurrFemales );
+		while(true) {
+			if (nMalesToCreate <= this->_nCurrMales && nFemalesToCreate <= this->_nCurrFemales) {
+				break;
 			}
-			else {
-				delete pNewInd;
-				continue;
-			}
-		}
 
-		if (pNewInd->GetSex() == Individual::Female) { // If the created individual is female
+			Individual * pNewInd = new Individual(this, nAncestryLabel);
 
-			if (nFemalesToCreate > this->_nCurrFemales) { // if still have room for new females
-				this->_mpFemales.insert(this->_mpFemales.begin(), pNewInd); // put the new female in the population;
-				this->_nCurrFemales++;
+			if (pNewInd->GetSex() == Individual::Male) { // If the created individual is male
+
+				if (nMalesToCreate > this->_nCurrMales) { // if still have room for new males
+					#pragma omp critical 
+					{
+					this->_mpMales.push_back(pNewInd); // put the new male in the population;
+					this->_nCurrMales++;
+					}
+				}
+				else {
+					delete pNewInd;
+					continue;
+				}
 			}
-			else {
-				delete pNewInd;
-				continue;
+
+			if (pNewInd->GetSex() == Individual::Female) { // If the created individual is female
+
+				if (nFemalesToCreate > this->_nCurrFemales) { // if still have room for new females
+					#pragma omp critical 
+					{
+						this->_mpFemales.push_back(pNewInd); // put the new female in the population;
+						this->_nCurrFemales++;
+					}
+				}
+				else {
+					delete pNewInd;
+					continue;
+				}
 			}
-		}
-	}
+		}//while end.
+	} //for end
+
+	} //end parallel
 };
 
 void Population::SummarizePhenotype() {
