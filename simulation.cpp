@@ -1,6 +1,8 @@
 #include "simulation.h"
 #include "maths.h"
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 //#include <random>
 
 #ifdef _OPENMP
@@ -634,6 +636,15 @@ void fnMakeDir(const char * sPath)
 
 bool fnFileExists(const char *filename)
 {
+	/*
   ifstream ifile(filename);
   return ifile.is_open();
+  */
+
+	 struct stat info;
+
+    if(stat( filename, &info ) != 0)
+        return false;
+    else 
+        return true;
 }
