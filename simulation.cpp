@@ -1,8 +1,12 @@
 #include "simulation.h"
 #include "maths.h"
 #include <time.h>
+
+#ifdef _WIN32
 #include <sys/types.h>
 #include <sys/stat.h>
+#endif
+
 //#include <random>
 
 #ifdef _OPENMP
@@ -640,11 +644,15 @@ bool fnFileExists(const char *filename)
   ifstream ifile(filename);
   return ifile.is_open();
   */
-
+  #ifdef _WIN32
 	 struct stat info;
 
     if(stat( filename, &info ) != 0)
         return false;
     else 
         return true;
+  #else
+	ifstream ifile(filename);
+	return ifile.is_open();
+  #endif
 }
