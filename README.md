@@ -7,6 +7,6 @@ The aim of this program is to allow users to simulate admixture with selection, 
 
 If you use this program, please cite 
 
-Cui, Rongfeng, Molly Schumer, and Gil G. Rosenthal. "Admix’em: a flexible framework for forward-time simulations of hybrid populations with selection and mate choice." Bioinformatics 32.7 (2016): 1103-1105.
+Cui, R., Schumer, M., & Rosenthal, G. G. (2016). Admix’em: a flexible framework for forward-time simulations of hybrid populations with selection and mate choice. Bioinformatics, 32(7), 1103-1105.
 
 Detailed manual is found on the wiki page of the github repository: https://github.com/melop/admixem/wiki.
