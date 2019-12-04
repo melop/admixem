@@ -922,6 +922,10 @@ void NaturalSelectionConfigurations::LoadFromFile(string szConfigFile)
 		
 		int nGen;
 		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
+                if (sBuffer == "") {
+                        continue;
+                }
+
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPrevPopName = sPopName;
 		sPrevFormula = sFormula;
@@ -1199,10 +1203,13 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 		string sPopName, sFormula;
 		int nGen = -1;
 		sBuffer.erase(sBuffer.find_last_not_of(" \n\r\t")+1);//trim
+		if (sBuffer == "") {
+			continue;
+		}
 		sscanf(sBuffer.c_str(), "%[^\t\n]	%d	%[^\t\n]", szPopName, &nGen, szFormula);
 		sPopName = szPopName; //make it string so that it saves lots of trouble of fuddling with c strings... i hate c strings.
 		sFormula = szFormula;
-		printf("Parsing sexual rule for Pop %s : %s\n", sPopName.c_str(), sFormula.c_str());
+		printf("Parsing sexual rule for Pop %s : %s for gen %d\n", sPopName.c_str(), sFormula.c_str(), nGen);
 		if (sPopName.length() != 0 && sFormula.length() !=0) {
 			
 			
@@ -1378,6 +1385,9 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 
 			this->_mpRules[sPopName].push_back(sFormula); // save the formula string for further reference.
 			for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) {
+				if (nCPU == 0) {
+					printf("Inserting %s to gen %d\n", sFormula.c_str(), nGen);
+				}
 				this->_mpmpRuleFormulae[nCPU][sPopName].push_back( pair< Parser *, int> ( new Parser(sFormula), nGen) ); //literally copy the pF object, so that there are nTotalCPUCore numbers of copies in the RAM! ;-)
 			}
 			this->_mpRuleFormulaSymbolStrings[sPopName].push_back(vSymbolStrings);
@@ -1397,6 +1407,7 @@ void SexualSelectionConfigurations::LoadFromFile(string szConfigFile)
 			this->_mpRuleFormulaSymbolStringsPrevPopWidePrevGenChooser[sPopName].push_back(vSymbolStringsPrevPopWidePrevGenChooser); //PrevGenPrevPopChooser_
 
 			if (nGen > -1) {
+				printf("Sexual selection special generation: %d\n", nGen);
 				this->_vSpecialGens.insert(nGen);
 			}
 		}
