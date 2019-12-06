@@ -486,10 +486,10 @@ bool Population::Breed() {
 						this->_mpvNewGenFemales[nCPU].push_back(*itOffSpring);
 					//}
 				}
-				//#pragma omp critical
-				//{
+				#pragma omp critical
+				{
 					nNewOffSpringCount++;
-				//}
+				}
 			}
 			else {
 
