@@ -304,7 +304,7 @@ bool Population::Breed() {
 		
 	if (nPrevKidPerFemale == nAvgKidPerFemale ) {
 		//no addition;
-		if (nSameAvgKidIterCount > 10) {
+		if (nSameAvgKidIterCount > nMaxLoop) {
 			printf("No more breeding possible\n");
 			break;
 		} else {
