@@ -284,6 +284,7 @@ bool Population::Breed() {
 	int nMaxLoop = SimulConfig.GetNumericConfig("FemaleGiveBirthMaxIterations");
 	nMaxLoop = (nMaxLoop==-1)? 1000:nMaxLoop; //do at most 20 loops.
 	int nLoopCount = 0;
+	int nSameAvgKidIterCount = 0;
 	double nPrevKidPerFemale = -1.0;
 	do 
 	{
@@ -301,10 +302,14 @@ bool Population::Breed() {
 	double nAvgKidPerFemale = (double)(_nPopMaxSize - nNewOffSpringCount) / (double)nNumFemales; // average kid per female, given the number offsprings left to fill the pop
 	vOffSpringPoissonGen.clear();
 		
-	if (nPrevKidPerFemale == nAvgKidPerFemale) {
+	if (nPrevKidPerFemale == nAvgKidPerFemale ) {
 		//no addition;
-		printf("No more breeding possible\n");
-		break;
+		if (nSameAvgKidIterCount > 10) {
+			printf("No more breeding possible\n");
+			break;
+		} else {
+			nSameAvgKidIterCount++;	
+		}
 	}
 	nPrevKidPerFemale = nAvgKidPerFemale;
 		
@@ -525,6 +530,10 @@ bool Population::Breed() {
 	int nExcessFemales = nExcessOffsprings - nExcessMales;
 	int nDeletedMales = 0;
 	int nDeletedFemales = 0;
+	
+	if (nExcessOffsprings > 0) {
+		printf("Delete %d extra males and %d females (total %d)\n", nExcessMales,  nExcessFemales, nExcessOffsprings);	
+	}
 	
 		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
