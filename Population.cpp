@@ -330,7 +330,8 @@ bool Population::Breed() {
 	
 
 
-	#pragma omp for reduction(+: nNewOffSpringCount) 
+	#pragma omp for 
+		//reduction(+: nNewOffSpringCount) 
 	for(int i=0;i<nNumFemales;i++) 
 	{
 		if (nNewOffSpringCount >= this->_nPopMaxSize || stExhaustedFemales.size() >= this->_mpFemales.size()) {
