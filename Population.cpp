@@ -525,7 +525,7 @@ bool Population::Breed() {
 
 	} // end do block
 	while( (nLoopCount <= nMaxLoop) && (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
-
+	/* needs more work
 	int nExcessOffsprings = nNewOffSpringCount - this->_nPopMaxSize;
 	int nExcessMales = nExcessOffsprings / 2;
 	int nExcessFemales = nExcessOffsprings - nExcessMales;
@@ -551,6 +551,7 @@ bool Population::Breed() {
                                 nDeletedFemales++;
                         }
 		}
+	*/
 	
 	this->_bBred = true; //set flag
 	return true;
