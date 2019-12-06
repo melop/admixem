@@ -284,6 +284,7 @@ bool Population::Breed() {
 	int nMaxLoop = SimulConfig.GetNumericConfig("FemaleGiveBirthMaxIterations");
 	nMaxLoop = (nMaxLoop==-1)? 1000:nMaxLoop; //do at most 20 loops.
 	int nLoopCount = 0;
+	double nPrevKidPerFemale = -1.0;
 	do 
 	{
 		nLoopCount++;
@@ -299,7 +300,14 @@ bool Population::Breed() {
 		//}
 	double nAvgKidPerFemale = (double)(_nPopMaxSize - nNewOffSpringCount) / (double)nNumFemales; // average kid per female, given the number offsprings left to fill the pop
 	vOffSpringPoissonGen.clear();
-
+		
+	if (nPrevKidPerFemale == nAvgKidPerFemale) {
+		//no addition;
+		printf("No more breeding possible\n");
+		break;
+	}
+	nPrevKidPerFemale = nAvgKidPerFemale;
+		
 	for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
 		//initialize poisson generators for offspring numbers
