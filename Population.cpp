@@ -504,26 +504,8 @@ bool Population::Breed() {
 	} //end parallel block
 
 	bCourterHandeled = true;
-	int nExcessOffsprings = nNewOffSpringCount - this->_nPopMaxSize;
-	int nExcessMales = nExcessOffsprings / 2;
-	int nExcessFemales = nExcessOffsprings - nExcessMales;
-	int nDeletedMales = 0;
-	int nDeletedFemales = 0;
-	
 		
 		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
-
-			if (nDeletedMales < nExcessMales && (!this->_mpvNewGenMales[nCPU].empty())) {
-				delete this->_mpvNewGenMales[nCPU][this->_mpvNewGenMales[nCPU].size()-1];
-				this->_mpvNewGenMales[nCPU].pop_back();
-				nDeletedMales++;
-			}
-                        if (nDeletedFemales < nExcessFemales && (!this->_mpvNewGenFemales[nCPU].empty())) {
-                                delete this->_mpvNewGenFemales[nCPU][this->_mpvNewGenFemales[nCPU].size()-1];
-                                this->_mpvNewGenFemales[nCPU].pop_back();
-                                nDeletedFemales++;
-                        }
-
 			//delete poisson generators for offspring numbers
 			if (nOffSpringCountFunc == 1 ) {
 				#ifdef DEBUG
@@ -538,7 +520,25 @@ bool Population::Breed() {
 	} // end do block
 	while( (nLoopCount <= nMaxLoop) && (nNewOffSpringCount < this->_nPopMaxSize) && (stExhaustedFemales.size() < this->_mpFemales.size()) ) ; //end do while block.
 
+	int nExcessOffsprings = nNewOffSpringCount - this->_nPopMaxSize;
+	int nExcessMales = nExcessOffsprings / 2;
+	int nExcessFemales = nExcessOffsprings - nExcessMales;
+	int nDeletedMales = 0;
+	int nDeletedFemales = 0;
+	
+		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
+			if (nDeletedMales < nExcessMales && (!this->_mpvNewGenMales[nCPU].empty())) {
+				delete this->_mpvNewGenMales[nCPU][this->_mpvNewGenMales[nCPU].size()-1];
+				this->_mpvNewGenMales[nCPU].pop_back();
+				nDeletedMales++;
+			}
+                        if (nDeletedFemales < nExcessFemales && (!this->_mpvNewGenFemales[nCPU].empty())) {
+                                delete this->_mpvNewGenFemales[nCPU][this->_mpvNewGenFemales[nCPU].size()-1];
+                                this->_mpvNewGenFemales[nCPU].pop_back();
+                                nDeletedFemales++;
+                        }
+		}
 	
 	this->_bBred = true; //set flag
 	return true;
