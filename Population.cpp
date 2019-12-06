@@ -317,7 +317,7 @@ bool Population::Breed() {
 	
 
 
-	#pragma omp for 
+	#pragma omp for reduction(+: nNewOffSpringCount) 
 	for(int i=0;i<nNumFemales;i++) 
 	{
 		if (nNewOffSpringCount >= this->_nPopMaxSize || stExhaustedFemales.size() >= this->_mpFemales.size()) {
@@ -496,9 +496,25 @@ bool Population::Breed() {
 	} //end parallel block
 
 	bCourterHandeled = true;
+	int nExcessOffsprings = nNewOffSpringCount - this->_nPopMaxSize;
+	int nExcessMales = nExcessOffsprings / 2;
+	int nExcessFemales = nExcessOffsprings - nExcessMales;
+	int nDeletedMales = 0;
+	int nDeletedFemales = 0;
 	
 		
 		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
+
+			if (nDeletedMales < nExcessMales && (!this->_mpvNewGenMales[nCPU].empty())) {
+				delete this->_mpvNewGenMales[nCPU][this->_mpvNewGenMales[nCPU].size()-1];
+				this->_mpvNewGenMales[nCPU].pop_back();
+				nDeletedMales++;
+			}
+                        if (nDeletedFemales < nExcessFemales && (!this->_mpvNewGenFemales[nCPU].empty())) {
+                                delete this->_mpvNewGenFemales[nCPU][this->_mpvNewGenFemales[nCPU].size()-1];
+                                this->_mpvNewGenFemales[nCPU].pop_back();
+                                nDeletedFemales++;
+                        }
 
 			//delete poisson generators for offspring numbers
 			if (nOffSpringCountFunc == 1 ) {
@@ -546,6 +562,7 @@ void Population::KillOldGen() { //
 	//printf("_mpNewGenFemales.size() %d\n", _mpNewGenFemales.size());
 	_mpMales.reserve(this->GetPopSize(2));
 	_mpFemales.reserve(this->GetPopSize(3));
+
 	for(int nCpu=0; nCpu<nTotalCPUCore;nCpu++) {
 		copy(_mpvNewGenMales[nCpu].begin(), _mpvNewGenMales[nCpu].end(), back_inserter(_mpMales));
 		copy(_mpvNewGenFemales[nCpu].begin(), _mpvNewGenFemales[nCpu].end(), back_inserter(_mpFemales));
