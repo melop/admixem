@@ -538,13 +538,15 @@ bool Population::Breed() {
 		for(int nCPU=0;nCPU<nTotalCPUCore;nCPU++) { //set global current population parameters for all the CPUs
 
 			if (nDeletedMales < nExcessMales && (!this->_mpvNewGenMales[nCPU].empty())) {
-				delete *(this->_mpvNewGenMales[nCPU].back());
+				Individual *pToDelete = (this->_mpvNewGenMales[nCPU].back());
 				this->_mpvNewGenMales[nCPU].pop_back();
+				delete pToDelete;
 				nDeletedMales++;
 			}
                         if (nDeletedFemales < nExcessFemales && (!this->_mpvNewGenFemales[nCPU].empty())) {
-                                delete *(this->_mpvNewGenFemales[nCPU].back());
+                                Individual *pToDelete = (this->_mpvNewGenFemales[nCPU].back());
                                 this->_mpvNewGenFemales[nCPU].pop_back();
+				delete pToDelete;
                                 nDeletedFemales++;
                         }
 		}
