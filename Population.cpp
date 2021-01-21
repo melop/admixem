@@ -234,7 +234,8 @@ bool Population::Breed() {
 			
 					pParser->symbols_[string("Pop_Avg_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].first;
 					pParser->symbols_[string("Pop_Std_"+sSymbol)] = this->_mpSumPhenotype[sSymbol].second;
-
+					cout << "CPU:" << nCPU << "Pop_Avg_" << sSymbol.c_str() << "=" << this->_mpSumPhenotype[sSymbol].first << "\n";
+					cout << "CPU:" << nCPU << "Pop_Std_" << sSymbol.c_str() << "=" << this->_mpSumPhenotype[sSymbol].second << "\n";
 				}
 
 				for(vector<string>::iterator itSymbol=vSymbolsPopCourter.begin();itSymbol!=vSymbolsPopCourter.end();++itSymbol)
@@ -250,7 +251,8 @@ bool Population::Breed() {
 			
 					pParser->symbols_[string("PopCourter_Avg_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].first;
 					pParser->symbols_[string("PopCourter_Std_"+sSymbol)] = this->_mpSumPhenotypeMale[sSymbol].second;
-
+					cout << "CPU:" << nCPU << "PopCourter_Avg_" << sSymbol.c_str() << "=" << this->_mpSumPhenotypeMale[sSymbol].first << "\n";
+					cout << "CPU:" << nCPU << "PopCourter_Std_" << sSymbol.c_str() << "=" << this->_mpSumPhenotypeMale[sSymbol].second << "\n";
 				}
 
 				for(vector<string>::iterator itSymbol=vSymbolsPopChooser.begin();itSymbol!=vSymbolsPopChooser.end();++itSymbol)
@@ -266,6 +268,9 @@ bool Population::Breed() {
 			
 					pParser->symbols_[string("PopChooser_Avg_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].first;
 					pParser->symbols_[string("PopChooser_Std_"+sSymbol)] = this->_mpSumPhenotypeFemale[sSymbol].second;
+					cout << "CPU:" << nCPU << "PopChooser_Avg_" << sSymbol.c_str() << "=" << this->_mpSumPhenotypeFemale[sSymbol].first << "\n";
+					cout << "CPU:" << nCPU << "PopChooser_Std_" << sSymbol.c_str() << "=" << this->_mpSumPhenotypeFemale[sSymbol].second << "\n";
+
 
 				}
 			
