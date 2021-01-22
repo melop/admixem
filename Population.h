@@ -31,7 +31,7 @@ public:
 	void KillOldGen();
 	void Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile, ofstream &fPhenoSumOutFile, ofstream &fOffSpringNatSelProb);
 	void FreqDependentNaturalSelection(); //Frequency-dependent natural selection
-	void SummarizePhenotype(); // get pop level statisticss
+	void SummarizePhenotype(bool bSetPrevious); // get pop level statisticss
 	//static bool IsNULL(Individual * pPtr);
 	int GetPopSize(int nMode);
 	int GetPopId();

@@ -209,7 +209,7 @@ void PerformSimulation() {
 		printf("Calculating phenotype distributions...\n");
 		for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
 		{
-			(*itpPop)->SummarizePhenotype();
+			(*itpPop)->SummarizePhenotype(true); // set previous
 		}
 	
 		bool bAllOutputOff = (SimulConfig.GetConfig("AllOutput")=="Off");
@@ -323,6 +323,8 @@ void PerformSimulation() {
 			for (vector< Population * >::iterator itpPop = vPops.begin() ; itpPop != vPops.end(); ++itpPop)
 			{
 				(*itpPop)->ImmigrateConfirm(true);
+				cout << "Update trait summary stats after migration for pop " << (*itpPop)->GetPopName() << "\n";
+				(*itpPop)->SummarizePhenotype(false); //do not reset previous
 			}
 		}
 
