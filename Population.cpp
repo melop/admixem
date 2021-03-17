@@ -714,6 +714,8 @@ bool Population::ImmigrateConfirm(bool bForceExistingDie) {
 			}
 		}
 	}
+
+	return ((nAddedMales+nAddedFemales)>0);
 }
 
 int Population::GetPopSize(int nMode) {
@@ -725,6 +727,8 @@ int Population::GetPopSize(int nMode) {
 		case 4: return _mpFemales.size()+_mpMales.size();
 		case 5: {int nCount=0; for( int nCpu=0;nCpu<nTotalCPUCore;nCpu++) {nCount+=_mpvNewGenMales[nCpu].size()+ _mpvNewGenFemales[nCpu].size();} return nCount;};
 	}
+
+	return 0;
 }
 
 void Population::Sample(ofstream &fMarkerOutFile, ofstream &fGeneOutFile,  ofstream &fPhenotypeOutFile,  ofstream &fPhenoSumOutFile, ofstream &fOffSpringNatSelProb ) {
